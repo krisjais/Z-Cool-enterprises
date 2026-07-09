@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -85,9 +85,16 @@ export default function ContactPage() {
               
               {/* Direct Call/WA Cards */}
               <div className="p-8 rounded-[28px] bg-white border flex flex-col gap-6 shadow-sm" style={{ borderColor: C.borderLight }}>
-                <h3 className="font-bold text-sm uppercase tracking-wider text-[#0F2B46] border-b pb-3" style={{ borderColor: C.borderLight }}>
-                  Direct Operational Links
-                </h3>
+                
+                <div className="flex items-center gap-3.5 pb-4 border-b animate-fade-in" style={{ borderColor: C.borderLight }}>
+                  <img src="/logo1.png" alt="Z Cool Icon" className="w-10 h-10 object-contain" />
+                  <div>
+                    <h3 className="font-bold text-sm uppercase tracking-wider text-[#0F2B46]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                      Z COOL TECH
+                    </h3>
+                    <span className="font-mono text-[8px] text-slate-400 block uppercase tracking-widest font-bold">Technical Operations Desk</span>
+                  </div>
+                </div>
 
                 <a
                   href="tel:+919920691707"

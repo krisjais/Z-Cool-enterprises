@@ -6,8 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, ChevronDown, ArrowUpRight, Download, Cpu,
   Settings, CheckCircle2, ShieldCheck, Thermometer, Zap, Layers,
-  ChevronRight, Home, RefreshCw, X, MessageSquare, Phone, FileText, Info
+  ChevronRight, Home, RefreshCw, X, MessageSquare, Phone, FileText, Info, HelpCircle
 } from 'lucide-react';
+import { PRODUCTS_CATALOG } from '@/data/products';
+import { gsap } from '@/lib/gsap';
 
 const C = {
   bgHero:        '#F1F6FA',
@@ -19,142 +21,60 @@ const C = {
   navy:          '#0F2B46',
   blue:          '#1D6FA3',
   teal:          '#0EA6A6',
-  gold:          '#F2C14E',
+  gold:          '#B8955A',
   slate:         '#6E7C93',
-  muted:         '#8A9BB4',
   borderLight:   'rgba(15,43,70,0.06)',
   borderStrong:  'rgba(15,43,70,0.12)',
 };
 
-// ══════════════════════════════════════════════════════════════════
-// DETAILED PRODUCT SEED DATA (FULL CATALOG)
-// ══════════════════════════════════════════════════════════════════
-const PRODUCTS_CATALOG = [
+const INDUSTRY_SOLUTIONS = [
   {
-    id: 'hvac-pcb-100',
-    code: 'Z-PCB-H100',
-    name: 'Inverter VRF Controller Board',
-    tagline: 'VRF/VRV Core Inverter Controller PCB',
-    category: 'Electronic Components',
-    type: 'PCB Boards',
-    accentColor: '#1D6FA3',
-    img: '/hvac_pcb_front.png',
-    imgAlt: 'Precision PCB inverter controller board',
-    voltage: '380V - 415V AC 3-Phase',
-    pcbType: 'FR-4 High-TG 6-Layer',
-    availability: 'In Stock',
-    oemGrade: 'Tier-1 OEM Approved',
-    warranty: '36 Months',
-    techSupport: '24/7 Remote Support',
-    description: 'The master inverter controller board for high-capacity VRF climate systems. Engineered to coordinate active compressor frequency scaling and electronic expansion valve throttling.',
-    compatibility: ['Daikin', 'LG', 'Mitsubishi', 'Carrier'],
-    applications: ['VRF/VRV Outdoor Units', 'Commercial Multi-Split Central Loops', 'Heavy Duty Heat Pumps'],
-    specs: { 'Cooling Capacity': '10-25 kW', 'Compressor Control': 'Active PID', 'Ingress Seal': 'IP54 Conformal' }
+    id: 'hospitals',
+    title: 'Hospitals',
+    icon: '🏥',
+    image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce2?q=80&w=600&auto=format&fit=crop',
+    description: 'Designed for operating theatres, laboratories, diagnostic rooms and critical healthcare infrastructure requiring precise environmental control.',
+    products: ['Precision Air Conditioning', 'Close Control Units', 'Cabinet Heat Exchangers']
   },
   {
-    id: 'chiller-w50',
-    code: 'CH-W50',
-    name: 'Industrial Process Water Chiller',
-    tagline: 'Heavy-Duty Process Liquid Chillers',
-    category: 'Water Cooling Systems',
-    type: 'Chillers',
-    accentColor: '#0EA6A6',
-    img: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=600&auto=format&fit=crop',
-    imgAlt: 'Industrial water chiller compressor pipeline',
-    voltage: '415V AC 3-Phase 50Hz',
-    pcbType: 'Microprocessor Controller',
-    availability: '4 Weeks Delivery',
-    oemGrade: 'OEM Grade ISO 9001',
-    warranty: '24 Months',
-    techSupport: '24/7 Field Engineering',
-    description: 'Engineered for process cooling in automated factories, medical imaging centers, and chemical reactors. Features scroll compressor array and shell-and-tube heat exchanger.',
-    compatibility: ['Carrier', 'Trane', 'York', 'Daikin'],
-    applications: ['Medical Diagnostics (MRI/CT)', 'Plastic Injection Molds', 'Laser Cutting Cooling'],
-    specs: { 'Cooling Capacity': '50 kW Nominal', 'Refrigerant': 'R410A Eco', 'Water Flow Rate': '8.6 m³/h' }
+    id: 'data-centers',
+    title: 'Data Centers',
+    icon: '🖥',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&auto=format&fit=crop',
+    description: 'Maintain server uptime through stable temperature control and intelligent thermal management.',
+    products: ['Precision Cooling Systems', 'High Capacity Chillers', 'VRF Controllers']
   },
   {
-    id: 'panel-pex15',
-    code: 'PEX-P15',
-    name: 'Cabinet Panel Heat Exchanger',
-    tagline: 'Sealed Enclosure Heat Protection',
-    category: 'Panel Cooling Systems',
-    type: 'Cabinet Coolers',
-    accentColor: '#1D6FA3',
-    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600&auto=format&fit=crop',
-    imgAlt: 'Sealed electrical cabinet cooling panel mount',
-    voltage: '220V - 240V AC 50/60Hz',
-    pcbType: 'Sealed Analog Thermal Card',
-    availability: 'In Stock',
-    oemGrade: 'Tier-1 Industrial',
-    warranty: '36 Months',
-    techSupport: '24/7 Help Desk Support',
-    description: 'Protects critical PLC, VFD, and automation electronics from thermal failure without allowing ambient dust or chemical vapors inside the enclosure.',
-    compatibility: ['Rittal', 'Siemens', 'ABB', 'Schneider'],
-    applications: ['Automated Factory VFD Cabinets', 'CNC Control Panels', 'Outdoor Telecom Hub Cabinets'],
-    specs: { 'Heat Extraction': '1500 W', 'Ingress Seal': 'IP55 Closed Loop', 'Airflow Rate': '450 m³/h' }
+    id: 'factories',
+    title: 'Factories',
+    icon: '🏭',
+    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=600&auto=format&fit=crop',
+    description: 'Reliable thermal management for manufacturing plants, production lines and industrial automation systems.',
+    products: ['Industrial Water Chillers', 'Cabinet Panel Coolers', 'Heavy Duty Cooling Units']
   },
   {
-    id: 'ccu-x10',
-    code: 'CCU-X10',
-    name: 'Precision Close Control Unit',
-    tagline: 'Mission-Critical Server Room Climate AC',
-    category: 'Precision Air Conditioning',
-    type: 'Precision ACs',
-    accentColor: '#1D6FA3',
-    img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&auto=format&fit=crop',
-    imgAlt: 'Data server rack infrastructure cooling unit',
-    voltage: '380V - 415V AC 3-Phase',
-    pcbType: 'Integrated Microprocessor Loop',
-    availability: 'In Stock',
-    oemGrade: 'Tier-1 Telecom Grade',
-    warranty: '24 Months',
-    techSupport: '24/7 Field Commissioning Support',
-    description: 'Provides precise climate regulation within ±0.5°C tolerances. Configured with inner-grooved copper tube exchangers and EC fan modulations.',
-    compatibility: ['Emerson', 'Schneider', 'Daikin', 'ABB'],
-    applications: ['Data Centers', 'High-density Server Vaults', 'Calibration Laboratories'],
-    specs: { 'Cooling Capacity': '10 kW', 'Airflow Rate': '2200 m³/h', 'Temperature Control': '±0.5°C' }
+    id: 'hotels',
+    title: 'Hotels',
+    icon: '🏨',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop',
+    description: 'Comfort-focused HVAC electronics designed for hospitality environments with reduced operating costs.',
+    products: ['VRF Controllers', 'Energy Efficient Cooling', 'Smart HVAC Controls']
   },
   {
-    id: 'chiller-w100',
-    code: 'CH-W100',
-    name: 'High-Capacity Liquid Chiller',
-    tagline: 'Double Capacity Process Liquid Chiller',
-    category: 'Water Cooling Systems',
-    type: 'Chillers',
-    accentColor: '#0EA6A6',
-    img: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=600&auto=format&fit=crop',
-    imgAlt: 'High capacity water chiller equipment loop',
-    voltage: '415V AC 3-Phase 50Hz',
-    pcbType: 'Dual Redundant PLC System',
-    availability: '6 Weeks Delivery',
-    oemGrade: 'OEM Grade ISO 9001',
-    warranty: '24 Months',
-    techSupport: '24/7 Field Engineering',
-    description: 'Double-capacity process chiller featuring a multi-compressor Scroll Array and titanium plates heat exchangers for harsh chemical process loops.',
-    compatibility: ['Carrier', 'Daikin Applied', 'Siemens', 'Trane'],
-    applications: ['Chemical Processing Plants', 'Central Building HVAC loops', 'Industrial Plant Cooling'],
-    specs: { 'Cooling Capacity': '100 kW Nominal', 'Refrigerant': 'R410A Eco', 'Water Flow Rate': '17.2 m³/h' }
+    id: 'commercial-buildings',
+    title: 'Commercial Buildings',
+    icon: '🏢',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
+    description: 'Efficient cooling infrastructure for offices, malls, commercial complexes and mixed-use developments.',
+    products: ['Building Automation Controllers', 'VRF Systems', 'Precision Cooling']
   },
   {
-    id: 'panel-pex30',
-    code: 'PEX-P30',
-    name: 'Cabinet Heat Exchanger 3000W',
-    tagline: 'Double-Capacity Panel Cooling Core',
-    category: 'Panel Cooling Systems',
-    type: 'Cabinet Coolers',
-    accentColor: '#1D6FA3',
-    img: 'https://images.unsplash.com/photo-1591453089816-0fbb971b454c?q=80&w=600&auto=format&fit=crop',
-    imgAlt: 'Double capacity panel cooling core macro view',
-    voltage: '220V - 240V AC 50/60Hz',
-    pcbType: 'Modbus Integrated Control Board',
-    availability: 'In Stock',
-    oemGrade: 'Tier-1 Industrial',
-    warranty: '36 Months',
-    techSupport: '24/7 Help Desk Support',
-    description: 'Heavy duty cabinet cooler delivering 3000W of heat extraction. Maintains sealed NEMA 4X parameters for control equipment in harsh steel or cement mill environments.',
-    compatibility: ['Rittal', 'Siemens', 'ABB', 'Schneider'],
-    applications: ['Heavy Industry CNC Cabinets', 'High-capacity VFD enclosures', 'Power Station Switchgear'],
-    specs: { 'Heat Extraction': '3000 W', 'Ingress Seal': 'IP55 Closed Loop', 'Airflow Rate': '850 m³/h' }
+    id: 'electrical-control-rooms',
+    title: 'Electrical Control Rooms',
+    icon: '⚡',
+    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600&auto=format&fit=crop',
+    description: 'Protect electrical equipment from overheating and extend system reliability.',
+    products: ['Cabinet Heat Exchangers', 'Panel Cooling Systems', 'Industrial PCB Controllers']
   }
 ];
 
@@ -162,31 +82,58 @@ export default function ProductListingPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedBrand, setSelectedBrand] = useState('All');
-  const [selectedType, setSelectedType] = useState('All');
+  const [selectedApplication, setSelectedApplication] = useState('All');
   const [sortBy, setSortBy] = useState('name-asc');
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
 
   // Comparison State
   const [comparedIds, setComparedIds] = useState([]);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
 
-  // Quick View State
-  const [quickViewProduct, setQuickViewProduct] = useState(null);
-
   // Product Finder wizard states
+  const [showFinder, setShowFinder] = useState(false);
   const [finderStep, setFinderStep] = useState(1);
+  const [finderIndustry, setFinderIndustry] = useState('');
   const [finderBrand, setFinderBrand] = useState('');
   const [finderType, setFinderType] = useState('');
-  const [finderModel, setFinderModel] = useState('');
   const [finderResult, setFinderResult] = useState(null);
 
   // Dynamic filter arrays
   const categories = ['All', 'Electronic Components', 'Water Cooling Systems', 'Panel Cooling Systems', 'Precision Air Conditioning'];
   const brands = ['All', 'Daikin', 'LG', 'Carrier', 'Mitsubishi', 'Rittal', 'Siemens', 'ABB', 'Schneider'];
-  const types = ['All', 'PCB Boards', 'Chillers', 'Cabinet Coolers', 'Precision ACs'];
+  const applications = ['All', 'Hospitals', 'Data Centers', 'Factories', 'Commercial Buildings', 'Hotels', 'Electrical Control Rooms'];
+
+  // Ref for animations
+  const finderRef = useRef(null);
+  const industryGridRef = useRef(null);
+
+  // Stagger reveal of industry solution cards with GSAP
+  useEffect(() => {
+    const grid = industryGridRef.current;
+    if (!grid) return;
+    
+    const ctx = gsap.context(() => {
+      gsap.fromTo(grid.children,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: grid,
+            start: 'top 85%'
+          }
+        }
+      );
+    }, grid);
+
+    return () => ctx.revert();
+  }, []);
 
   // ── FILTER & SORT LOGIC ──
   const filteredProducts = useMemo(() => {
@@ -197,7 +144,8 @@ export default function ProductListingPage() {
       result = result.filter(p =>
         p.name.toLowerCase().includes(q) ||
         p.code.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q)
+        p.description.toLowerCase().includes(q) ||
+        p.tagline.toLowerCase().includes(q)
       );
     }
 
@@ -209,8 +157,32 @@ export default function ProductListingPage() {
       result = result.filter(p => p.compatibility.includes(selectedBrand));
     }
 
-    if (selectedType !== 'All') {
-      result = result.filter(p => p.type === selectedType);
+    if (selectedApplication !== 'All') {
+      const app = selectedApplication.toLowerCase();
+      result = result.filter(p => {
+        const matchesCategory = (app === 'hospitals' && (p.category === 'Precision Air Conditioning' || p.type === 'PCB Boards')) ||
+                                (app === 'data centers' && (p.type === 'Precision ACs' || p.category === 'Water Cooling Systems')) ||
+                                (app === 'factories' && (p.category === 'Water Cooling Systems' || p.category === 'Panel Cooling Systems')) ||
+                                (app === 'hotels' && (p.type === 'PCB Boards' || p.category === 'Electronic Components')) ||
+                                (app === 'commercial buildings' && (p.type === 'Precision ACs' || p.category === 'Electronic Components')) ||
+                                (app === 'electrical control rooms' && (p.category === 'Panel Cooling Systems' || p.type === 'PCB Boards'));
+
+        const matchesAppText = p.applications.some(a => {
+          const name = a.name.toLowerCase();
+          const challenge = a.challenge.toLowerCase();
+          const solution = a.solution.toLowerCase();
+          
+          if (app === 'hospitals') return name.includes('hospital') || name.includes('medical') || name.includes('laboratory') || challenge.includes('surgery') || challenge.includes('calibration');
+          if (app === 'data centers') return name.includes('data center') || name.includes('server') || name.includes('vault') || challenge.includes('rack');
+          if (app === 'factories') return name.includes('factory') || name.includes('plant') || name.includes('milling') || name.includes('cement') || name.includes('steel') || challenge.includes('milling') || challenge.includes('drive');
+          if (app === 'hotels') return name.includes('hotel') || name.includes('hospitality');
+          if (app === 'commercial buildings') return name.includes('building') || name.includes('office') || name.includes('mall');
+          if (app === 'electrical control rooms') return name.includes('cabinet') || name.includes('panel') || name.includes('control') || challenge.includes('short') || challenge.includes('overheating');
+          return false;
+        });
+
+        return matchesCategory || matchesAppText;
+      });
     }
 
     // Sorting
@@ -223,7 +195,7 @@ export default function ProductListingPage() {
     }
 
     return result;
-  }, [searchTerm, selectedCategory, selectedBrand, selectedType, sortBy]);
+  }, [searchTerm, selectedCategory, selectedBrand, selectedApplication, sortBy]);
 
   // Paginated output
   const paginatedProducts = useMemo(() => {
@@ -236,15 +208,15 @@ export default function ProductListingPage() {
   // Reset page on filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedBrand, selectedType, sortBy]);
+  }, [searchTerm, selectedCategory, selectedBrand, selectedApplication, sortBy]);
 
   // ── COMPARISON LOGIC ──
   const toggleCompare = (id) => {
     if (comparedIds.includes(id)) {
       setComparedIds(comparedIds.filter(x => x !== id));
     } else {
-      if (comparedIds.length >= 2) {
-        alert('You can compare a maximum of 2 products side-by-side.');
+      if (comparedIds.length >= 3) {
+        alert('You can compare a maximum of 3 products side-by-side.');
         return;
       }
       setComparedIds([...comparedIds, id]);
@@ -257,64 +229,255 @@ export default function ProductListingPage() {
 
   // ── PRODUCT FINDER RESOLVE ──
   const handleFinderSubmit = () => {
-    const matched = PRODUCTS_CATALOG.find(p =>
-      p.compatibility.includes(finderBrand) &&
-      p.type === finderType
-    );
+    const matched = PRODUCTS_CATALOG.find(p => {
+      const typeMatches = finderType === 'All' || p.type.toLowerCase().includes(finderType.toLowerCase());
+      const brandMatches = finderBrand === 'All' || p.compatibility.includes(finderBrand);
+      return typeMatches && brandMatches;
+    });
+
     setFinderResult(matched || PRODUCTS_CATALOG[0]);
     setFinderStep(4);
   };
 
   const resetFinder = () => {
     setFinderStep(1);
+    setFinderIndustry('');
     setFinderBrand('');
     setFinderType('');
-    setFinderModel('');
     setFinderResult(null);
   };
 
+  // Industry click scroll-to-view filter helper
+  const handleIndustrySelect = (indTitle) => {
+    // Normalise name to match applications state
+    let target = 'All';
+    if (indTitle === 'Hospitals') target = 'Hospitals';
+    if (indTitle === 'Data Centers') target = 'Data Centers';
+    if (indTitle === 'Factories') target = 'Factories';
+    if (indTitle === 'Hotels') target = 'Hotels';
+    if (indTitle === 'Commercial Buildings') target = 'Commercial Buildings';
+    if (indTitle === 'Electrical Control Rooms') target = 'Electrical Control Rooms';
+
+    setSelectedApplication(target);
+
+    const targetSection = document.getElementById('catalog-grid-section');
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <div className="w-full overflow-x-hidden min-h-screen" style={{ background: C.bgHero }}>
+    <div className="w-full overflow-x-hidden min-h-screen relative" style={{ background: C.bgHero }}>
+      
+      {/* Subtle Engineering grid lines background */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] engineering-grid" />
       
       {/* ── BREADCRUMB ── */}
-      <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 pt-8 pb-4 flex items-center gap-2 font-mono text-[10px] text-slate-400 tracking-wider">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-16 lg:px-24 pt-8 pb-4 flex items-center gap-2 font-mono text-[10px] text-slate-400 tracking-wider">
         <Link href="/" className="hover:text-[#1D6FA3] flex items-center gap-1">
           <Home size={10} /> HOME
         </Link>
         <ChevronRight size={10} />
-        <span className="text-[#0F2B46] font-bold">PRODUCTS CATALOG</span>
+        <span className="text-[#0F2B46] font-bold">PRODUCTS ECOSYSTEM</span>
       </div>
 
-      {/* ── HERO BANNER ── */}
-      <section className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 py-16 text-left">
-        <span className="font-mono text-xs text-[#1D6FA3] tracking-widest uppercase font-bold">Z-COOL INDUSTRIAL INVENTORY</span>
-        <h1 className="text-4xl lg:text-6xl font-bold tracking-tight mt-3 mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: C.navy }}>
-          Engineering Solutions
-        </h1>
-        <p className="text-slate-600 max-w-xl text-[15px] leading-relaxed">
-          Explore our certified range of HVAC controller PCBs, heavy-duty industrial water chillers, and closed-loop cabinet heat exchangers designed for critical telecom and automated factory parameters.
-        </p>
+      {/* ── PREMIUM EDITORIAL HERO ── */}
+      <section className="max-w-[1440px] mx-auto px-6 md:px-16 lg:px-24 pt-12 pb-16 relative">
+        <div className="vertical-guide left-[8%] hidden lg:block" />
+        <div className="vertical-guide right-[8%] hidden lg:block" />
+        
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-8 border-b pb-12" style={{ borderColor: C.borderStrong }}>
+          <div className="max-w-3xl">
+            <span className="font-mono text-[10px] text-[#1D6FA3] tracking-[0.3em] uppercase font-bold block mb-4">
+              Z-COOL INDUSTRIAL PORTFOLIO
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[#0F2B46] mb-6 leading-[1.1]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+              Engineered Climate Solutions
+            </h1>
+            <p className="text-slate-600 text-sm md:text-base max-w-2xl leading-relaxed">
+              Explore our range of certified VRF logic controllers, heavy-duty industrial process chillers, closed-loop cabinet heat exchangers, and precision server-room units configured for high-density, mission-critical parameters.
+            </p>
+          </div>
+
+          {/* Quick HUD Metrics */}
+          <div className="grid grid-cols-2 gap-4 w-full lg:w-fit min-w-[280px]">
+            <div className="bg-white border rounded-2xl p-4 flex flex-col justify-between shadow-sm" style={{ borderColor: C.borderLight }}>
+              <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">Deployed Systems</span>
+              <span className="text-xl font-bold text-[#0F2B46] mt-2">1,240+ Active</span>
+            </div>
+            <div className="bg-white border rounded-2xl p-4 flex flex-col justify-between shadow-sm" style={{ borderColor: C.borderLight }}>
+              <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">BMS Connectivity</span>
+              <span className="text-xl font-bold text-[#0EA6A6] mt-2">Modbus/BACnet</span>
+            </div>
+            <div className="bg-white border rounded-2xl p-4 flex flex-col justify-between shadow-sm" style={{ borderColor: C.borderLight }}>
+              <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">QA Verification</span>
+              <span className="text-xl font-bold text-[#B8955A] mt-2">100% Tested</span>
+            </div>
+            <div className="bg-white border rounded-2xl p-4 flex flex-col justify-between shadow-sm" style={{ borderColor: C.borderLight }}>
+              <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider block">Design Standards</span>
+              <span className="text-xl font-bold text-[#1D6FA3] mt-2">ASME & CE</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Finder Accordion / Wizard Trigger */}
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={() => setShowFinder(!showFinder)}
+            className="flex items-center gap-2.5 px-6 py-3.5 bg-[#0F2B46] hover:bg-[#1D6FA3] text-white text-[11px] font-mono tracking-widest uppercase rounded-full shadow-md transition-all duration-300"
+          >
+            <Cpu size={14} className={showFinder ? 'animate-spin' : ''} />
+            {showFinder ? 'Close Assistant' : 'Launch System Finder Wizard'}
+          </button>
+        </div>
+
+        {/* ── STUNNING INTERACTIVE PRODUCT FINDER WIZARD ── */}
+        <AnimatePresence>
+          {showFinder && (
+            <motion.div
+              ref={finderRef}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden mt-6"
+            >
+              <div className="bg-white border border-[#0F2B46]/10 rounded-3xl p-6 md:p-10 shadow-lg relative">
+                <button
+                  onClick={() => setShowFinder(false)}
+                  className="absolute right-5 top-5 text-slate-400 hover:text-red-500 transition-colors p-1"
+                >
+                  <X size={18} />
+                </button>
+
+                <div className="max-w-2xl mx-auto text-center mb-8">
+                  <span className="text-[9px] font-mono text-[#0EA6A6] tracking-widest uppercase font-bold">INTELLIGENT SELECTION ENGINE</span>
+                  <h3 className="text-xl md:text-2xl font-bold text-[#0F2B46] mt-2">Engineering Product Finder</h3>
+                  <p className="text-xs text-slate-500 mt-2 font-mono">STEP {finderStep} OF 4</p>
+                </div>
+
+                {/* Step 1: Industry */}
+                {finderStep === 1 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-6">
+                    <p className="text-sm font-bold text-center text-slate-700">Select your target operating industry:</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {['Hospitals', 'Data Centers', 'Factories', 'Commercial Buildings', 'Electrical Control Rooms', 'Hotels'].map(ind => (
+                        <button
+                          key={ind}
+                          onClick={() => { setFinderIndustry(ind); setFinderStep(2); }}
+                          className="py-4 border rounded-2xl hover:border-[#1D6FA3] hover:bg-[#1D6FA3]/5 text-xs text-slate-700 transition-all font-semibold"
+                        >
+                          {ind}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 2: Compatible Brand */}
+                {finderStep === 2 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-6">
+                    <p className="text-sm font-bold text-center text-slate-700">Select compatible OEM equipment brand:</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {['Daikin', 'LG', 'Siemens', 'ABB', 'Carrier', 'Rittal', 'Schneider', 'All'].map(br => (
+                        <button
+                          key={br}
+                          onClick={() => { setFinderBrand(br); setFinderStep(3); }}
+                          className="py-4 border rounded-2xl hover:border-[#1D6FA3] hover:bg-[#1D6FA3]/5 text-xs text-slate-700 transition-all font-semibold"
+                        >
+                          {br}
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={() => setFinderStep(1)} className="text-[10px] font-mono text-slate-400 hover:text-slate-600 block text-center mt-2 uppercase">← Back to Step 1</button>
+                  </motion.div>
+                )}
+
+                {/* Step 3: Product Type */}
+                {finderStep === 3 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-6">
+                    <p className="text-sm font-bold text-center text-slate-700">Select target system category component:</p>
+                    <div className="grid grid-cols-2 gap-3 max-w-lg mx-auto w-full">
+                      {['PCB Boards', 'Chillers', 'Cabinet Coolers', 'Precision ACs', 'All'].map(t => (
+                        <button
+                          key={t}
+                          onClick={() => { setFinderType(t); }}
+                          className={`py-4 border rounded-2xl text-xs transition-all font-semibold ${
+                            finderType === t ? 'border-[#1D6FA3] bg-[#1D6FA3]/5 text-[#1D6FA3]' : 'hover:border-[#1D6FA3] hover:bg-[#1D6FA3]/5 text-slate-700'
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex gap-4 justify-center mt-4">
+                      <button onClick={() => setFinderStep(2)} className="text-[10px] font-mono text-slate-400 hover:text-slate-600 uppercase">← Back</button>
+                      <button
+                        onClick={handleFinderSubmit}
+                        disabled={!finderType}
+                        className="px-6 py-2.5 bg-[#1D6FA3] text-white text-[10px] font-mono tracking-widest uppercase rounded-lg disabled:opacity-50"
+                      >
+                        Resolve Code →
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 4: Result */}
+                {finderStep === 4 && finderResult && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl mx-auto flex flex-col md:flex-row gap-8 items-center bg-[#F1F6FA]/50 p-6 rounded-2xl border" style={{ borderColor: C.borderLight }}>
+                    <div className="w-32 h-32 flex-shrink-0 flex items-center justify-center bg-white p-3 rounded-2xl border">
+                      <img src={finderResult.images[0]} alt={finderResult.name} className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <div className="flex-grow text-left">
+                      <span className="font-mono text-[9px] text-[#1D6FA3] uppercase font-bold tracking-wider">RESOLVED SYSTEM MATCH</span>
+                      <h4 className="text-base font-bold text-[#0F2B46] mt-1">{finderResult.name}</h4>
+                      <p className="font-mono text-[10px] text-slate-400 mt-0.5">CODE: {finderResult.code}</p>
+                      <p className="text-xs text-slate-500 mt-2 line-clamp-2">{finderResult.description}</p>
+                      
+                      <div className="flex gap-3 mt-4">
+                        <Link
+                          href={`/products/${finderResult.id}`}
+                          className="px-4 py-2 bg-[#1D6FA3] text-white font-mono text-[9px] uppercase tracking-wider rounded hover:bg-blue-600 transition-colors"
+                        >
+                          Engineering Profile
+                        </Link>
+                        <button
+                          onClick={resetFinder}
+                          className="px-4 py-2 border font-mono text-[9px] uppercase tracking-wider rounded hover:bg-white text-slate-500"
+                        >
+                          Find Another
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       {/* ── STICKY SIDEBAR & PRODUCT LISTING SECTION ── */}
-      <section className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 pb-32">
-        <div className="grid grid-cols-12 gap-10">
+      <section id="catalog-grid-section" className="max-w-[1440px] mx-auto px-6 md:px-16 lg:px-24 pb-32 scroll-mt-24">
+        <div className="grid grid-cols-12 gap-6 lg:gap-10">
           
           {/* LEFT COLUMN: Sticky Filter Sidebar (Desktop) */}
-          <div className="col-span-12 lg:col-span-3 h-fit lg:sticky lg:top-[130px] relative top-auto bg-white border border-[#0F2B46]/5 rounded-3xl p-8 shadow-sm">
-            <h3 className="font-bold text-sm uppercase tracking-wider mb-6 pb-3 border-b" style={{ color: C.navy, borderColor: C.borderLight }}>
-              Filter Inventory
+          <div className="col-span-12 lg:col-span-3 h-fit lg:sticky lg:top-[110px] relative top-auto bg-white border border-[#0F2B46]/5 rounded-3xl p-6 md:p-8 shadow-sm">
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-6 pb-3 border-b flex justify-between items-center" style={{ color: C.navy, borderColor: C.borderLight }}>
+              <span>Filter Inventory</span>
+              <Settings size={14} className="text-slate-400" />
             </h3>
 
             {/* Category Select */}
             <div className="mb-6">
-              <label className="font-mono text-[10px] text-slate-400 uppercase tracking-widest block mb-2.5">Category</label>
-              <div className="flex flex-col gap-2">
+              <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-3 font-bold">Category</label>
+              <div className="flex flex-col gap-1.5">
                 {categories.map(cat => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className="text-left text-xs py-1.5 px-3 rounded-lg transition-colors border"
+                    className="text-left text-xs py-2 px-3 rounded-xl transition-colors border"
                     style={{
                       borderColor: selectedCategory === cat ? C.blue : 'transparent',
                       background: selectedCategory === cat ? `${C.blue}08` : 'transparent',
@@ -330,11 +493,11 @@ export default function ProductListingPage() {
 
             {/* Brand Compatibility Select */}
             <div className="mb-6">
-              <label className="font-mono text-[10px] text-slate-400 uppercase tracking-widest block mb-2.5">Brand Support</label>
+              <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">OEM Compatibility</label>
               <select
                 value={selectedBrand}
                 onChange={(e) => setSelectedBrand(e.target.value)}
-                className="w-full text-xs p-2.5 border rounded-xl bg-slate-50 text-slate-700 outline-none"
+                className="w-full text-xs p-3 border rounded-xl bg-slate-50 text-slate-700 outline-none"
                 style={{ borderColor: C.borderStrong }}
               >
                 {brands.map(brand => (
@@ -343,24 +506,31 @@ export default function ProductListingPage() {
               </select>
             </div>
 
-            {/* Product Type Select */}
+            {/* Application Filters */}
             <div className="mb-6">
-              <label className="font-mono text-[10px] text-slate-400 uppercase tracking-widest block mb-2.5">Product Type</label>
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full text-xs p-2.5 border rounded-xl bg-slate-50 text-slate-700 outline-none"
-                style={{ borderColor: C.borderStrong }}
-              >
-                {types.map(t => (
-                  <option key={t} value={t}>{t === 'All' ? 'All Component Types' : t}</option>
+              <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-3.5 font-bold font-mono">Applications</label>
+              <div className="flex flex-wrap gap-1.5">
+                {applications.map(app => (
+                  <button
+                    key={app}
+                    onClick={() => setSelectedApplication(app)}
+                    className="text-[10px] font-mono py-1.5 px-3 rounded-full border transition-all"
+                    style={{
+                      borderColor: selectedApplication === app ? C.teal : C.borderStrong,
+                      background: selectedApplication === app ? `${C.teal}08` : 'transparent',
+                      color: selectedApplication === app ? C.teal : C.slate,
+                      fontWeight: selectedApplication === app ? 'bold' : 'normal'
+                    }}
+                  >
+                    {app}
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
 
             <button
-              onClick={() => { setSelectedCategory('All'); setSelectedBrand('All'); setSelectedType('All'); setSearchTerm(''); }}
-              className="w-full text-center text-[10px] font-mono tracking-widest uppercase py-3 border border-dashed rounded-xl text-slate-400 hover:text-red-500 hover:border-red-400 transition-colors"
+              onClick={() => { setSelectedCategory('All'); setSelectedBrand('All'); setSelectedApplication('All'); setSearchTerm(''); }}
+              className="w-full text-center text-[9px] font-mono tracking-widest uppercase py-3.5 border border-dashed rounded-xl text-slate-400 hover:text-red-500 hover:border-red-400 transition-colors"
             >
               Reset Filters
             </button>
@@ -378,17 +548,17 @@ export default function ProductListingPage() {
                   placeholder="Search code, model, spec..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-xl text-xs bg-slate-50 text-slate-700 placeholder-slate-400 outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 border rounded-xl text-xs bg-slate-50 text-slate-700 placeholder-slate-400 outline-none"
                   style={{ borderColor: C.borderStrong }}
                 />
               </div>
 
               <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                <span className="font-mono text-[9px] text-slate-400 uppercase tracking-widest">Sort By</span>
+                <span className="font-mono text-[9px] text-slate-400 uppercase tracking-widest">Sort Parameters</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="text-xs p-2 border rounded-xl bg-slate-50 text-slate-700 outline-none"
+                  className="text-xs p-2.5 border rounded-xl bg-slate-50 text-slate-700 outline-none"
                   style={{ borderColor: C.borderStrong }}
                 >
                   <option value="name-asc">Alphabetical A-Z</option>
@@ -398,455 +568,420 @@ export default function ProductListingPage() {
               </div>
             </div>
 
-            {/* Product Card Showcase Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AnimatePresence mode="popLayout">
-                {paginatedProducts.map((p) => (
-                  <motion.div
-                    key={p.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.4 }}
-                    className="group bg-white rounded-3xl border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between"
-                    style={{ borderColor: C.borderLight }}
+            {/* Asymmetric Product Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+              {paginatedProducts.length > 0 ? (
+                paginatedProducts.map((p, index) => {
+                  const isWide = index === 0 || index === 3;
+                  return (
+                    <motion.div
+                      key={p.id}
+                      layout
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.05 }}
+                      className={`group bg-white rounded-[28px] border overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col justify-between ${
+                        isWide ? 'md:col-span-2' : ''
+                      }`}
+                      style={{ borderColor: C.borderLight }}
+                    >
+                      <div className="flex flex-col md:flex-row h-full">
+                        {/* Image Frame */}
+                        <div className={`p-6 bg-slate-50/50 flex items-center justify-center border-b md:border-b-0 md:border-r relative overflow-hidden flex-shrink-0 ${
+                          isWide ? 'w-full md:w-[40%]' : 'w-full'
+                        }`} style={{ borderColor: C.borderLight }}>
+                          
+                          <div className="absolute top-0 left-0 w-[4px] h-full" style={{ background: p.accentColor }} />
+                          
+                          <img
+                            src={p.images[0]}
+                            alt={p.name}
+                            className="max-h-[180px] object-contain group-hover:scale-105 transition-transform duration-500"
+                          />
+
+                          <div className="absolute bottom-3 left-4 right-4 flex justify-between text-[9px] font-mono text-slate-400 bg-white/80 backdrop-blur-sm border rounded-lg py-1.5 px-2.5">
+                            <span>{p.availability}</span>
+                            <span>{p.warranty}</span>
+                          </div>
+                        </div>
+
+                        {/* Text Frame */}
+                        <div className="p-6 md:p-8 flex-grow flex flex-col justify-between">
+                          <div>
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="font-mono text-[9px] text-slate-400 tracking-wider">CODE: {p.code}</span>
+                              <span className="text-[9px] font-mono font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase">
+                                {p.type}
+                              </span>
+                            </div>
+
+                            <h3 className="text-lg md:text-xl font-bold text-[#0F2B46] leading-snug group-hover:text-[#1D6FA3] transition-colors mb-2">
+                              {p.name}
+                            </h3>
+                            
+                            <p className="text-xs text-slate-500 leading-relaxed font-light mb-4 line-clamp-2">
+                              {p.description}
+                            </p>
+
+                            <div className="grid grid-cols-2 gap-2.5 border-t pt-4 mb-4" style={{ borderColor: C.borderLight }}>
+                              <div>
+                                <span className="text-[7px] uppercase font-mono text-slate-400 block">Supply Logic</span>
+                                <span className="text-[10px] font-bold text-[#0F2B46] truncate block">{p.voltage}</span>
+                              </div>
+                              <div>
+                                <span className="text-[7px] uppercase font-mono text-slate-400 block">System Grade</span>
+                                <span className="text-[10px] font-bold text-[#0EA6A6] truncate block">{p.oemGrade}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2 items-center mb-6">
+                              <span className="text-[8px] font-mono uppercase text-slate-400">Couples With:</span>
+                              <div className="flex gap-1.5">
+                                {p.compatibility.map(comp => (
+                                  <span key={comp} className="text-[9px] font-mono bg-slate-50 border rounded-md px-1.5 py-0.5 text-slate-500" style={{ borderColor: C.borderLight }}>
+                                    {comp}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: C.borderLight }}>
+                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={comparedIds.includes(p.id)}
+                                onChange={() => toggleCompare(p.id)}
+                                className="w-3.5 h-3.5 border rounded cursor-pointer accent-[#1D6FA3]"
+                              />
+                              <span className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Compare spec</span>
+                            </label>
+
+                            <Link
+                              href={`/products/${p.id}`}
+                              className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[#1D6FA3] hover:text-blue-600 transition-colors"
+                            >
+                              Profile Details <ArrowUpRight size={12} />
+                            </Link>
+                          </div>
+                        </div>
+
+                      </div>
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div className="col-span-1 md:col-span-2 text-center py-20 bg-white border rounded-[28px] relative overflow-hidden flex flex-col items-center justify-center p-8 shadow-sm" style={{ borderColor: C.borderLight }}>
+                  {/* Large Logo 1 Watermark background */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+                    <img src="/logo1.png" alt="Watermark" className="w-80 h-80 object-contain" />
+                  </div>
+                  
+                  {/* Premium illustration container */}
+                  <div className="relative z-10 w-20 h-20 mb-6 flex items-center justify-center bg-slate-50 border rounded-2xl" style={{ borderColor: C.borderLight }}>
+                    <img src="/logo1.png" alt="Z Icon Empty" className="w-10 h-10 object-contain opacity-40" />
+                  </div>
+                  
+                  <h4 className="relative z-10 text-base font-bold text-[#0F2B46] mb-2 font-sans">
+                    Zero Matching Systems Found
+                  </h4>
+                  <p className="relative z-10 text-xs text-slate-400 max-w-xs mx-auto leading-relaxed mb-6 font-light">
+                    No products in our current database match your selected category, OEM brand, or target application filters.
+                  </p>
+                  <button
+                    onClick={() => { setSelectedCategory('All'); setSelectedBrand('All'); setSelectedApplication('All'); setSearchTerm(''); }}
+                    className="relative z-10 px-6 py-2.5 bg-slate-100 hover:bg-[#1D6FA3] hover:text-white text-[#0F2B46] text-[10px] font-mono font-bold uppercase tracking-wider rounded-xl transition-all"
                   >
-                    <div>
-                      {/* Product Image Frame (Contained Apple style) */}
-                      <div className="p-6 bg-slate-50/80 flex items-center justify-center relative aspect-[4/3] border-b" style={{ borderColor: C.borderLight }}>
-                        <img
-                          src={p.img}
-                          alt={p.imgAlt}
-                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
-                          style={{ filter: 'brightness(1.02) saturate(0.8)' }}
-                        />
-                        <div className="absolute top-4 left-4 font-mono text-[9px] bg-white border border-slate-200 text-[#0F2B46] px-2.5 py-1 rounded-full font-bold">
-                          {p.code}
-                        </div>
-                      </div>
-
-                      {/* Content block */}
-                      <div className="p-8">
-                        <span className="font-mono text-[9px] text-[#1D6FA3] tracking-widest uppercase font-bold block mb-1">
-                          {p.category}
-                        </span>
-                        <h3 className="text-xl font-bold text-[#0F2B46] mb-2 leading-snug group-hover:text-[#1D6FA3] transition-colors">
-                          {p.name}
-                        </h3>
-                        <p className="text-xs text-slate-500 font-mono mb-4">{p.tagline}</p>
-                        <p className="text-xs text-slate-600 leading-relaxed mb-6 font-light">{p.description}</p>
-
-                        {/* Details specs */}
-                        <div className="grid grid-cols-2 gap-3.5 mb-6 pb-6 border-b" style={{ borderColor: C.borderLight }}>
-                          <div>
-                            <div className="text-[8px] uppercase tracking-widest font-mono text-slate-400">Voltage</div>
-                            <div className="text-[11px] font-bold text-[#0F2B46] truncate">{p.voltage}</div>
-                          </div>
-                          <div>
-                            <div className="text-[8px] uppercase tracking-widest font-mono text-slate-400">Availability</div>
-                            <div className="text-[11px] font-bold text-emerald-600 truncate">{p.availability}</div>
-                          </div>
-                        </div>
-
-                        {/* Compatible brands */}
-                        <div>
-                          <div className="text-[8px] uppercase tracking-widest font-mono text-slate-400 mb-2">Compatible Brands</div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {p.compatibility.map(b => (
-                              <span key={b} className="text-[9px] font-mono border px-2 py-0.5 rounded bg-slate-50 text-slate-600" style={{ borderColor: C.borderStrong }}>{b}</span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* CTAs */}
-                    <div className="p-8 pt-0 flex flex-col gap-3">
-                      <div className="flex gap-3">
-                        <Link
-                          href={`/products/${p.id}`}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-3.5 bg-[#1D6FA3] hover:bg-[#0F2B46] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors"
-                        >
-                          Details <ArrowUpRight size={13} />
-                        </Link>
-                        <button
-                          onClick={() => setQuickViewProduct(p)}
-                          className="flex-1 flex items-center justify-center py-3.5 border rounded-xl text-xs uppercase tracking-wider font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-                          style={{ borderColor: C.borderStrong }}
-                        >
-                          Quick View
-                        </button>
-                      </div>
-
-                      {/* Compare toggle */}
-                      <button
-                        onClick={() => toggleCompare(p.id)}
-                        className="w-full text-center py-2 border border-dashed rounded-xl text-[10px] font-mono uppercase tracking-widest transition-colors"
-                        style={{
-                          borderColor: comparedIds.includes(p.id) ? C.teal : C.borderStrong,
-                          color: comparedIds.includes(p.id) ? C.teal : C.slate,
-                          background: comparedIds.includes(p.id) ? `${C.teal}0c` : 'transparent'
-                        }}
-                      >
-                        {comparedIds.includes(p.id) ? '✓ Added to Compare' : '+ Compare Model'}
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {filteredProducts.length === 0 && (
-                <div className="col-span-2 text-center py-20 bg-white border rounded-3xl" style={{ borderColor: C.borderLight }}>
-                  <div className="text-slate-400 mb-2">No matching products found</div>
-                  <button onClick={() => { setSelectedCategory('All'); setSelectedBrand('All'); setSelectedType('All'); setSearchTerm(''); }} className="text-xs text-[#1D6FA3] underline font-bold uppercase tracking-wider">Reset filters</button>
+                    Reset All Filters
+                  </button>
                 </div>
               )}
             </div>
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2.5 mt-12">
-                {Array.from({ length: totalPages }).map((_, i) => (
+              <div className="flex justify-center items-center gap-2 mt-12">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  className="px-4 py-2 border rounded-xl text-xs font-mono disabled:opacity-40 bg-white"
+                >
+                  PREV
+                </button>
+                {[...Array(totalPages)].map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className="w-9 h-9 rounded-xl border flex items-center justify-center text-xs font-mono transition-colors"
-                    style={{
-                      background: currentPage === i + 1 ? C.blue : 'transparent',
-                      color: currentPage === i + 1 ? '#fff' : C.navy,
-                      borderColor: currentPage === i + 1 ? C.blue : C.borderStrong
-                    }}
+                    className={`w-9 h-9 rounded-xl border text-xs font-mono font-bold transition-all ${
+                      currentPage === i + 1 ? 'bg-[#0F2B46] text-white border-[#0F2B46]' : 'bg-white hover:bg-slate-50'
+                    }`}
                   >
                     {i + 1}
                   </button>
                 ))}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  className="px-4 py-2 border rounded-xl text-xs font-mono disabled:opacity-40 bg-white"
+                >
+                  NEXT
+                </button>
               </div>
             )}
 
           </div>
-
         </div>
       </section>
 
-      {/* ── INTERACTIVE PRODUCT FINDER WIZARD ── */}
-      <section className="py-28 relative text-white" style={{ background: C.bgDarkNavy }}>
-        <div className="absolute inset-0 pointer-events-none opacity-5" style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '70px 70px'
-        }} />
+      {/* ── NEW PREMIUM SECTION: Engineering Solutions by Industry ── */}
+      <section className="py-24 border-t" style={{ background: C.bgWarmWhite, borderColor: C.borderLight }}>
+        <div className="max-w-[1440px] mx-auto px-6 md:px-16 lg:px-24 text-left">
+          
+          <div className="max-w-3xl mb-16">
+            <span className="font-mono text-[10px] text-[#1D6FA3] tracking-[0.3em] uppercase font-bold block mb-4">DISCOVERY PORTAL</span>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#0F2B46] leading-tight mb-4" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+              Engineering Solutions by Industry
+            </h2>
+            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+              Discover recommended HVAC and industrial electronic solutions tailored for your operational environment.
+            </p>
+          </div>
 
-        <div className="max-w-3xl mx-auto px-8 text-center relative z-10">
-          <span className="font-mono text-xs text-[#0EA6A6] tracking-widest uppercase font-bold">DIGITAL CONFIGURATOR</span>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight mt-3 mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            Interactive Product Finder
-          </h2>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto mb-14">
-            Select your brand support and hardware specifications, and our algorithm will suggest the compatible Z-Cool module code instantly.
-          </p>
-
-          <div className="bg-[#122438] border border-white/10 rounded-[32px] p-10 text-left shadow-2xl">
-            <div className="flex items-center justify-between mb-10 pb-4 border-b border-white/5">
-              <span className="font-mono text-xs text-white/50">STEP 0{finderStep} // 04</span>
-              <div className="flex gap-1.5">
-                {[1, 2, 3, 4].map(s => (
-                  <div
-                    key={s}
-                    className="w-8 h-1 rounded transition-colors duration-300"
-                    style={{ background: finderStep >= s ? C.teal : 'rgba(255,255,255,0.1)' }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {finderStep === 1 && (
-                <motion.div
-                  key="step1"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="flex flex-col gap-6"
-                >
-                  <h3 className="text-lg font-bold">Select OEM Compressor Brand</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {['Daikin', 'LG', 'Carrier', 'Mitsubishi', 'Rittal', 'Siemens', 'ABB', 'Schneider'].map(b => (
-                      <button
-                        key={b}
-                        onClick={() => { setFinderBrand(b); setFinderStep(2); }}
-                        className="py-3 px-4 rounded-xl border text-center transition-all text-xs font-mono tracking-wider uppercase hover:border-[#0EA6A6]"
-                        style={{
-                          background: finderBrand === b ? '#0EA6A6' : 'rgba(255,255,255,0.03)',
-                          borderColor: finderBrand === b ? '#0EA6A6' : 'rgba(255,255,255,0.1)'
-                        }}
-                      >
-                        {b}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {finderStep === 2 && (
-                <motion.div
-                  key="step2"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="flex flex-col gap-6"
-                >
-                  <h3 className="text-lg font-bold">Select Target Component Type</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {[
-                      { type: 'PCB Boards', label: 'Inverter Logic / Controller PCBs' },
-                      { type: 'Chillers', label: 'Liquid Evaporator / Water Chillers' },
-                      { type: 'Cabinet Coolers', label: 'Sealed Enclosure Heat Exchangers' },
-                      { type: 'Precision ACs', label: 'Server Vault Climate Air Handlers' }
-                    ].map(item => (
-                      <button
-                        key={item.type}
-                        onClick={() => { setFinderType(item.type); setFinderStep(3); }}
-                        className="py-4 px-6 rounded-2xl border text-left transition-all hover:border-[#0EA6A6]"
-                        style={{
-                          background: finderType === item.type ? '#0EA6A6' : 'rgba(255,255,255,0.03)',
-                          borderColor: finderType === item.type ? '#0EA6A6' : 'rgba(255,255,255,0.1)'
-                        }}
-                      >
-                        <div className="font-bold text-xs font-mono uppercase tracking-wider text-white">{item.type}</div>
-                        <div className="text-[10px] text-white/50 mt-1">{item.label}</div>
-                      </button>
-                    ))}
-                  </div>
-                  <button onClick={() => setFinderStep(1)} className="text-xs text-white/40 mt-4 hover:text-white underline">Back to Brand Selection</button>
-                </motion.div>
-              )}
-
-              {finderStep === 3 && (
-                <motion.div
-                  key="step3"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="flex flex-col gap-6"
-                >
-                  <h3 className="text-lg font-bold">Select Hardware Specifications</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {['Light Commercial (220V)', 'Heavy Industrial (415V)', 'High Capacity Redundant'].map(m => (
-                      <button
-                        key={m}
-                        onClick={() => { setFinderModel(m); handleFinderSubmit(); }}
-                        className="py-4 px-4 rounded-xl border text-center transition-all text-xs font-mono tracking-wider uppercase hover:border-[#0EA6A6]"
-                        style={{
-                          background: finderModel === m ? '#0EA6A6' : 'rgba(255,255,255,0.03)',
-                          borderColor: finderModel === m ? '#0EA6A6' : 'rgba(255,255,255,0.1)'
-                        }}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
-                  <button onClick={() => setFinderStep(2)} className="text-xs text-white/40 mt-4 hover:text-white underline">Back to Component Type</button>
-                </motion.div>
-              )}
-
-              {finderStep === 4 && finderResult && (
-                <motion.div
-                  key="step4"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col gap-6 text-center md:text-left md:flex-row items-center gap-8"
-                >
-                  <div className="w-40 h-40 p-4 bg-white rounded-2xl flex items-center justify-center flex-shrink-0 border border-white/10">
-                    <img src={finderResult.img} alt={finderResult.name} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="flex-1">
-                    <span className="font-mono text-[9px] text-[#0EA6A6] tracking-widest uppercase font-bold block mb-1">
-                      RECOMMENDED SOLUTION
-                    </span>
-                    <h3 className="text-xl font-bold text-white mb-2">{finderResult.name}</h3>
-                    <p className="font-mono text-xs text-white/60 mb-3">CODE: {finderResult.code}</p>
-                    <p className="text-xs text-white/70 leading-relaxed mb-6 font-light">{finderResult.description}</p>
-                    <div className="flex flex-wrap gap-3.5 justify-center md:justify-start">
-                      <Link
-                        href={`/products/${finderResult.id}`}
-                        className="flex items-center gap-1 px-5 py-3 bg-[#1D6FA3] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-blue-600"
-                      >
-                        View Details <ArrowUpRight size={13} />
-                      </Link>
-                      <button
-                        onClick={resetFinder}
-                        className="flex items-center gap-1 px-5 py-3 border border-white/20 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-white/5"
-                      >
-                        <RefreshCw size={12} /> Configure Again
-                      </button>
+          {/* Grid Layout (Desktop) & Swipe Slider (Mobile/Tablet scroll viewport) */}
+          <div 
+            ref={industryGridRef} 
+            className="flex lg:grid lg:grid-cols-3 gap-8 overflow-x-auto lg:overflow-x-visible pb-8 lg:pb-0 snap-x snap-mandatory scrollbar-none"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {INDUSTRY_SOLUTIONS.map(ind => (
+              <div
+                key={ind.id}
+                onClick={() => handleIndustrySelect(ind.title)}
+                className="w-[85vw] sm:w-[50vw] lg:w-auto snap-center flex-shrink-0 flex flex-col justify-between bg-white rounded-[28px] overflow-hidden border border-[#0F2B46]/5 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer group"
+                style={{ borderColor: C.borderLight }}
+              >
+                <div>
+                  {/* Card Industrial Image Frame */}
+                  <div className="h-48 relative overflow-hidden bg-slate-100 flex items-center justify-center">
+                    <img 
+                      src={ind.image} 
+                      alt={ind.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      style={{ filter: 'brightness(0.9) saturate(0.95)' }}
+                    />
+                    
+                    {/* Industry Icon HUD Overlay */}
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm border rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-mono text-lg select-none">
+                      {ind.icon}
                     </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </section>
 
-      {/* ── RESOURCE DOWNLOAD CENTER ── */}
-      <section className="py-28" style={{ background: C.bgSage, borderTop: `1px solid ${C.borderLight}` }}>
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24">
-          <div className="mb-14">
-            <span className="font-mono text-xs text-[#1D6FA3] tracking-widest uppercase font-bold">RESOURCE ACCESS</span>
-            <h2 className="text-3xl lg:text-4xl font-bold mt-2" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: C.navy }}>
-              Download Center
-            </h2>
-          </div>
+                  {/* Description area */}
+                  <div className="p-6 md:p-8">
+                    <h3 className="text-lg md:text-xl font-bold text-[#0F2B46] mb-3 flex items-center gap-2 group-hover:text-[#1D6FA3] transition-colors">
+                      {ind.title}
+                    </h3>
+                    
+                    <p className="text-xs text-slate-500 leading-relaxed font-light mb-6 min-h-[50px]">
+                      {ind.description}
+                    </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { type: 'Product Datasheets', size: 'PDF // 4.8 MB', desc: 'Detailed dimensional drawings, connection diagrams, and thermodynamic parameters.' },
-              { type: 'Installation Manuals', size: 'PDF // 8.2 MB', desc: 'Wiring guides, bracket mounting instructions, and Modbus address registers.' },
-              { type: 'Technical Certificates', size: 'PDF // 2.1 MB', desc: 'CE directives compliance records, NEMA type approvals, and ISO certificates.' },
-            ].map((file) => (
-              <div key={file.type} className="bg-white rounded-2xl border p-6 flex flex-col justify-between" style={{ borderColor: C.borderLight }}>
-                <div>
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-4">
-                    <FileText size={18} className="text-[#1D6FA3]" />
+                    {/* Recommended products blocks */}
+                    <div className="border-t pt-5" style={{ borderColor: C.borderLight }}>
+                      <span className="font-mono text-[8px] text-[#B8955A] tracking-wider uppercase font-bold block mb-3">RECOMMENDED SOLUTIONS</span>
+                      <div className="flex flex-col gap-2">
+                        {ind.products.map(prod => (
+                          <div key={prod} className="flex items-center gap-2 text-[10px] font-mono text-[#0F2B46]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#0EA6A6]" />
+                            {prod}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                   </div>
-                  <h4 className="text-sm font-bold text-[#0F2B46] mb-1">{file.type}</h4>
-                  <div className="text-[10px] font-mono text-[#0EA6A6] font-bold mb-3">{file.size}</div>
-                  <p className="text-[12px] text-slate-500 leading-relaxed mb-6 font-light">{file.desc}</p>
                 </div>
-                <button
-                  className="flex items-center gap-1.5 text-[10px] font-mono tracking-widest uppercase text-[#1D6FA3] font-bold hover:underline"
-                >
-                  <Download size={12} /> Download PDF
-                </button>
+
+                <div className="px-6 md:px-8 pb-6 md:pb-8 pt-0">
+                  <div className="w-full py-3.5 bg-slate-50 hover:bg-[#0F2B46] group-hover:bg-[#0F2B46] text-[#0F2B46] group-hover:text-white text-[10px] font-mono font-bold uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    Explore Solutions 
+                    <ArrowUpRight size={12} className="transform transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </div>
+                </div>
+
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* ── STICKY FLOATING COMPARISON DRAWER ── */}
-      {comparedIds.length > 0 && (
-        <div
-          className="fixed bottom-0 left-0 w-full z-[9990] bg-[#0F2B46] text-white p-6 border-t border-white/10 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4"
-        >
-          <div className="flex items-center gap-6">
-            <span className="font-mono text-xs uppercase text-cyan-400 tracking-wider font-bold">Compare Models:</span>
-            <div className="flex gap-4">
-              {comparedProducts.map(p => (
-                <div key={p.id} className="flex items-center gap-2 bg-[#122438] px-3.5 py-1.5 rounded-lg border border-white/5">
-                  <span className="text-xs font-bold">{p.code}</span>
-                  <button onClick={() => toggleCompare(p.id)} className="text-slate-400 hover:text-white"><X size={12} /></button>
+      {/* ── STICKY COMPARISON DRAWER ── */}
+      <AnimatePresence>
+        {comparedIds.length > 0 && (
+          <motion.div
+            initial={{ y: 150, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 150, opacity: 0 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9990] bg-[#0F2B46] text-white px-6 py-4 rounded-3xl shadow-[0_20px_50px_rgba(15,43,70,0.4)] flex flex-col md:flex-row items-center gap-6 border border-white/10 max-w-2xl w-full"
+          >
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-[9px] uppercase tracking-wider text-cyan-400 font-bold bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800">
+                COMPARISON HUD
+              </span>
+              <span className="text-[11px] font-mono text-white/80">{comparedIds.length} of 3 systems selected</span>
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto max-w-[280px]">
+              {comparedProducts.map(cp => (
+                <div key={cp.id} className="relative flex items-center bg-white/10 rounded-xl py-1 px-3 border border-white/5 pr-7 flex-shrink-0">
+                  <span className="text-[10px] font-mono text-white font-bold">{cp.code}</span>
+                  <button onClick={() => toggleCompare(cp.id)} className="absolute right-1 text-white/40 hover:text-white p-0.5">
+                    <X size={10} />
+                  </button>
                 </div>
               ))}
+              {comparedIds.length < 3 && (
+                <div className="border border-dashed border-white/20 rounded-xl px-4 py-1 flex items-center justify-center text-[10px] text-white/40 font-mono">
+                  + Slot 0{comparedIds.length + 1}
+                </div>
+              )}
             </div>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => {
-                if (comparedIds.length < 2) {
-                  alert('Please select exactly 2 products to compare.');
-                  return;
-                }
-                setShowComparisonModal(true);
-              }}
-              className="px-6 py-2.5 bg-[#0EA6A6] text-xs uppercase font-bold tracking-widest text-white rounded-lg"
+
+            <div className="flex gap-2 flex-shrink-0 ml-auto w-full md:w-auto">
+              <button
+                disabled={comparedIds.length < 2}
+                onClick={() => setShowComparisonModal(true)}
+                className="flex-1 md:flex-none px-5 py-2.5 bg-white text-[#0F2B46] hover:bg-[#E6F1F5] font-mono text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all disabled:opacity-40"
+              >
+                Compare Now
+              </button>
+              <button
+                onClick={() => setComparedIds([])}
+                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-white text-[10px] font-mono uppercase"
+              >
+                Clear
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── COMPARISON SPECIFICATION OVERLAY MODAL ── */}
+      <AnimatePresence>
+        {showComparisonModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-white rounded-3xl w-full max-w-6xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl relative"
             >
-              Compare Now
-            </button>
-            <button onClick={() => setComparedIds([])} className="text-xs text-white/50 hover:text-white font-bold font-mono uppercase tracking-widest">Clear</button>
-          </div>
-        </div>
-      )}
-
-      {/* ── SIDE-BY-SIDE COMPARISON MODAL ── */}
-      {showComparisonModal && comparedProducts.length === 2 && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-8 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-[32px] p-10 max-w-4xl w-full max-h-[85vh] overflow-y-auto relative text-slate-800 shadow-2xl">
-            <button onClick={() => setShowComparisonModal(false)} className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-50"><X size={20} className="text-slate-400" /></button>
-            <h3 className="text-xl font-bold text-[#0F2B46] mb-8 pb-3 border-b">Side-by-Side System Comparison</h3>
-            
-            <div className="grid grid-cols-3 gap-6">
-              <div className="font-mono text-[10px] text-slate-400 uppercase tracking-widest flex flex-col gap-8 justify-end pb-4">
-                <div>Model Reference</div>
-                <div>Category</div>
-                <div>Voltage Standard</div>
-                <div>Operating Specs</div>
-                <div>Warranty</div>
-                <div>Support Access</div>
+              <div className="p-6 border-b flex justify-between items-center" style={{ borderColor: C.borderStrong }}>
+                <div>
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#1D6FA3] font-bold">PARAMETRIC MATRIX DIAGRAM</span>
+                  <h3 className="text-xl font-bold text-[#0F2B46] mt-0.5">System Specification Comparison</h3>
+                </div>
+                <button
+                  onClick={() => setShowComparisonModal(false)}
+                  className="p-2 border rounded-full hover:bg-slate-50 transition-colors text-[#0F2B46]"
+                >
+                  <X size={16} />
+                </button>
               </div>
 
-              {comparedProducts.map(p => (
-                <div key={p.id} className="flex flex-col gap-8 bg-slate-50/50 p-6 rounded-2xl border" style={{ borderColor: C.borderLight }}>
-                  <div>
-                    <h4 className="font-bold text-[#0F2B46] text-base leading-snug">{p.name}</h4>
-                    <span className="font-mono text-xs text-[#1D6FA3] font-bold mt-1 block">{p.code}</span>
-                  </div>
-                  <div className="text-xs font-bold text-slate-700">{p.category}</div>
-                  <div className="text-xs font-bold text-slate-700">{p.voltage}</div>
-                  <div className="text-xs flex flex-col gap-1 text-slate-700">
-                    {Object.entries(p.specs).map(([k, v]) => (
-                      <div key={k} className="font-light"><span className="font-bold">{k}:</span> {v}</div>
+              <div className="p-6 overflow-y-auto flex-grow">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="p-3 border-b text-[10px] font-mono uppercase text-slate-400 font-bold bg-slate-50/50">Technical parameters</th>
+                      {comparedProducts.map(cp => (
+                        <th key={cp.id} className="p-3 border-b bg-slate-50/50" style={{ minWidth: '220px' }}>
+                          <span className="font-mono text-[9px] text-[#1D6FA3] uppercase font-bold block">{cp.code}</span>
+                          <span className="text-sm font-bold text-[#0F2B46] block mt-0.5">{cp.name}</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="bg-slate-50/20"><td colSpan={comparedProducts.length + 1} className="p-2.5 font-mono text-[9px] font-bold text-slate-400 uppercase tracking-widest">General specifications</td></tr>
+                    <tr>
+                      <td className="p-3 border-b font-mono text-[11px] text-slate-500">Category</td>
+                      {comparedProducts.map(cp => <td key={cp.id} className="p-3 border-b text-xs text-[#0F2B46] font-semibold">{cp.category}</td>)}
+                    </tr>
+                    <tr>
+                      <td className="p-3 border-b font-mono text-[11px] text-slate-500">Standard Warranty</td>
+                      {comparedProducts.map(cp => <td key={cp.id} className="p-3 border-b text-xs text-[#0F2B46] font-semibold">{cp.warranty}</td>)}
+                    </tr>
+
+                    <tr className="bg-slate-50/20"><td colSpan={comparedProducts.length + 1} className="p-2.5 font-mono text-[9px] font-bold text-slate-400 uppercase tracking-widest">Electrical specifications</td></tr>
+                    {Object.keys(comparedProducts[0].specs.electrical).map(param => (
+                      <tr key={param}>
+                        <td className="p-3 border-b font-mono text-[11px] text-slate-500">{param}</td>
+                        {comparedProducts.map(cp => (
+                          <td key={cp.id} className="p-3 border-b text-xs text-[#0F2B46] font-mono">
+                            {cp.specs.electrical[param] || 'N/A'}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
-                  </div>
-                  <div className="text-xs font-bold text-slate-700">{p.warranty}</div>
-                  <div className="text-xs font-bold text-[#0EA6A6]">{p.techSupport}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* ── QUICK VIEW DETAIL DIALOG MODAL ── */}
-      {quickViewProduct && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-8 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-[32px] p-10 max-w-2xl w-full relative text-slate-800 shadow-2xl flex flex-col md:flex-row gap-8">
-            <button onClick={() => setQuickViewProduct(null)} className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-50"><X size={20} className="text-slate-400" /></button>
-            
-            <div className="w-full md:w-1/2 aspect-square p-6 bg-slate-50 rounded-2xl flex items-center justify-center border" style={{ borderColor: C.borderLight }}>
-              <img src={quickViewProduct.img} alt={quickViewProduct.name} className="w-full h-full object-contain" />
-            </div>
+                    <tr className="bg-slate-50/20"><td colSpan={comparedProducts.length + 1} className="p-2.5 font-mono text-[9px] font-bold text-slate-400 uppercase tracking-widest">Thermal Performance</td></tr>
+                    {Object.keys(comparedProducts[0].specs.thermal).map(param => (
+                      <tr key={param}>
+                        <td className="p-3 border-b font-mono text-[11px] text-slate-500">{param}</td>
+                        {comparedProducts.map(cp => (
+                          <td key={cp.id} className="p-3 border-b text-xs text-[#0F2B46] font-mono">
+                            {cp.specs.thermal[param] || 'N/A'}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
 
-            <div className="flex-1 flex flex-col justify-between">
-              <div>
-                <span className="font-mono text-[9px] text-[#1D6FA3] tracking-widest uppercase font-bold block mb-1">QUICK VIEW SPEC</span>
-                <h3 className="text-lg font-bold text-[#0F2B46] mb-1 leading-snug">{quickViewProduct.name}</h3>
-                <span className="font-mono text-xs text-slate-400 font-bold block mb-4">{quickViewProduct.code}</span>
-                <p className="text-xs text-slate-500 leading-relaxed font-light mb-6">{quickViewProduct.description}</p>
-                
-                <div className="grid grid-cols-2 gap-3.5 mb-6 text-xs">
-                  <div>
-                    <span className="font-mono text-[8px] text-slate-400 block uppercase">Voltage</span>
-                    <span className="font-bold text-slate-700">{quickViewProduct.voltage}</span>
-                  </div>
-                  <div>
-                    <span className="font-mono text-[8px] text-slate-400 block uppercase">Warranty</span>
-                    <span className="font-bold text-slate-700">{quickViewProduct.warranty}</span>
-                  </div>
-                </div>
+                    <tr className="bg-slate-50/20"><td colSpan={comparedProducts.length + 1} className="p-2.5 font-mono text-[9px] font-bold text-slate-400 uppercase tracking-widest">Mechanical Dimensions</td></tr>
+                    {Object.keys(comparedProducts[0].specs.mechanical).map(param => (
+                      <tr key={param}>
+                        <td className="p-3 border-b font-mono text-[11px] text-slate-500">{param}</td>
+                        {comparedProducts.map(cp => (
+                          <td key={cp.id} className="p-3 border-b text-xs text-[#0F2B46] font-mono">
+                            {cp.specs.mechanical[param] || 'N/A'}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+
+                    <tr className="bg-slate-50/20"><td colSpan={comparedProducts.length + 1} className="p-2.5 font-mono text-[9px] font-bold text-slate-400 uppercase tracking-widest">Communication Protocol support</td></tr>
+                    {Object.keys(comparedProducts[0].specs.communication).map(param => (
+                      <tr key={param}>
+                        <td className="p-3 border-b font-mono text-[11px] text-slate-500">{param}</td>
+                        {comparedProducts.map(cp => (
+                          <td key={cp.id} className="p-3 border-b text-xs text-[#0F2B46] font-mono">
+                            {cp.specs.communication[param] || 'N/A'}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              <div className="flex gap-3">
-                <Link
-                  href={`/products/${quickViewProduct.id}`}
-                  className="flex-1 text-center py-3 bg-[#1D6FA3] text-white text-xs font-bold uppercase tracking-wider rounded-xl"
-                  onClick={() => setQuickViewProduct(null)}
+              <div className="p-6 border-t flex justify-end gap-3 bg-slate-50" style={{ borderColor: C.borderStrong }}>
+                <button
+                  onClick={() => setShowComparisonModal(false)}
+                  className="px-6 py-3 bg-[#0F2B46] hover:bg-[#1D6FA3] text-white font-mono text-xs uppercase tracking-widest rounded-xl transition-all"
                 >
-                  View Details Page
-                </Link>
-                <Link
-                  href="/contact"
-                  className="flex-1 text-center py-3 border text-slate-700 text-xs font-bold uppercase tracking-wider rounded-xl"
-                  style={{ borderColor: C.borderStrong }}
-                  onClick={() => setQuickViewProduct(null)}
-                >
-                  Get Quote
-                </Link>
+                  Close Overlay
+                </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

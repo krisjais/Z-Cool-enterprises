@@ -40,17 +40,16 @@ export default function Header() {
         {/* Magnetic Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 group cursor-pointer"
+          className="flex items-center gap-3.5 group cursor-pointer transition-all duration-300 hover:scale-[1.03]"
           onMouseEnter={() => setCursorHover(true)}
           onMouseLeave={() => setCursorHover(false)}
         >
-          <svg className="w-8 h-8 text-[#1D6FA3]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 15,15 H 85 L 65,35 H 15 Z M 15,85 H 85 L 65,65 H 15 Z" fill="#0F2B46" />
-            <path d="M 65,35 L 35,65" stroke="#1D6FA3" strokeWidth="6" strokeLinecap="round" />
-            <circle cx="35" cy="45" r="4" fill="#1D6FA3" />
-            <circle cx="55" cy="65" r="4" fill="#1D6FA3" />
-          </svg>
-          <span className="font-bold tracking-widest text-sm uppercase text-[#0F2B46] group-hover:text-[#1D6FA3] transition-colors">
+          <img
+            src="/logo1.png"
+            alt="Z Cool Tech Logo Icon"
+            className="w-8 h-8 object-contain"
+          />
+          <span className="font-medium tracking-[0.25em] text-sm uppercase text-[#0F2B46] group-hover:text-[#1D6FA3] transition-colors duration-300" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
             Z COOL TECH
           </span>
         </Link>

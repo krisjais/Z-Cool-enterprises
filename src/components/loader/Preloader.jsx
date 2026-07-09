@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap } from '../../lib/gsap';
 
 export default function Preloader({ onComplete }) {
   const containerRef = useRef(null);
-  const pcbPathRef = useRef(null);
-  const logoRef = useRef(null);
-  const progressLineRef = useRef(null);
+  const logoContainerRef = useRef(null);
+  const sheenRef = useRef(null);
+  const brandRef = useRef(null);
+  const lineRef = useRef(null);
   const progressTextRef = useRef(null);
+  const progressLineRef = useRef(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -16,31 +18,57 @@ export default function Preloader({ onComplete }) {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
-          // Slide preloader out of view
           gsap.to(containerRef.current, {
-            yPercent: -100,
-            duration: 1.0,
-            ease: 'power4.inOut',
+            opacity: 0,
+            duration: 0.6,
+            ease: 'power2.out',
             onComplete: () => {
               if (onComplete) onComplete();
-            },
+            }
           });
-        },
+        }
       });
 
-      // 1. Draw circuit paths
-      tl.to(pcbPathRef.current, {
-        strokeDashoffset: 0,
-        duration: 2.2,
-        ease: 'power2.inOut',
-      });
+      // 1. Dark overlay is visible. Logo 2 appears from blur
+      tl.fromTo(logoContainerRef.current,
+        { opacity: 0, filter: 'blur(10px)', scale: 0.95 },
+        { opacity: 1, filter: 'blur(0px)', scale: 1.0, duration: 0.8, ease: 'power2.out' }
+      );
 
-      // Update loading percentage text dynamically during trace
+      // 2. Soft metallic light sweeps across the logo
+      tl.fromTo(sheenRef.current,
+        { left: '-150%' },
+        { left: '150%', duration: 0.7, ease: 'power1.inOut' },
+        '>-0.2'
+      );
+
+      // 3. Logo scales slightly
+      tl.to(logoContainerRef.current, {
+        scale: 1.03,
+        duration: 0.5,
+        ease: 'power2.out'
+      }, '>-0.4');
+
+      // 4. Brand name fades in
+      tl.fromTo(brandRef.current,
+        { opacity: 0, y: 5 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+        '>-0.2'
+      );
+
+      // 5. Thin blueprint line draws underneath
+      tl.fromTo(lineRef.current,
+        { width: '0%' },
+        { width: '100%', duration: 0.5, ease: 'power2.inOut' },
+        '>-0.1'
+      );
+
+      // 6. Loading percentage or progress line fills smoothly
       const progressObject = { value: 0 };
       tl.to(progressObject, {
         value: 100,
-        duration: 2.0,
-        ease: 'power1.inOut',
+        duration: 0.8,
+        ease: 'power2.out',
         onUpdate: () => {
           if (progressTextRef.current) {
             progressTextRef.current.textContent = `${Math.floor(progressObject.value)}%`;
@@ -48,31 +76,11 @@ export default function Preloader({ onComplete }) {
           if (progressLineRef.current) {
             progressLineRef.current.style.width = `${progressObject.value}%`;
           }
-        },
-      }, '<');
+        }
+      }, '>');
 
-      // 2. Light up PCB paths & fade in central Z logo
-      tl.to(logoRef.current, {
-        opacity: 1,
-        scale: 1,
-        filter: 'drop-shadow(0 0 30px #00F0FF) drop-shadow(0 0 10px #005BFF)',
-        duration: 1.0,
-        ease: 'back.out(1.7)',
-      }, '>-0.4');
-
-      // 3. Glow burst & exit preloader
-      tl.to(logoRef.current, {
-        scale: 1.1,
-        duration: 0.5,
-        ease: 'power2.out',
-      });
-
-      // Slide out elements before container transition
-      tl.to([pcbPathRef.current, progressTextRef.current, progressLineRef.current?.parentNode], {
-        opacity: 0,
-        duration: 0.4,
-        stagger: 0.1,
-      }, '>-0.2');
+      // Hold briefly before fade out
+      tl.to({}, { duration: 0.15 });
 
     }, containerRef);
 
@@ -82,73 +90,46 @@ export default function Preloader({ onComplete }) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 w-full h-full bg-[#050608] z-[99999] flex flex-col items-center justify-center overflow-hidden"
+      className="fixed inset-0 w-full h-full bg-[#0F2B46] z-[99999] flex flex-col items-center justify-center overflow-hidden"
     >
-      <div className="relative w-80 h-80 flex items-center justify-center">
-        {/* Animated circuit lines */}
-        <svg
-          className="absolute w-full h-full text-cyan-400/30"
-          viewBox="0 0 200 200"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            ref={pcbPathRef}
-            d="M 20,100 H 60 L 80,80 H 120 L 140,120 H 180 M 100,20 V 60 L 120,80 V 120 L 100,140 V 180"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeDasharray="400"
-            strokeDashoffset="400"
+      <div className="flex flex-col items-center relative max-w-sm w-full px-8">
+        
+        {/* Logo 2 Wrapper */}
+        <div ref={logoContainerRef} className="relative w-44 h-44 flex items-center justify-center overflow-hidden rounded-2xl bg-white/5 border border-white/10 shadow-lg">
+          <img src="/logo2.png" alt="Z Cool Enterprises Logo" className="w-full h-full object-cover" />
+          
+          {/* Metallic light sheen sweep layer */}
+          <div
+            ref={sheenRef}
+            className="absolute top-0 bottom-0 w-[50%] skew-x-[-25deg] pointer-events-none"
+            style={{
+              background: 'linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%)',
+            }}
           />
-        </svg>
+        </div>
 
-        {/* Dynamic Logo Reveal */}
-        <div ref={logoRef} className="z-10 opacity-0 scale-95 transition-all duration-300">
-          <svg
-            className="w-24 h-24 text-white"
-            viewBox="0 0 100 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Outer geometry */}
-            <path
-              d="M 15,15 H 85 L 65,35 H 15 Z"
-              fill="#005BFF"
-              className="opacity-90"
-            />
-            <path
-              d="M 15,85 H 85 L 65,65 H 15 Z"
-              fill="#005BFF"
-              className="opacity-90"
-            />
-            {/* Middle Z Trace */}
-            <path
-              d="M 65,35 L 35,65 M 35,45 V 65 H 55"
-              stroke="#00F0FF"
-              strokeWidth="6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="35" cy="45" r="5" fill="#00F0FF" />
-            <circle cx="55" cy="65" r="5" fill="#00F0FF" />
-          </svg>
-          <h2 className="text-center font-bold tracking-widest text-xs uppercase mt-4 text-white">
+        {/* Brand Name Typography */}
+        <div ref={brandRef} className="mt-6 text-center opacity-0">
+          <h2 className="text-white text-xs font-mono font-medium tracking-[0.25em] uppercase" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
             Z COOL TECH
           </h2>
         </div>
-      </div>
 
-      {/* Loading Percentage UI */}
-      <div className="absolute bottom-16 w-64 flex flex-col items-center gap-2">
-        <span
-          ref={progressTextRef}
-          className="text-xs font-mono uppercase tracking-widest text-cyan-400 glow-text-cyan"
-        >
-          0%
-        </span>
-        <div className="w-full h-[1px] bg-white/10 rounded-full overflow-hidden">
-          <div ref={progressLineRef} className="h-full bg-cyan-400 w-0" />
+        {/* Blueprint line */}
+        <div className="w-48 h-[1px] bg-white/10 mt-3 relative overflow-hidden">
+          <div ref={lineRef} className="absolute left-0 top-0 bottom-0 bg-[#0EA6A6] w-0" />
         </div>
+
+        {/* Loading Percentage & Bar */}
+        <div className="w-48 mt-4 flex flex-col items-center gap-1.5">
+          <span ref={progressTextRef} className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+            0%
+          </span>
+          <div className="w-full h-[1.5px] bg-white/5 rounded-full overflow-hidden">
+            <div ref={progressLineRef} className="h-full bg-[#1D6FA3] w-0" />
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -14,12 +14,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand block */}
           <div className="flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-2" onMouseEnter={() => setCursorHover(true)} onMouseLeave={() => setCursorHover(false)}>
-              <svg className="w-8 h-8 text-[#1D6FA3]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 15,15 H 85 L 65,35 H 15 Z M 15,85 H 85 L 65,65 H 15 Z" fill="#FFFFFF" />
-                <path d="M 65,35 L 35,65" stroke="#1D6FA3" strokeWidth="6" strokeLinecap="round" />
-              </svg>
-              <span className="font-bold tracking-widest text-sm uppercase text-white">Z COOL TECH</span>
+            <Link href="/" className="flex items-center gap-3.5 group cursor-pointer transition-all duration-300 hover:scale-[1.03]" onMouseEnter={() => setCursorHover(true)} onMouseLeave={() => setCursorHover(false)}>
+              <img
+                src="/logo1.png"
+                alt="Z Cool Tech Logo Icon"
+                className="w-8 h-8 object-contain brightness-0 invert"
+              />
+              <span className="font-medium tracking-[0.25em] text-sm uppercase text-white group-hover:text-[#1D6FA3] transition-colors duration-300" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                Z COOL TECH
+              </span>
             </Link>
             <p className="text-gray-400 text-xs leading-relaxed uppercase tracking-wider">
               ENGINEERING NEXT-GENERATION INDUSTRIAL HVAC AND THERMAL MANAGEMENT PLATFORMS FOR MISSION-CRITICAL INFRASTRUCTURE.

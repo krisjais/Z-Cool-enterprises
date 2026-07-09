@@ -48,7 +48,8 @@ export default function AdminLogin() {
 
   if (loading) {
     return (
-      <div className="w-full h-screen bg-[#050608] flex items-center justify-center">
+      <div className="w-full h-screen bg-[#050608] flex flex-col items-center justify-center gap-4">
+        <img src="/logo1.png" alt="Loading" className="w-12 h-12 object-contain animate-pulse" />
         <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 animate-pulse">
           Validating Security Credentials...
         </div>
@@ -65,10 +66,11 @@ export default function AdminLogin() {
       <div className="w-full max-w-md relative z-10">
         <Card className="p-8 border border-blue-500/20" enableGlare>
           <div className="flex flex-col items-center gap-2 mb-8">
-            <svg className="w-12 h-12 text-cyan-400 drop-shadow-[0_0_12px_#00F0FF]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 15,15 H 85 L 65,35 H 15 Z M 15,85 H 85 L 65,65 H 15 Z" fill="#005BFF" />
-              <path d="M 65,35 L 35,65" stroke="#00F0FF" strokeWidth="6" strokeLinecap="round" />
-            </svg>
+            <img
+              src="/logo1.png"
+              alt="Z Cool Tech Logo Icon"
+              className="w-16 h-16 object-contain"
+            />
             <h1 className="text-lg font-bold tracking-widest text-white uppercase mt-4">
               SECURE PORTAL
             </h1>

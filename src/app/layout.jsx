@@ -5,6 +5,8 @@ import CustomCursor from '../components/cursor/CustomCursor';
 import GridBackground from '../components/background/GridBackground';
 import CircuitBackground from '../components/background/CircuitBackground';
 import ScrollProgress from '../components/ui/ScrollProgress';
+import ScrollToTop from '../components/ui/ScrollToTop';
+import TransitionLoader from '../components/loader/TransitionLoader';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { generateSEO } from '../utils/seo';
@@ -26,8 +28,12 @@ export default function RootLayout({ children }) {
           {/* Custom cursor trails */}
           <CustomCursor />
 
-          {/* Global progress meter */}
+          {/* Global progress meter & scroll-to-top */}
           <ScrollProgress />
+          <ScrollToTop />
+
+          {/* Route Transition Loading HUD */}
+          <TransitionLoader />
 
           <div className="flex flex-col min-h-screen">
             {/* Header / Navigation bar */}

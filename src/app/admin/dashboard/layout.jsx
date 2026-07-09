@@ -34,7 +34,8 @@ export default function DashboardLayout({ children }) {
 
   if (loading || !admin) {
     return (
-      <div className="w-full h-screen bg-[#050608] flex items-center justify-center">
+      <div className="w-full h-screen bg-[#050608] flex flex-col items-center justify-center gap-4">
+        <img src="/logo1.png" alt="Loading" className="w-12 h-12 object-contain animate-pulse" />
         <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 animate-pulse">
           Authorizing Operator Session...
         </div>
@@ -55,12 +56,9 @@ export default function DashboardLayout({ children }) {
       <aside className="w-64 bg-[#0B1220] border-r border-white/5 flex flex-col justify-between p-6">
         <div className="flex flex-col gap-8">
           {/* Logo link */}
-          <Link href="/" className="flex items-center gap-2">
-            <svg className="w-7 h-7 text-cyan-400 drop-shadow-[0_0_6px_#00F0FF]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 15,15 H 85 L 65,35 H 15 Z M 15,85 H 85 L 65,65 H 15 Z" fill="#005BFF" />
-              <path d="M 65,35 L 35,65" stroke="#00F0FF" strokeWidth="6" strokeLinecap="round" />
-            </svg>
-            <span className="font-bold tracking-widest text-xs uppercase text-white">
+          <Link href="/" className="flex items-center gap-3.5 group cursor-pointer transition-all duration-300 hover:scale-[1.03]">
+            <img src="/logo1.png" alt="Z Cool Tech Logo Icon" className="w-7 h-7 object-contain" />
+            <span className="font-medium tracking-[0.25em] text-xs uppercase text-white group-hover:text-[#1D6FA3] transition-colors duration-300" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
               Z COOL TECH
             </span>
           </Link>
