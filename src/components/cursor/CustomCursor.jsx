@@ -25,12 +25,19 @@ export default function CustomCursor() {
   const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let frameId = requestAnimationFrame(() => {
+      setMounted(true);
+
+      const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      if (hasCoarsePointer || hasTouch) {
+        setIsTouch(true);
+      }
+    });
 
     const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
     const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (hasCoarsePointer || hasTouch) {
-      setIsTouch(true);
       return;
     }
 
@@ -48,6 +55,7 @@ export default function CustomCursor() {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      cancelAnimationFrame(frameId);
       window.removeEventListener('mousemove', moveCursor);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };

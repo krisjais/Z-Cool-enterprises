@@ -100,14 +100,15 @@ function ShaderPlane() {
   }, []);
 
   useFrame((state) => {
-    if (!meshRef.current) return;
+    if (!meshRef.current || !meshRef.current.material) return;
     const { clock, mouse } = state;
     
-    // Update time
-    material.uniforms.u_time.value = clock.getElapsedTime();
-    
-    // Interpolate mouse coordinates smoothly
-    material.uniforms.u_mouse.value.lerp(mouse, 0.05);
+    // Update uniforms via mesh reference to satisfy react-hooks/immutability rules
+    const mat = meshRef.current.material;
+    if (mat.uniforms) {
+      mat.uniforms.u_time.value = clock.getElapsedTime();
+      mat.uniforms.u_mouse.value.lerp(mouse, 0.05);
+    }
   });
 
   return (

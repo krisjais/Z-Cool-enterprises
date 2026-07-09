@@ -11,14 +11,19 @@ export default function TransitionLoader() {
 
   useEffect(() => {
     if (pathname !== prevPath) {
-      setIsNavigating(true);
-      setPrevPath(pathname);
+      let frameId = requestAnimationFrame(() => {
+        setIsNavigating(true);
+        setPrevPath(pathname);
+      });
       
       // Auto disable navigation loader after 600ms (within 500-700ms duration specification)
       const timer = setTimeout(() => {
         setIsNavigating(false);
       }, 600);
-      return () => clearTimeout(timer);
+      return () => {
+        cancelAnimationFrame(frameId);
+        clearTimeout(timer);
+      };
     }
   }, [pathname, prevPath]);
 

@@ -10,7 +10,10 @@ export default function Card({ className, children, tiltMaxAngle = 10, enableGla
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let frameId = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   // Standard container template

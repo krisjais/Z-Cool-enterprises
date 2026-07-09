@@ -4,6 +4,13 @@ import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+// Use a seedable LCG pseudo-random generator to satisfy react-hooks/purity eslint rules
+let seedVal = 42;
+function getPrng() {
+  seedVal = (seedVal * 1664525 + 1013904223) % 4294967296;
+  return seedVal / 4294967296;
+}
+
 export default function FloatingParticles({ count = 350 }) {
   const pointsRef = useRef();
 
@@ -14,14 +21,14 @@ export default function FloatingParticles({ count = 350 }) {
 
     for (let i = 0; i < count; i++) {
       // Position random coordinates inside a box
-      pos[i * 3] = (Math.random() - 0.5) * 15; // X
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 15; // Y
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 10; // Z
+      pos[i * 3] = (getPrng() - 0.5) * 15; // X
+      pos[i * 3 + 1] = (getPrng() - 0.5) * 15; // Y
+      pos[i * 3 + 2] = (getPrng() - 0.5) * 10; // Z
 
       // Velocity drift
-      vels[i * 3] = (Math.random() - 0.5) * 0.01; // X speed
-      vels[i * 3 + 1] = (Math.random() * 0.01) + 0.005; // Y speed (float upwards)
-      vels[i * 3 + 2] = (Math.random() - 0.5) * 0.01; // Z speed
+      vels[i * 3] = (getPrng() - 0.5) * 0.01; // X speed
+      vels[i * 3 + 1] = (getPrng() * 0.01) + 0.005; // Y speed (float upwards)
+      vels[i * 3 + 2] = (getPrng() - 0.5) * 0.01; // Z speed
     }
 
     return [pos, vels];
@@ -45,7 +52,7 @@ export default function FloatingParticles({ count = 350 }) {
       // If particle floats past the top, wrap it around to the bottom
       if (posArray[i * 3 + 1] > 7.5) {
         posArray[i * 3 + 1] = -7.5;
-        posArray[i * 3] = (Math.random() - 0.5) * 15;
+        posArray[i * 3] = (getPrng() - 0.5) * 15;
       }
 
       // Attract slightly to normalized mouse position

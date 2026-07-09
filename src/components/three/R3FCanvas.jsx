@@ -10,7 +10,10 @@ export default function R3FCanvas({ children, enableControls = true, enableBloom
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let frameId = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   if (!mounted) {
