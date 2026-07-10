@@ -237,26 +237,6 @@ export default function ProductListingPage() {
       result = result.filter(p => {
         const matchesCategory = (app === 'hospitals' && (p.category === 'Precision Air Conditioning' || p.type === 'PCB Boards')) ||
                                 (app === 'data centers' && (p.type === 'Precision ACs' || p.category === 'Water Cooling Systems')) ||
-                                (app === 'factories' && (p.category === 'Water Cooling Systems' || p.category === 'Panel Cooling Systems')) ||
-                                (app === 'hotels' && (p.type === 'PCB Boards' || p.category === 'Electronic Components')) ||
-                                (app === 'commercial buildings' && (p.type === 'Precision ACs' || p.category === 'Electronic Components')) ||
-                                (app === 'electrical control rooms' && (p.category === 'Panel Cooling Systems' || p.type === 'PCB Boards'));
-
-        const matchesAppText = (p.applications ?? []).some(a => {
-          const name = String(a?.name || "").toLowerCase();
-          const problem = String(a?.problem || "").toLowerCase();
-          const outcome = String(a?.outcome || "").toLowerCase();
-          
-          if (app === 'hospitals') return name.includes('hospital') || name.includes('medical') || name.includes('laboratory') || problem.includes('surgery') || problem.includes('calibration');
-          if (app === 'data centers') return name.includes('data center') || name.includes('server') || name.includes('vault') || problem.includes('rack');
-          if (app === 'factories') return name.includes('factory') || name.includes('plant') || name.includes('milling') || name.includes('cement') || name.includes('steel') || problem.includes('milling') || problem.includes('drive');
-          if (app === 'hotels') return name.includes('hotel') || name.includes('hospitality');
-          if (app === 'commercial buildings') return name.includes('building') || name.includes('office') || name.includes('mall');
-          if (app === 'electrical control rooms') return name.includes('cabinet') || name.includes('panel') || name.includes('control') || problem.includes('short') || problem.includes('overheating');
-          return false;
-        }) || false;
-
-        return matchesCategory || matchesAppText;
       });
     }
 
