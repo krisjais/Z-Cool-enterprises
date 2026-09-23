@@ -49,7 +49,9 @@ export default function AdminLogin() {
   if (loading) {
     return (
       <div className="w-full h-screen bg-[#050608] flex flex-col items-center justify-center gap-4">
-        <img src="/logo1.png" alt="Loading" className="w-12 h-12 object-contain animate-pulse" />
+        <div className="w-12 h-12 rounded-xl bg-[#1D6FA3] text-white flex items-center justify-center font-mono font-bold text-xl shadow-lg border border-cyan-400/30 animate-pulse">
+          Z
+        </div>
         <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 animate-pulse">
           Validating Security Credentials...
         </div>
@@ -64,18 +66,16 @@ export default function AdminLogin() {
       <div className="absolute w-[300px] h-[300px] bg-cyan-500/5 blur-[100px] rounded-full bottom-1/4 right-1/4 pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
-        <Card className="p-8 border border-blue-500/20" enableGlare>
-          <div className="flex flex-col items-center gap-2 mb-8">
-            <img
-              src="/logo1.png"
-              alt="Z Cool Tech Logo Icon"
-              className="w-16 h-16 object-contain"
-            />
+        <Card variant="dark" className="p-8 border border-slate-800 shadow-2xl">
+          <div className="flex flex-col items-center text-center mb-8">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#1D6FA3] to-[#0A192F] text-white flex items-center justify-center font-mono font-black text-2xl shadow-xl border border-cyan-400/30">
+              Z
+            </div>
             <h1 className="text-lg font-bold tracking-widest text-white uppercase mt-4">
               SECURE PORTAL
             </h1>
-            <p className="text-xs text-gray-400 uppercase tracking-widest">
-              Z COOL TECH ADMINISTRATIVE GATEWAY
+            <p className="text-[11px] text-slate-400 uppercase tracking-widest mt-1">
+              ZCOOL ENTERPRISES PROCUREMENT DESK
             </p>
           </div>
 

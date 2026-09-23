@@ -16,8 +16,8 @@ const Input = forwardRef(({ className, label, error, type = 'text', ...props }, 
           type={type}
           ref={ref}
           className={cn(
-            "w-full bg-white border border-[#111827]/10 focus:border-[#2563EB] text-sm px-4 py-3 rounded-[16px] text-[#111827] placeholder-gray-400 focus:outline-none transition-all duration-300",
-            error ? "border-red-500 focus:border-red-500" : "focus:shadow-[0_4px_12px_rgba(37,99,235,0.05)]",
+            "w-full bg-slate-900/90 border border-slate-700/80 focus:border-cyan-400 text-sm px-4 py-3 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-400/50 transition-colors",
+            error ? "border-red-500 focus:border-red-500 focus:ring-red-500/50" : "",
             className
           )}
           {...props}

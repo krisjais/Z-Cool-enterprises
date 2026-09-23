@@ -58,14 +58,14 @@ export default function QuoteDock({ product, isDesktop, setQuoteModalOpen }) {
 
                 <div className="flex gap-2">
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+919920691707"
                     className="flex-1 h-9 bg-white/10 hover:bg-white text-white hover:text-[#0F2B46] rounded-lg flex items-center justify-center transition-all"
                     title="Call Engineering Desk"
                   >
                     <Phone size={14} />
                   </a>
                   <a
-                    href="https://wa.me/919876543210"
+                    href="https://wa.me/919920691707"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 h-9 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center justify-center transition-all"
@@ -81,7 +81,7 @@ export default function QuoteDock({ product, isDesktop, setQuoteModalOpen }) {
                     <Mail size={14} />
                   </button>
                   <a
-                    href="mailto:procure@zcool.com"
+                    href="mailto:zcooltech4@gmail.com"
                     className="flex-1 h-9 bg-[#B8955A] hover:bg-amber-600 text-white rounded-lg flex items-center justify-center transition-all"
                     title="Email Procurement Desk"
                   >
@@ -100,14 +100,14 @@ export default function QuoteDock({ product, isDesktop, setQuoteModalOpen }) {
               className="fixed bottom-0 left-0 w-full z-[9995] bg-[#0F2B46] text-white p-3.5 grid grid-cols-4 gap-2 border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.2)]"
             >
               <a
-                href="tel:+919876543210"
+                href="tel:+919920691707"
                 className="flex flex-col items-center justify-center gap-1 py-2 bg-white/10 hover:bg-white/20 rounded-xl"
               >
                 <Phone size={14} />
                 <span className="text-[8px] font-mono uppercase">Call</span>
               </a>
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/919920691707"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-col items-center justify-center gap-1 py-2 bg-emerald-500/90 hover:bg-emerald-600 rounded-xl"
@@ -123,7 +123,7 @@ export default function QuoteDock({ product, isDesktop, setQuoteModalOpen }) {
                 <span className="text-[8px] font-mono uppercase">Quote RFQ</span>
               </button>
               <a
-                href="mailto:procure@zcool.com"
+                href="mailto:zcooltech4@gmail.com"
                 className="flex flex-col items-center justify-center gap-1 py-2 bg-[#B8955A]/90 hover:bg-amber-600 rounded-xl"
               >
                 <Send size={14} />

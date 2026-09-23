@@ -11,19 +11,14 @@ export default function TransitionLoader() {
 
   useEffect(() => {
     if (pathname !== prevPath) {
-      let frameId = requestAnimationFrame(() => {
-        setIsNavigating(true);
-        setPrevPath(pathname);
-      });
-      
-      // Auto disable navigation loader after 600ms (within 500-700ms duration specification)
+      setIsNavigating(true);
+      setPrevPath(pathname);
+
       const timer = setTimeout(() => {
         setIsNavigating(false);
-      }, 600);
-      return () => {
-        cancelAnimationFrame(frameId);
-        clearTimeout(timer);
-      };
+      }, 250);
+
+      return () => clearTimeout(timer);
     }
   }, [pathname, prevPath]);
 
@@ -46,7 +41,7 @@ export default function TransitionLoader() {
             className="flex flex-col items-center gap-4"
           >
             <div className="w-24 h-24 flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 shadow-md">
-              <img src="/logo2.png" alt="Z Cool Tech Loader Logo" className="w-full h-full object-cover" />
+              <img src="/logo2.png" alt="Zcool Enterprises Loader Logo" className="w-full h-full object-cover" />
             </div>
             
             {/* Thin loading line */}

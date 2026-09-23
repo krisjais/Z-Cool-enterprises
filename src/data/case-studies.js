@@ -1,0 +1,50 @@
+export const CASE_STUDIES = [
+  {
+    id: 'commercial-tower-mumbai',
+    title: 'Compressor Replacement for Commercial Office Tower',
+    location: 'Mumbai, Maharashtra',
+    sector: 'Commercial Real Estate',
+    requirement: 'A 6-ton scroll compressor failed on a central ductable AC package unit, disrupting cooling across office floors.',
+    equipment: 'Ductable Package AC Unit (36-Ton System)',
+    compressorSupplied: 'Copeland Scroll ZR72KC-TFD (Refurbished & Pressure Tested)',
+    model: 'ZR72KC-TFD',
+    brand: 'Copeland',
+    condition: 'Refurbished & Pressure Tested',
+    productId: 'copeland-zr72kc-tFD',
+    action: 'Verified nameplate electrical and capacity specifications, confirmed mounting footprint and copper line connections, and dispatched matching unit from Mumbai warehouse inventory.',
+    result: 'Replacement compressor installed and charged. Office AC package unit restored to operational cooling.',
+    takeaway: 'Confirming mounting bolt pitch and port orientation prior to dispatch prevented line modifications during on-site installation.'
+  },
+  {
+    id: 'hotel-vrv-retrofit',
+    title: 'Daikin VRV Compressor Sourcing for Hospitality Property',
+    location: 'Navi Mumbai',
+    sector: 'Hospitality',
+    requirement: 'Property required a replacement compressor for a guest floor VRV outdoor unit where new OEM lead time was delayed.',
+    equipment: 'Daikin VRV III Outdoor Unit',
+    compressorSupplied: 'Daikin Scroll JT160G-P8Y1 (Refurbished & Tested)',
+    model: 'JT160G-P8Y1',
+    brand: 'Daikin',
+    condition: 'Refurbished & Tested',
+    productId: 'daikin-jt160g-p8y1',
+    action: 'Inspected terminal block, verified motor winding continuity, and supplied matching Daikin JT series scroll compressor from available stock.',
+    result: 'Compressor mounted directly to existing VRV outdoor unit frame with compatible suction and discharge line connections.',
+    takeaway: 'Sourcing an in-stock tested replacement compressor reduced downtime compared to waiting for new OEM factory lead times.'
+  },
+  {
+    id: 'cold-storage-refurbishment',
+    title: 'Cold Storage Unit Compressor Replacement for Food Processing',
+    location: 'Bhiwandi, Thane',
+    sector: 'Refrigeration & Cold Chain',
+    requirement: 'Reciprocating compressor failed on a medium-temperature cold room condensing unit holding perishable stock.',
+    equipment: 'Commercial Condensing Unit (Medium Temp)',
+    compressorSupplied: 'Danfoss Maneurop MTZ64 Reciprocating Compressor (Refurbished & Leak Tested)',
+    model: 'MTZ64',
+    brand: 'Danfoss Maneurop',
+    condition: 'Refurbished & Leak Tested',
+    productId: 'danfoss-maneurop-mtz64',
+    action: 'Verified suction and discharge rotolock thread sizing and POE oil compatibility, then dispatched matching reciprocating unit from inventory.',
+    result: 'Replacement compressor connected directly to existing rotolock service valves, returning cold storage room to operational temperature.',
+    takeaway: 'Checking rotolock valve thread sizes and refrigerant oil compatibility before supply ensured direct bolt-in fit for refrigeration service valves.'
+  }
+];

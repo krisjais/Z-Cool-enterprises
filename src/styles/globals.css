@@ -1,297 +1,145 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @import "tailwindcss";
 
+/* ── ZCOOL INDUSTRIAL DESIGN TOKENS ── */
 @layer base {
   :root {
-    /* ── Section Backgrounds (alternating premium engineering tones) ── */
-    --bg-1: #F6FAFD;    /* pale sky blue — hero */
-    --bg-2: #EEF6F8;    /* pale cyan-blue */
-    --bg-3: #F0F7F7;    /* soft sage-teal */
-    --bg-4: #EBF4F7;    /* muted steel blue */
-    --bg-5: #F3F8FA;    /* near-white blue */
-    --bg-6: #E8F3F6;    /* light air blue */
+    /* Color Palette */
+    --bg-page:         #F8F9FA;   /* warm light industrial gray */
+    --bg-surface:      #FFFFFF;   /* clean elevated card surface */
+    --bg-dark-navy:    #0A192F;   /* deep engineering navy */
+    --bg-dark-elevated:#112240;   /* elevated dark navy surface */
+    --bg-tech-light:   #EAEFF2;   /* pale technical section background */
 
-    /* ── Card & Surface ── */
-    --bg-card: #FFFFFF;
-    --bg-glass: rgba(255, 255, 255, 0.72);
+    /* Typography Colors */
+    --text-primary:    #0F172A;   /* sharp slate dark text */
+    --text-heading:    #0A192F;   /* deep navy headings */
+    --text-secondary:  #475569;   /* readable muted slate body */
+    --text-subtle:     #64748B;   /* secondary label gray */
+    --text-light-head: #F8FAFC;   /* dark section headings */
+    --text-light-body: #94A3B8;   /* dark section body */
 
-    /* ── Typography — Deep Navy (NOT black) ── */
-    --text-navy:   #0D1F3C;   /* primary text */
-    --text-ink:    #1E3A5F;   /* headings */
-    --text-slate:  #4A6580;   /* secondary */
-    --text-muted:  #7B96AE;   /* tertiary */
+    /* Accent Palette */
+    --accent-blue:       #1D6FA3; /* primary industrial action blue */
+    --accent-blue-hover: #165680; /* active blue */
+    --accent-teal:       #0EA6A6; /* technical highlight teal */
+    --accent-amber:      #D97706; /* amber warning / status indicator */
+    --accent-emerald:    #059669; /* green availability indicator */
 
-    /* ── Accent Palette ── */
-    --accent-blue: #1A56DB;   /* primary — elegant blue */
-    --accent-teal: #0B8F8F;   /* secondary — muted teal */
-    --accent-cyan: #0EA5E9;   /* highlight */
-    --accent-gold: #B8955A;   /* luxury — use ≤3 places */
+    /* Borders & Dividers */
+    --border-light:    rgba(15, 23, 42, 0.08);
+    --border-medium:   rgba(15, 23, 42, 0.15);
+    --border-dark:     rgba(255, 255, 255, 0.12);
 
-    /* ── Borders ── */
-    --border-light:  rgba(13, 31, 60, 0.07);
-    --border-strong: rgba(13, 31, 60, 0.14);
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
 
-    /* ── Dark Surfaces ── */
-    --dark-bg: #091525;
-    --footer-bg: #091525;
+    /* Radius Tokens */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
 
-    /* ── Shadows ── */
-    --shadow-sm: 0 2px 12px rgba(13, 31, 60, 0.06);
-    --shadow-md: 0 8px 32px rgba(13, 31, 60, 0.08);
-    --shadow-lg: 0 20px 60px rgba(13, 31, 60, 0.12);
+    /* Transition Duration Tokens */
+    --transition-fast: 150ms ease-out;
+    --transition-base: 200ms ease-out;
+  }
+
+  html, body {
+    max-width: 100%;
+    overflow-x: clip;
+    margin: 0;
+    padding: 0;
   }
 
   body {
-    background-color: var(--bg-1);
-    color: var(--text-navy);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 16px;
-    line-height: 1.65;
-  }
-
-  img, video, iframe, canvas {
-    max-width: 100%;
-    height: auto;
+    font-size: 15px;
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    color: var(--text-ink);
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-heading);
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
 
-  /* Custom Webkit scrollbars */
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg-1); }
-  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+  /* Custom Webkit Scrollbars */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0A192F; }
+  ::-webkit-scrollbar-thumb { background: #1D6FA3; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #0EA6A6; }
 }
 
-/* Premium subtle noise overlay */
-.noise-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  opacity: 0.018;
-  z-index: 9999;
-  pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* Glass navbar panel */
-.glass-panel {
-  background: rgba(246, 250, 253, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Premium card base */
-.glass-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-  border-radius: 22px;
-  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
-}
-
-/* Engineering grid background texture */
+/* Engineering Blueprint Pattern */
 .engineering-grid {
-  background-size: 72px 72px;
-  background-image:
-    linear-gradient(to right, rgba(13, 31, 60, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(13, 31, 60, 0.025) 1px, transparent 1px);
-}
-
-/* Animated blueprint grid */
-@keyframes gridMove {
-  0% { background-position: 0 0; }
-  100% { background-position: 72px 72px; }
-}
-.animated-grid {
-  animation: gridMove 30s linear infinite;
-}
-
-/* Blueprint scanning line */
-@keyframes scanLine {
-  0% { top: 0%; opacity: 0; }
-  10% { opacity: 0.2; }
-  90% { opacity: 0.2; }
-  100% { top: 100%; opacity: 0; }
-}
-.blueprint-scanner {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(29, 111, 163, 0.15), rgba(14, 166, 166, 0.3), rgba(29, 111, 163, 0.15), transparent);
-  animation: scanLine 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Light sweep effect on card hover */
-@keyframes lightSweep {
-  0% { transform: translate(-100%, -100%) rotate(45deg); }
-  100% { transform: translate(100%, 100%) rotate(45deg); }
-}
-.light-sweep-container {
-  position: relative;
-  overflow: hidden;
-}
-.light-sweep-element {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0.22) 50%,
-    rgba(255, 255, 255, 0) 60%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: translate(-100%, -100%) rotate(45deg);
-  pointer-events: none;
-  z-index: 20;
-}
-.light-sweep-container:hover .light-sweep-element {
-  animation: lightSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Premium shadows */
-.shadow-premium {
-  box-shadow: 0 10px 30px -10px rgba(15, 43, 70, 0.04), 0 1px 3px rgba(15, 43, 70, 0.02);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.shadow-premium:hover {
-  box-shadow: 0 30px 70px -15px rgba(15, 43, 70, 0.12), 0 0 1px rgba(15, 43, 70, 0.06);
-  transform: translateY(-4px);
-}
-
-/* Layout guide lines */
-.vertical-guide {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 1px;
-  background-color: var(--border-light);
-  pointer-events: none;
-}
-
-/* Scale utilities */
-.scale-102 { transform: scale(1.02); }
-.scale-103 { transform: scale(1.03); }
-.group:hover .group-hover\:scale-105 { transform: scale(1.05); }
-
-/* Glass reflection glare overlay */
-.glass-reflection {
-  position: relative;
-  overflow: hidden;
-}
-.glass-reflection::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -150%;
-  width: 200%; height: 100%;
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.02) 30%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.02) 70%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: skewX(-20deg);
-  pointer-events: none;
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-reflection:hover::after {
-  left: 150%;
-}
-
-/* Micro-vibration animation for thumbnails */
-@keyframes microVibe {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(-0.5px, 0.5px) rotate(-0.2deg); }
-  40% { transform: translate(-0.5px, -0.5px) rotate(0.2deg); }
-  60% { transform: translate(0.5px, 0.5px) rotate(-0.2deg); }
-  80% { transform: translate(0.5px, -0.5px) rotate(0.2deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-.hover-vibrate:hover {
-  animation: microVibe 0.1s linear infinite;
-}
-
-/* Soft floating animation */
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0px); }
-}
-.float-element {
-  animation: float 6s ease-in-out infinite;
-}/* ── PDP Utility Classes ── */
-
-/* Engineering blueprint grid background */
-.engineering-grid {
-  background-image:
-    linear-gradient(rgba(29, 111, 163, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(29, 111, 163, 0.12) 1px, transparent 1px);
   background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
 }
 
-/* CAD blueprint-style grid (brighter blue variant) */
-.blueprint-grid {
-  background-image:
-    linear-gradient(rgba(14, 166, 166, 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 166, 166, 0.15) 1px, transparent 1px),
-    linear-gradient(rgba(14, 166, 166, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 166, 166, 0.05) 1px, transparent 1px);
-  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+.engineering-grid-dark {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
-/* Hide scrollbar (cross-browser) */
-.scrollbar-none {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-/* Slow spin animation for compass/rotate icon */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
+/* Card & Utility Primitives */
+.card-industrial {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
-/* Story card transition smooth */
-.story-card {
-  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+.card-industrial:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(29, 111, 163, 0.4);
+  transform: translateY(-2px);
 }
 
+.badge-industrial {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* Accessibility Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scroll-reveal-element {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Dark theme autofill override to prevent blinding white browser autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #f8fafc;
+}

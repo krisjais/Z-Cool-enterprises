@@ -123,18 +123,18 @@ export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, acti
               <span className="font-mono text-[8px] text-slate-400 uppercase tracking-widest block mb-4 font-bold">QUICK ACTION PROTOCOLS</span>
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+919920691707"
                   className="flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 text-[#0F2B46] text-[10px] font-mono uppercase font-bold rounded-xl transition-all"
                 >
-                  <Phone size={12} /> Call Desk
+                  <Phone size={12} /> Call Us
                 </a>
                 <a
-                  href="https://wa.me/919876543210"
+                  href="https://wa.me/919920691707"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-mono uppercase font-bold rounded-xl transition-all"
                 >
-                  <MessageSquare size={12} /> WhatsApp
+                  <MessageSquare size={12} /> WhatsApp Us
                 </a>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -142,7 +142,7 @@ export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, acti
                   onClick={() => setQuoteModalOpen(true)}
                   className="flex items-center justify-center gap-2 py-3.5 bg-[#1D6FA3] hover:bg-blue-600 text-white text-[10px] font-mono uppercase font-bold rounded-xl transition-all shadow-md"
                 >
-                  <Mail size={12} /> Request Quote
+                  <Mail size={12} /> Enquire Now
                 </button>
                 <a
                   href="#"
@@ -264,7 +264,7 @@ export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, acti
                         : 'hover:border-slate-400 border-slate-200'
                     }`}
                   >
-                    <img src={img} alt="Thumbnail" className="max-h-full max-w-full object-contain pointer-events-none" />
+                    <img src={img} alt={`${product?.name || 'AC Compressor'} thumbnail ${idx + 1}`} className="max-h-full max-w-full object-contain pointer-events-none" />
                   </button>
                 ))}
               </div>

@@ -1,135 +1,124 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
   LayoutDashboard, 
   Box, 
-  FolderTree, 
-  Tag, 
-  Image, 
-  FileText, 
-  Briefcase, 
-  FileCheck, 
-  Mail, 
-  Users, 
-  History, 
+  ShoppingCart, 
+  Truck, 
   LogOut,
   UserCheck
 } from 'lucide-react';
-import { useAuth } from '../../../context/AuthContext';
-import Button from '../../../components/ui/Button';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DashboardLayout({ children }) {
   const { admin, loading, logout } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'overview';
 
-  // Enforce JWT Authentication shield
+  // Strict JWT Authentication protection
   useEffect(() => {
     if (!loading && !admin) {
-      router.push('/admin/login');
+      router.replace('/admin/login');
     }
   }, [admin, loading, router]);
 
   if (loading || !admin) {
     return (
-      <div className="w-full h-screen bg-[#050608] flex flex-col items-center justify-center gap-4">
-        <img src="/logo1.png" alt="Loading" className="w-12 h-12 object-contain animate-pulse" />
-        <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 animate-pulse">
-          Authorizing Operator Session...
+      <div className="w-full min-h-screen bg-[#0A192F] flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-[#1D6FA3] text-white flex items-center justify-center font-mono font-bold text-lg shadow-md animate-pulse">
+            Z
+          </div>
+          <p className="font-mono text-xs text-slate-300 uppercase tracking-wider">
+            Authorizing session...
+          </p>
         </div>
       </div>
     );
   }
 
-  const sidebarLinks = [
-    { name: 'Overview', path: '/admin/dashboard?tab=overview', icon: LayoutDashboard },
-    { name: 'Products', path: '/admin/dashboard?tab=products', icon: Box },
-    { name: 'Blog Editor', path: '/admin/dashboard?tab=blogs', icon: FileText },
-    { name: 'Inquiries', path: '/admin/dashboard?tab=inquiries', icon: Mail },
+  const navTabs = [
+    { id: 'overview', name: 'Overview', icon: LayoutDashboard, href: '/admin/dashboard?tab=overview' },
+    { id: 'products', name: 'Products', icon: Box, href: '/admin/dashboard?tab=products' },
+    { id: 'orders', name: 'Orders', icon: ShoppingCart, href: '/admin/dashboard?tab=orders' },
+    { id: 'shipments', name: 'Shipments', icon: Truck, href: '/admin/dashboard?tab=shipments' },
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#050608] text-white flex">
-      {/* Sidebar Panel */}
-      <aside className="w-64 bg-[#0B1220] border-r border-white/5 flex flex-col justify-between p-6">
-        <div className="flex flex-col gap-8">
-          {/* Logo link */}
-          <Link href="/" className="flex items-center gap-3.5 group cursor-pointer transition-all duration-300 hover:scale-[1.03]">
-            <img src="/logo1.png" alt="Z Cool Tech Logo Icon" className="w-7 h-7 object-contain" />
-            <span className="font-medium tracking-[0.25em] text-xs uppercase text-white group-hover:text-[#1D6FA3] transition-colors duration-300" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              Z COOL TECH
-            </span>
-          </Link>
-
-          {/* Sidebar Menu Links */}
-          <nav className="flex flex-col gap-1.5">
-            <span className="text-[9px] font-mono tracking-widest text-gray-500 uppercase px-2 mb-2">
-              OPERATIONAL CONTROLS
-            </span>
-            {sidebarLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.name}
-                  href={link.path}
-                  className="flex items-center gap-3 text-xs uppercase tracking-widest text-gray-400 hover:text-cyan-400 hover:bg-white/5 px-3 py-3 rounded-sm transition-all"
-                >
-                  <Icon className="w-4 h-4 text-cyan-400" />
-                  <span>{link.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Admin Footer block */}
-        <div className="flex flex-col gap-4 border-t border-white/5 pt-4">
-          <div className="flex items-center gap-2.5 px-2">
-            <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-cyan-400">
-              <UserCheck className="w-4 h-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold uppercase tracking-wider text-white truncate max-w-[120px]">
-                {admin.username}
-              </span>
-              <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-widest">
-                SYSTEM OPERATOR
+    <div className="w-full min-h-screen bg-slate-100 text-slate-900 flex flex-col antialiased">
+      {/* Top Header Bar */}
+      <header className="sticky top-0 z-30 bg-[#0A192F] text-white border-b border-slate-800 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16 gap-3">
+            {/* Logo / Title */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Link href="/" className="flex items-center gap-2 shrink-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-[#1D6FA3] text-white flex items-center justify-center font-mono font-bold text-xs sm:text-sm">
+                  Z
+                </div>
+                <span className="font-bold text-xs sm:text-sm tracking-wide text-white uppercase hidden min-[360px]:inline">
+                  ZCOOL ADMIN
+                </span>
+              </Link>
+              <span className="text-slate-500 hidden sm:inline">|</span>
+              <span className="text-[11px] font-mono text-[#0EA6A6] uppercase tracking-wider truncate hidden md:inline">
+                Management Portal
               </span>
             </div>
+
+            {/* Operator and Logout */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-300">
+                <UserCheck size={14} className="text-[#0EA6A6]" />
+                <span className="font-medium text-white">{admin.username}</span>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-red-900/60 transition-colors border border-slate-700 min-h-[36px]"
+              >
+                <LogOut size={13} />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/20 border-red-950/30"
-            onClick={logout}
-          >
-            <LogOut className="w-3.5 h-3.5 mr-2" /> End Session
-          </Button>
         </div>
-      </aside>
 
-      {/* Main Workspace Frame */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Header Panel */}
-        <header className="h-16 bg-[#0B1220]/40 border-b border-white/5 px-8 flex items-center justify-between backdrop-blur-md">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-mono bg-blue-950/40 text-cyan-400 border border-blue-500/25 px-2.5 py-1 rounded-sm uppercase tracking-wider">
-              NODE_ENV: PRODUCTION_READY
-            </span>
+        {/* Mobile & Desktop Segmented Navigation Bar */}
+        <div className="bg-[#0D213F] border-t border-slate-800/80">
+          <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <nav className="flex space-x-1 sm:space-x-4 overflow-x-auto py-2 no-scrollbar" aria-label="Tabs">
+              {navTabs.map((tab) => {
+                const Icon = tab.icon;
+                const isSelected = activeTab === tab.id;
+                return (
+                  <Link
+                    key={tab.id}
+                    href={tab.href}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-colors min-h-[40px] ${
+                      isSelected
+                        ? 'bg-[#1D6FA3] text-white shadow-xs'
+                        : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon size={14} />
+                    <span>{tab.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-400 font-mono">
-            <span>OPERATOR LOGGED:</span>
-            <span className="text-white font-bold">{admin.email}</span>
-          </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Content Container */}
-        <main className="flex-1 p-8 overflow-y-auto bg-[#050608]">
-          {children}
-        </main>
-      </div>
+      {/* Main Content Area */}
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        {children}
+      </main>
     </div>
   );
 }

@@ -1,47 +1,24 @@
 import React from 'react';
 import '../styles/globals.css';
 import RootProvider from '../providers/RootProvider';
-import CustomCursor from '../components/cursor/CustomCursor';
-import GridBackground from '../components/background/GridBackground';
-import CircuitBackground from '../components/background/CircuitBackground';
-import ScrollProgress from '../components/ui/ScrollProgress';
-import TransitionLoader from '../components/loader/TransitionLoader';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import { generateSEO } from '../utils/seo';
 
-export const metadata = generateSEO();
+export const metadata = {
+  title: 'Zcool Enterprises | Refurbished AC Compressors & HVAC Equipment',
+  description: 'Specialized B2B supplier of refurbished and replacement scroll, rotary, and reciprocating AC compressors in Mumbai, India.',
+};
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="selection:bg-blue-100 selection:text-blue-900">
+      <body className="bg-[#F8F9FA] text-[#0F172A] selection:bg-[#1D6FA3] selection:text-white">
         <RootProvider>
-          {/* Static grain noise overlay */}
-          <div className="noise-overlay" />
-
-          {/* WebGL & Vector Backgrounds */}
-          <GridBackground />
-          <CircuitBackground />
-
-          {/* Custom cursor trails */}
-          <CustomCursor />
-
-          <ScrollProgress />
-
-          {/* Route Transition Loading HUD */}
-          <TransitionLoader />
-
           <div className="flex flex-col min-h-screen">
-            {/* Header / Navigation bar */}
             <Header />
-
-            {/* Main view container */}
-            <main className="flex-grow pt-[80px]">
+            <main className="flex-grow pt-[64px]">
               {children}
             </main>
-
-            {/* Footer */}
             <Footer />
           </div>
         </RootProvider>

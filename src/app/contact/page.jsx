@@ -1,265 +1,387 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
-  Phone, MessageSquare, Mail, MapPin, ChevronRight, Home, ShieldCheck,
-  Send, Clock, Award, Building, User, Info, FileText
+  Phone,
+  Mail,
+  MapPin,
+  MessageSquare,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowRight,
+  HelpCircle,
+  Clock,
+  Layers,
+  FileCheck,
+  Camera,
+  Package,
 } from 'lucide-react';
-import Preloader from '../../components/loader/Preloader';
+import ContactForm from '@/components/contact/ContactForm';
+import { ContactHeroCTA } from '@/components/contact/ContactHeroCTA';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
-const C = {
-  bgHero:        '#F1F6FA',
-  bgWarmWhite:   '#E6F1F5',
-  bgSage:        '#E2ECE9',
-  bgNeutralGray: '#EAEDF1',
-  bgDarkNavy:    '#0F2B46',
-  card:          '#FFFFFF',
-  navy:          '#0F2B46',
-  blue:          '#1D6FA3',
-  teal:          '#0EA6A6',
-  gold:          '#F2C14E',
-  slate:         '#6E7C93',
-  borderLight:   'rgba(15,43,70,0.06)',
-  borderStrong:  'rgba(15,43,70,0.12)',
+export const metadata = {
+  title: 'Contact Zcool Enterprises | Compressor Quote & Sourcing Desk',
+  description:
+    'Contact Zcool Enterprises in Mumbai for commercial AC, VRV, and refrigeration compressor inquiries, refurbished unit availability, quote requests, and nameplate matching.',
 };
 
 export default function ContactPage() {
-  const [ready, setReady] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '', company: '', phone: '', email: '', category: 'PCB Boards', message: ''
-  });
+  const whatToSendItems = [
+    {
+      title: 'Compressor Model Number',
+      desc: 'Stamped on the compressor body sticker (e.g. Copeland ZR72KC-TFD, Daikin JT160G-P8Y1, Danfoss MTZ64-4VI).',
+    },
+    {
+      title: 'Nameplate Photograph',
+      desc: 'A photo of the label showing full model, electrical code, voltage, phase, and displacement numbers.',
+    },
+    {
+      title: 'Operating Refrigerant',
+      desc: 'Specify whether your system uses R22, R410A, R407C, or R404A so we verify oil compatibility.',
+    },
+    {
+      title: 'Equipment Application',
+      desc: 'Let us know if the unit is for a commercial package AC, VRV outdoor system, cold room, or chiller circuit.',
+    },
+    {
+      title: 'Required Quantity',
+      desc: 'Single unit for emergency breakdown replacement or multiple units for scheduled maintenance.',
+    },
+    {
+      title: 'Existing Equipment Frame',
+      desc: 'Any details on existing mounting bolt pitch or suction/discharge line dimensions to confirm direct fit.',
+    },
+  ];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch('http://localhost:5000/api/contact/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setSubmitted(true);
-      } else {
-        alert('Server connection issues. Try calling directly.');
-      }
-    } catch (err) {
-      // Mock submit if server is offline
-      setSubmitted(true);
-    }
-  };
+  const workflowSteps = [
+    {
+      num: '01',
+      title: 'Send Requirement',
+      desc: 'Submit your model code, nameplate photo, or equipment specifications via our form, WhatsApp, or phone.',
+    },
+    {
+      num: '02',
+      title: 'Review Details',
+      desc: 'Our Mumbai technical desk cross-references voltage, phase, displacement, and mounting footprint.',
+    },
+    {
+      num: '03',
+      title: 'Check Available Options',
+      desc: 'We check warehouse inventory for direct drop-ins, tested refurbished units, or suitable alternatives.',
+    },
+    {
+      num: '04',
+      title: 'Quote & Supply Discussion',
+      desc: 'We confirm pricing, verified condition grading, transport packaging, and freight arrangements.',
+    },
+  ];
 
   return (
-    <>
-      {!ready && <Preloader onComplete={() => setReady(true)} />}
-      <div className="w-full overflow-x-hidden min-h-screen" style={{ background: C.bgHero }}>
-        
-        {/* Breadcrumb */}
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 pt-8 pb-4 flex items-center gap-2 font-mono text-[10px] text-slate-400 tracking-wider">
-          <Link href="/" className="hover:text-[#1D6FA3] flex items-center gap-1">
-            <Home size={10} /> HOME
-          </Link>
-          <ChevronRight size={10} />
-          <span className="text-[#0F2B46] font-bold">CONTACT CHANNELS</span>
-        </div>
+    <div className="bg-[#F8F9FA] min-h-screen text-[#0F172A] overflow-x-hidden">
+      {/* ── Editorial Hero ── */}
+      <section className="bg-[#0A192F] text-white py-12 sm:py-16 border-b border-white/10 relative overflow-hidden">
+        {/* Subtle grid pattern */}
+        <div
+          className="absolute inset-0 opacity-5 pointer-events-none"
+          style={{
+            backgroundImage:
+              'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
 
-        {/* Hero Banner */}
-        <section className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 py-20 text-left">
-          <span className="font-mono text-xs text-[#1D6FA3] tracking-widest uppercase font-bold">INQUIRY HUB</span>
-          <h1 className="text-4xl lg:text-6xl font-bold tracking-tight mt-3 mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: C.navy }}>
-            Operational Procurement Desk
-          </h1>
-          <p className="text-slate-600 max-w-xl text-[15px] leading-relaxed">
-            Get in touch with Z-Cool engineers. Submit system metrics for pricing schematics and delivery schedules.
-          </p>
-        </section>
-
-        {/* Grid: Form and Contact details */}
-        <section className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 pb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            
-            {/* Left Col (5 cols): Details */}
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              
-              {/* Direct Call/WA Cards */}
-              <div className="p-8 rounded-[28px] bg-white border flex flex-col gap-6 shadow-sm" style={{ borderColor: C.borderLight }}>
-                
-                <div className="flex items-center gap-3.5 pb-4 border-b animate-fade-in" style={{ borderColor: C.borderLight }}>
-                  <img src="/logo1.png" alt="Z Cool Icon" className="w-10 h-10 object-contain" />
-                  <div>
-                    <h3 className="font-bold text-sm uppercase tracking-wider text-[#0F2B46]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                      Z COOL TECH
-                    </h3>
-                    <span className="font-mono text-[8px] text-slate-400 block uppercase tracking-widest font-bold">Technical Operations Desk</span>
-                  </div>
-                </div>
-
-                <a
-                  href="tel:+919920691707"
-                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors border"
-                  style={{ borderColor: C.borderStrong }}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-[#1D6FA3]">
-                    <Phone size={18} />
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Call Now</div>
-                    <div className="text-sm font-bold text-[#0F2B46]">+91 99206 91707</div>
-                  </div>
-                </a>
-
-                <a
-                  href="https://wa.me/919920691707"
-                  target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors border"
-                  style={{ borderColor: C.borderStrong }}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0 text-emerald-600">
-                    <MessageSquare size={18} />
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase font-mono text-slate-400">WhatsApp</div>
-                    <div className="text-sm font-bold text-[#0F2B46]">Chat Live with Engineer</div>
-                  </div>
-                </a>
-
-                <div className="flex items-center gap-4 p-4 border rounded-2xl" style={{ borderColor: C.borderStrong }}>
-                  <div className="w-10 h-10 rounded-xl bg-[#0EA6A6]/10 flex items-center justify-center flex-shrink-0 text-[#0EA6A6]">
-                    <Mail size={18} />
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Email Address</div>
-                    <div className="text-sm font-bold text-[#0F2B46]">zcooltech4@gmail.com</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4 p-4 border rounded-2xl" style={{ borderColor: C.borderStrong }}>
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0 text-purple-600">
-                    <MapPin size={18} />
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Corporate Office</div>
-                    <div className="text-sm font-bold text-[#0F2B46]">Plot 42, Okhla Industrial Area Phase-III, New Delhi</div>
-                  </div>
-                </div>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-8 space-y-4">
+              <div className="inline-flex items-center gap-2 font-mono text-xs text-[#0EA6A6] bg-white/5 border border-white/10 px-3 py-1 rounded">
+                <span>B2B COMPRESSOR PROCUREMENT DESK</span>
               </div>
 
-              {/* Verified Badge card */}
-              <div className="p-8 rounded-[28px] bg-slate-50 border flex items-center gap-4" style={{ borderColor: C.borderStrong }}>
-                <ShieldCheck size={28} className="text-[#0EA6A6] flex-shrink-0" />
-                <div>
-                  <h4 className="text-xs font-bold text-[#0F2B46]">Official Authorized OEM partner</h4>
-                  <p className="text-[10px] text-slate-400 mt-1 font-mono uppercase tracking-widest">ISO 9001:2015 CERTIFIED ASSEMBLY LINES</p>
-                </div>
-              </div>
+              <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
+                NEED A COMPRESSOR?
+              </h1>
+
+              <p className="text-slate-300 text-sm sm:text-base max-w-2xl font-sans leading-relaxed">
+                Send us the model number, nameplate photo, part number, application, or quantity
+                requirement and we will review your request. Our Mumbai desk assists commercial HVAC
+                contractors, facility managers, and dealers.
+              </p>
+
+              <ContactHeroCTA />
             </div>
 
-            {/* Right Col (7 cols): Form */}
-            <div className="lg:col-span-7 bg-white rounded-[32px] border p-10 shadow-sm" style={{ borderColor: C.borderLight }}>
-              <h3 className="font-bold text-lg text-[#0F2B46] mb-8 pb-3 border-b" style={{ borderColor: C.borderLight }}>
-                Inquiry Dispatch Form
-              </h3>
-
-              {submitted ? (
-                <div className="text-center py-16 flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 text-emerald-600 border border-emerald-500/30">
-                    <ShieldCheck size={32} />
-                  </div>
-                  <h4 className="text-xl font-bold text-[#0F2B46] mb-2">Inquiry Logged</h4>
-                  <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-                    Thank you. Your details are registered in our secure CRM. Our engineering support desk will email you layout schematics within 24 hours.
+            <div className="lg:col-span-4 hidden lg:flex justify-end">
+              <div className="relative bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs max-w-xs space-y-3">
+                <div className="relative h-44 w-full bg-slate-900/40 rounded-xl overflow-hidden flex items-center justify-center p-2">
+                  <Image
+                    src="/ac_compressor.png"
+                    alt="Commercial AC Compressor"
+                    width={200}
+                    height={160}
+                    className="object-contain max-h-40 drop-shadow-md"
+                    priority
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className="font-mono text-[10px] text-[#0EA6A6] uppercase tracking-wider block">
+                    MUMBAI SOURCING DESK
+                  </span>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Stock checks, condition verification, and direct freight dispatch from Mumbai,
+                    Maharashtra.
                   </p>
-                  <button onClick={() => setSubmitted(false)} className="mt-8 text-xs text-[#1D6FA3] font-bold uppercase tracking-widest hover:underline">
-                    Submit New Inquiry
-                  </button>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Operator / Company Name</label>
-                      <input
-                        type="text"
-                        placeholder="Company Ltd"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full text-xs p-3 border rounded-xl bg-slate-50 outline-none placeholder-slate-400"
-                        style={{ borderColor: C.borderStrong }}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Technical Email</label>
-                      <input
-                        type="email"
-                        placeholder="procure@company.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full text-xs p-3 border rounded-xl bg-slate-50 outline-none placeholder-slate-400"
-                        style={{ borderColor: C.borderStrong }}
-                        required
-                      />
-                    </div>
-                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Contact Number</label>
-                      <input
-                        type="text"
-                        placeholder="+91 XXXXX XXXXX"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full text-xs p-3 border rounded-xl bg-slate-50 outline-none placeholder-slate-400"
-                        style={{ borderColor: C.borderStrong }}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Target Component Category</label>
-                      <select
-                        value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="w-full text-xs p-3 border rounded-xl bg-slate-50 outline-none text-slate-700"
-                        style={{ borderColor: C.borderStrong }}
-                      >
-                        <option value="PCB Boards">VRF Inverter PCB Boards</option>
-                        <option value="Chillers">Industrial Process Water Chillers</option>
-                        <option value="Cabinet Coolers">Cabinet Panel Heat Exchangers</option>
-                        <option value="Precision ACs">Precision Server Close Control ACs</option>
-                      </select>
-                    </div>
-                  </div>
-
+      {/* ── Main Contact & Form Section ── */}
+      <section className="py-10 sm:py-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            {/* Left Column: Direct Channels & Operational Hub */}
+            <div className="lg:col-span-5 space-y-6">
+              <ScrollReveal animation="fade-up" duration={450}>
+                {/* Direct Channels Box */}
+                <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
                   <div>
-                    <label className="font-mono text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Enclosure Details / Custom Parameters</label>
-                    <textarea
-                      placeholder="Specify ambient temperature parameters, voltage phase, size footprint, and requested CAD format..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full text-xs p-3 border rounded-xl bg-slate-50 h-32 resize-none outline-none placeholder-slate-400"
-                      style={{ borderColor: C.borderStrong }}
-                      required
-                    />
+                    <span className="font-mono text-[11px] font-bold text-[#1D6FA3] uppercase tracking-wider block mb-1">
+                      DIRECT REACH
+                    </span>
+                    <h2 className="font-display font-bold text-xl text-[#0A192F]">
+                      Contact Sourcing Desk
+                    </h2>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-4 bg-[#1D6FA3] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 hover:bg-[#0F2B46]"
-                  >
-                    <Send size={13} /> Dispatch Inquiry Logs
-                  </button>
-                </form>
-              )}
+                  <div className="space-y-3 font-mono text-xs">
+                    {/* Phone */}
+                    <a
+                      href="tel:+919920691707"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#1D6FA3] hover:bg-blue-50/40 transition-colors active:scale-[0.985] group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-[#1D6FA3] text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <Phone size={18} />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase block">
+                          CALL SOURCING DESK
+                        </span>
+                        <strong className="text-slate-900 text-sm font-sans block mt-0.5">
+                          +91 99206 91707
+                        </strong>
+                      </div>
+                    </a>
+
+                    {/* WhatsApp */}
+                    <a
+                      href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20requirement"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-emerald-50/70 border border-emerald-200 hover:bg-emerald-100/70 transition-colors active:scale-[0.985] group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-emerald-700 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <MessageSquare size={18} />
+                      </div>
+                      <div>
+                        <span className="text-emerald-700 text-[10px] uppercase block">
+                          WHATSAPP NAMEPLATE PHOTO
+                        </span>
+                        <strong className="text-emerald-950 text-sm font-sans block mt-0.5">
+                          +91 99206 91707
+                        </strong>
+                      </div>
+                    </a>
+
+                    {/* Email */}
+                    <a
+                      href="mailto:zcooltech4@gmail.com"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#1D6FA3] hover:bg-blue-50/40 transition-colors active:scale-[0.985] group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-[#0A192F] text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <Mail size={18} />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase block">
+                          EMAIL SPECIFICATION SHEET
+                        </span>
+                        <strong className="text-slate-900 text-xs font-sans block mt-0.5 break-all">
+                          zcooltech4@gmail.com
+                        </strong>
+                      </div>
+                    </a>
+
+                    {/* Location */}
+                    <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                      <div className="w-10 h-10 rounded-lg bg-slate-800 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <MapPin size={18} />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase block">
+                          OPERATING HUB &amp; WAREHOUSE
+                        </span>
+                        <strong className="text-slate-900 text-xs font-sans block mt-0.5">
+                          Zcool Enterprises
+                        </strong>
+                        <span className="text-slate-600 font-sans text-xs block">
+                          Mumbai, Maharashtra, India
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              {/* Practical Trust Box */}
+              <ScrollReveal animation="fade-up" delay={100} duration={450}>
+                <div className="bg-[#0A192F] text-white rounded-xl p-6 sm:p-7 space-y-4 border border-white/10">
+                  <div className="flex items-center gap-2 text-[#0EA6A6] font-mono text-xs font-bold uppercase tracking-wider">
+                    <ShieldCheck size={16} />
+                    <span>COMMERCIAL PROCUREMENT PROTOCOL</span>
+                  </div>
+                  <p className="text-slate-300 text-xs font-sans leading-relaxed">
+                    Every inquiry is handled directly by technical personnel in Mumbai. We confirm
+                    electrical specifications, terminal layouts, port configurations, and condition
+                    ratings before dispatching any compressor.
+                  </p>
+                  <div className="border-t border-white/10 pt-3 flex flex-wrap gap-3 font-mono text-[11px] text-slate-400">
+                    <span>• Copeland</span>
+                    <span>• Daikin</span>
+                    <span>• LG</span>
+                    <span>• Danfoss</span>
+                    <span>• Carrier</span>
+                  </div>
+                </div>
+              </ScrollReveal>
             </div>
 
+            {/* Right Column: Main Compressor Inquiry Form */}
+            <div className="lg:col-span-7">
+              <ScrollReveal animation="fade-up" delay={150} duration={500}>
+                <ContactForm />
+              </ScrollReveal>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </div>
-    </>
+      {/* ── Buyer Requirement Guidance ── */}
+      <section className="py-12 sm:py-16 bg-white border-y border-slate-200">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-8">
+          <ScrollReveal animation="fade-up" duration={450}>
+            <div>
+              <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#1D6FA3] uppercase tracking-wider mb-2">
+                <HelpCircle size={14} />
+                <span>INQUIRY CHECKLIST</span>
+              </div>
+              <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#0A192F]">
+                WHAT TO SEND US
+              </h2>
+              <p className="text-slate-600 text-xs sm:text-sm font-sans mt-1 max-w-2xl">
+                Providing complete information helps our sourcing desk confirm exact model matches and
+                pricing without back-and-forth delays.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {whatToSendItems.map((item, idx) => (
+              <ScrollReveal key={idx} animation="fade-up" delay={idx * 60} duration={400}>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-2 h-full">
+                  <div className="flex items-center gap-2 font-mono text-xs font-bold text-[#0A192F]">
+                    <CheckCircle2 size={15} className="text-[#0EA6A6] flex-shrink-0" />
+                    <span>{item.title}</span>
+                  </div>
+                  <p className="text-slate-600 text-xs font-sans leading-relaxed pl-6">
+                    {item.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── What Happens Next ── */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-8">
+          <ScrollReveal animation="fade-up" duration={450}>
+            <div>
+              <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-[#1D6FA3] uppercase tracking-wider mb-2">
+                <Clock size={14} />
+                <span>TRANSPARENT PROCESS</span>
+              </div>
+              <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#0A192F]">
+                WHAT HAPPENS NEXT
+              </h2>
+              <p className="text-slate-600 text-xs sm:text-sm font-sans mt-1 max-w-2xl">
+                How our Mumbai procurement desk processes your compressor inquiry from initial review
+                to supply discussion.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {workflowSteps.map((step, idx) => (
+              <ScrollReveal key={step.num} animation="fade-up" delay={idx * 80} duration={450}>
+                <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-3 shadow-xs h-full">
+                  <span className="font-mono text-xs font-extrabold text-[#1D6FA3] bg-blue-50 border border-blue-100 px-2 py-1 rounded inline-block">
+                    {step.num} // STEP
+                  </span>
+                  <h3 className="font-display font-bold text-lg text-[#0A192F]">{step.title}</h3>
+                  <p className="text-slate-600 text-xs font-sans leading-relaxed">{step.desc}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Product Discovery ── */}
+      <section className="py-12 sm:py-14 bg-slate-100 border-t border-slate-200">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <ScrollReveal animation="fade-up" duration={450}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-1">
+                <span className="font-mono text-xs font-bold text-[#1D6FA3] uppercase tracking-wider block">
+                  COMPRESSOR INVENTORY &amp; SPECS
+                </span>
+                <h2 className="font-display font-extrabold text-xl sm:text-2xl text-[#0A192F]">
+                  LOOKING FOR A SPECIFIC COMPRESSOR?
+                </h2>
+                <p className="text-slate-600 text-xs sm:text-sm font-sans">
+                  Explore our catalog of scroll, rotary, and reciprocating compressors by brand or
+                  application.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/products"
+                  className="px-5 py-3 rounded-lg bg-[#0A192F] hover:bg-[#142847] text-white font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all active:scale-[0.985] shadow-xs"
+                >
+                  <span>VIEW COMPRESSORS</span>
+                  <ArrowRight size={13} />
+                </Link>
+                <Link
+                  href="/brands"
+                  className="px-5 py-3 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all active:scale-[0.985]"
+                >
+                  <span>BROWSE BRANDS</span>
+                </Link>
+                <Link
+                  href="/applications"
+                  className="px-5 py-3 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all active:scale-[0.985]"
+                >
+                  <span>VIEW APPLICATIONS</span>
+                </Link>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+    </div>
   );
 }
-

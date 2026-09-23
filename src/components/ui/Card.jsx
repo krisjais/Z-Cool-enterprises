@@ -1,55 +1,32 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Tilt from 'react-parallax-tilt';
+import React from 'react';
 import { cn } from '../../utils/cn';
-import { useTheme } from '../../context/ThemeContext';
 
-export default function Card({ className, children, tiltMaxAngle = 10, enableGlare = true, ...props }) {
-  const { setCursorHover } = useTheme();
-  const [mounted, setMounted] = useState(false);
+export default function Card({
+  className,
+  children,
+  variant = 'light',
+  tilt = false,
+  tiltMaxAngle = 8,
+  enableGlare = false,
+  ...props
+}) {
+  const variantClasses = {
+    light: 'bg-white border border-slate-200 shadow-xs rounded-xl p-6 sm:p-8 relative overflow-hidden',
+    dark: 'bg-slate-900/95 border border-slate-800/90 shadow-2xl rounded-2xl p-6 sm:p-8 relative overflow-hidden text-white',
+    tech: 'bg-[#0B1220] border border-cyan-500/20 shadow-2xl rounded-2xl p-6 sm:p-8 relative overflow-hidden text-white',
+  };
 
-  useEffect(() => {
-    let frameId = requestAnimationFrame(() => {
-      setMounted(true);
-    });
-    return () => cancelAnimationFrame(frameId);
-  }, []);
-
-  // Standard container template
-  const cardContent = (
+  return (
     <div
       className={cn(
-        "glass-card rounded-[24px] p-6 relative overflow-hidden transition-all duration-300",
+        variantClasses[variant] || variantClasses.light,
         className
       )}
-      onMouseEnter={() => setCursorHover(true)}
-      onMouseLeave={() => setCursorHover(false)}
       {...props}
     >
       {children}
     </div>
-  );
-
-  // Return static layout during server rendering
-  if (!mounted) {
-    return <div className={cn("glass-card rounded-[24px] p-6 relative overflow-hidden", className)}>{children}</div>;
-  }
-
-  return (
-    <Tilt
-      tiltMaxAngleX={tiltMaxAngle}
-      tiltMaxAngleY={tiltMaxAngle}
-      perspective={1000}
-      glareEnable={enableGlare}
-      glareMaxOpacity={0.12}
-      glareColor="#1E6FFF"
-      glarePosition="all"
-      glareBorderRadius="6px"
-      scale={1.02}
-      transitionSpeed={1500}
-    >
-      {cardContent}
-    </Tilt>
   );
 }

@@ -4,23 +4,21 @@
  */
 
 export const siteConfig = {
-  title: 'Z Cool Technology | Premium Industrial Cooling & Thermal Management',
-  description: 'Next-generation industrial HVAC, Close Control units, and high-performance electronic panel cooling systems.',
-  url: 'https://zcooltech.com',
-  ogImage: 'https://zcooltech.com/og-image.jpg',
-  twitterHandle: '@zcooltech',
+  title: 'Zcool Enterprises | Industrial AC Compressors & Cooling Solutions',
+  description: 'Supplying high-efficiency AC Compressors, air conditioning systems, and industrial cooling solutions in Mumbai.',
+  url: 'https://zcoolenterprises.com',
+  ogImage: '/ac_compressor.png',
+  twitterHandle: '@zcoolenterprises',
   organization: {
-    name: 'Z Cool Technology',
-    logo: 'https://zcooltech.com/logo.png',
-    sameAs: [
-      'https://linkedin.com/company/z-cool-technology',
-    ],
+    name: 'Zcool Enterprises',
+    logo: '/logo1.png',
+    sameAs: [],
   },
 };
 
 // Generates dynamic Metadata objects for Next.js App Router
 export function generateSEO({ title, description, path, ogImage, noIndex = false } = {}) {
-  const metaTitle = title ? `${title} | Z Cool Tech` : siteConfig.title;
+  const metaTitle = title ? `${title} | Zcool Enterprises` : siteConfig.title;
   const metaDesc = description || siteConfig.description;
   const metaUrl = `${siteConfig.url}${path || ''}`;
   const metaImg = ogImage || siteConfig.ogImage;
@@ -85,7 +83,7 @@ export function getOrganizationSchema() {
     sameAs: siteConfig.organization.sameAs,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+91-XXXX-XXXXXX',
+      telephone: '+91-99206-91707',
       contactType: 'customer service',
       areaServed: 'IN',
       availableLanguage: ['en', 'hi'],

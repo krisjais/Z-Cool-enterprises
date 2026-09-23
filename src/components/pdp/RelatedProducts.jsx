@@ -41,6 +41,8 @@ export default function RelatedProducts({ productId, currentAccentColor }) {
 
   const related = PRODUCTS_CATALOG.filter(item => item.id !== productId);
 
+  if (related.length === 0) return null;
+
   return (
     <div className="w-full text-left">
       <div 

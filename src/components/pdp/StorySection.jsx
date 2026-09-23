@@ -219,7 +219,7 @@ export default function StorySection({ product, isDesktop }) {
                     <motion.img
                       key={activeChapter}
                       src={product.images[activeChapter]}
-                      alt="Chapter visual"
+                      alt={`${product?.name || 'AC Compressor'} chapter ${activeChapter + 1} visual`}
                       className="max-h-[85%] max-w-[85%] object-contain mix-blend-multiply select-none pointer-events-none"
                       {...getTransitionProps(activeChapter)}
                       style={{
@@ -250,7 +250,7 @@ export default function StorySection({ product, isDesktop }) {
                     }`}
                     title={(product?.storytelling ?? [])[idx]?.title}
                   >
-                    <img src={imgUrl} alt="Thumbnail" className="max-h-full max-w-full object-contain pointer-events-none" />
+                    <img src={imgUrl} alt={`${product?.name || 'AC Compressor'} chapter ${idx + 1} thumbnail`} className="max-h-full max-w-full object-contain pointer-events-none" />
                   </button>
                 ))}
               </div>

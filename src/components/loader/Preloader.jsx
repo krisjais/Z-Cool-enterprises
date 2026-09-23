@@ -20,7 +20,7 @@ export default function Preloader({ onComplete }) {
         onComplete: () => {
           gsap.to(containerRef.current, {
             opacity: 0,
-            duration: 0.6,
+            duration: 0.3,
             ease: 'power2.out',
             onComplete: () => {
               if (onComplete) onComplete();
@@ -29,45 +29,34 @@ export default function Preloader({ onComplete }) {
         }
       });
 
-      // 1. Dark overlay is visible. Logo 2 appears from blur
+      // Fast, sleek single-pass loading sequence (~0.6s total)
       tl.fromTo(logoContainerRef.current,
-        { opacity: 0, filter: 'blur(10px)', scale: 0.95 },
-        { opacity: 1, filter: 'blur(0px)', scale: 1.0, duration: 0.8, ease: 'power2.out' }
+        { opacity: 0, filter: 'blur(8px)', scale: 0.95 },
+        { opacity: 1, filter: 'blur(0px)', scale: 1.0, duration: 0.3, ease: 'power2.out' }
       );
 
-      // 2. Soft metallic light sweeps across the logo
       tl.fromTo(sheenRef.current,
         { left: '-150%' },
-        { left: '150%', duration: 0.7, ease: 'power1.inOut' },
-        '>-0.2'
+        { left: '150%', duration: 0.4, ease: 'power1.inOut' },
+        '<0.1'
       );
 
-      // 3. Logo scales slightly
-      tl.to(logoContainerRef.current, {
-        scale: 1.03,
-        duration: 0.5,
-        ease: 'power2.out'
-      }, '>-0.4');
-
-      // 4. Brand name fades in
       tl.fromTo(brandRef.current,
-        { opacity: 0, y: 5 },
-        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
-        '>-0.2'
+        { opacity: 0, y: 4 },
+        { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' },
+        '<0.1'
       );
 
-      // 5. Thin blueprint line draws underneath
       tl.fromTo(lineRef.current,
         { width: '0%' },
-        { width: '100%', duration: 0.5, ease: 'power2.inOut' },
-        '>-0.1'
+        { width: '100%', duration: 0.3, ease: 'power2.inOut' },
+        '<0.1'
       );
 
-      // 6. Loading percentage or progress line fills smoothly
       const progressObject = { value: 0 };
       tl.to(progressObject, {
         value: 100,
-        duration: 0.8,
+        duration: 0.4,
         ease: 'power2.out',
         onUpdate: () => {
           if (progressTextRef.current) {
@@ -77,10 +66,7 @@ export default function Preloader({ onComplete }) {
             progressLineRef.current.style.width = `${progressObject.value}%`;
           }
         }
-      }, '>');
-
-      // Hold briefly before fade out
-      tl.to({}, { duration: 0.15 });
+      }, '<');
 
     }, containerRef);
 
@@ -111,7 +97,7 @@ export default function Preloader({ onComplete }) {
         {/* Brand Name Typography */}
         <div ref={brandRef} className="mt-6 text-center opacity-0">
           <h2 className="text-white text-xs font-mono font-medium tracking-[0.25em] uppercase" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            Z COOL TECH
+            ZCOOL ENTERPRISES
           </h2>
         </div>
 

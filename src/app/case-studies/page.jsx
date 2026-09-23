@@ -1,141 +1,171 @@
-'use client';
-
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { gsap } from '../../lib/gsap';
+import { ArrowUpRight, MapPin, CheckCircle2, ChevronRight, Layers } from 'lucide-react';
+import { CASE_STUDIES } from '@/data/case-studies';
+import { PRODUCTS_CATALOG } from '@/data/products';
 import {
-  ArrowUpRight, Users2, ShieldCheck, Award, Briefcase,
-  ChevronRight, Home, Settings, Zap, Cpu, FileText
-} from 'lucide-react';
-import Preloader from '../../components/loader/Preloader';
+  RequestSimilarButton,
+  CaseStudiesBottomCTA,
+} from '@/components/case-studies/CaseStudiesActions';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
-const C = {
-  bgHero:        '#F1F6FA',
-  bgWarmWhite:   '#E6F1F5',
-  bgSage:        '#E2ECE9',
-  bgNeutralGray: '#EAEDF1',
-  bgDarkNavy:    '#0F2B46',
-  card:          '#FFFFFF',
-  navy:          '#0F2B46',
-  blue:          '#1D6FA3',
-  teal:          '#0EA6A6',
-  gold:          '#F2C14E',
-  slate:         '#6E7C93',
-  borderLight:   'rgba(15,43,70,0.06)',
-  borderStrong:  'rgba(15,43,70,0.12)',
+export const metadata = {
+  title: 'Compressor Supply Case Studies | Zcool Enterprises',
+  description:
+    'Real-world compressor sourcing and replacement examples for commercial AC, VRV systems, and cold storage units supplied by Zcool Enterprises in Mumbai and Maharashtra.',
 };
 
-const CASES = [
-  {
-    num: '01',
-    metric: '35% Savings',
-    label: 'Energy Consumption Drop',
-    title: 'Automated Logistics Conveyor Cooling Enclosures',
-    desc: 'Deployment of 12 closed-loop PEX-P15 cabinet heat exchangers at Chennai logistics port VFD control boxes. Eliminated summer trip failures and dropped fan electricity bills by 35%.',
-    img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=900&auto=format&fit=crop',
-    sector: 'Logistics Port / Infrastructure'
-  },
-  {
-    num: '02',
-    metric: '99.8% Uptime',
-    label: 'Thermal Stability Guarantee',
-    title: 'Mission Critical General ICU Diagnostic Unit',
-    desc: 'Precision CCU-X10 air handling loops commissioned for diagnostic and surgical ICU rooms in Mumbai. Restored humidity parameters to strict ±1% tolerances.',
-    img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=900&auto=format&fit=crop',
-    sector: 'Healthcare Services'
-  },
-  {
-    num: '03',
-    metric: 'Zero Failures',
-    label: 'Dust Loop Containment',
-    title: 'CNC Mill Automation Control Cooler Integration',
-    desc: 'Installed sealed side-mount coolers for high-density robotic welding cells in Pune. Completely contained metal grind dust loops from entering server controller logic.',
-    img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=900&auto=format&fit=crop',
-    sector: 'Robotic Manufacturing'
-  }
-];
-
 export default function CaseStudiesPage() {
-  const [ready, setReady] = useState(false);
-  const cardsRef = useRef(null);
-
-  useEffect(() => {
-    if (!ready) return;
-    const ctx = gsap.context(() => {
-      gsap.from('.case-study-card', {
-        opacity: 0, y: 35, duration: 1.1, stagger: 0.2, ease: 'power3.out',
-        scrollTrigger: { trigger: cardsRef.current, start: 'top 80%' }
-      });
-    }, cardsRef);
-    return () => ctx.revert();
-  }, [ready]);
-
   return (
-    <>
-      {!ready && <Preloader onComplete={() => setReady(true)} />}
-      <div className="w-full overflow-x-hidden min-h-screen" style={{ background: C.bgHero }}>
-        
-        {/* Breadcrumb */}
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 pt-8 pb-4 flex items-center gap-2 font-mono text-[10px] text-slate-400 tracking-wider">
-          <Link href="/" className="hover:text-[#1D6FA3] flex items-center gap-1">
-            <Home size={10} /> HOME
-          </Link>
-          <ChevronRight size={10} />
-          <span className="text-[#0F2B46] font-bold">CASE STUDIES</span>
+    <div className="bg-[#F8F9FA] min-h-screen text-[#0F172A]">
+      {/* ── Header Banner ── */}
+      <section className="bg-[#0A192F] text-white py-12 sm:py-16 border-b border-white/10 relative overflow-hidden">
+        {/* Subtle grid texture */}
+        <div
+          className="absolute inset-0 opacity-5 pointer-events-none"
+          style={{
+            backgroundImage:
+              'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
+
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-3.5 relative z-10">
+          <ScrollReveal delay={0} direction="up" distance={10}>
+            <div className="inline-flex items-center gap-2 font-mono text-xs text-[#0EA6A6] bg-white/5 border border-white/10 px-3 py-1.5 rounded-full uppercase tracking-wider">
+              <span>REAL-WORLD SOURCING LOGS</span>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={80} direction="up" distance={14}>
+            <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight">
+              COMPRESSOR SUPPLY CASE STUDIES
+            </h1>
+          </ScrollReveal>
+
+          <ScrollReveal delay={160} direction="up" distance={14}>
+            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-sans leading-relaxed">
+              Practical examples of how Zcool Enterprises assists commercial HVAC contractors,
+              facility engineers, and refrigeration operators with replacement compressors, model
+              identification, and verified unit supply.
+            </p>
+          </ScrollReveal>
         </div>
+      </section>
 
-        {/* Hero Banner */}
-        <section className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 py-20 text-left">
-          <span className="font-mono text-xs text-[#1D6FA3] tracking-widest uppercase font-bold">FIELD PERFORMANCE</span>
-          <h1 className="text-4xl lg:text-6xl font-bold tracking-tight mt-3 mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: C.navy }}>
-            Thermodynamic Outcomes
-          </h1>
-          <p className="text-slate-600 max-w-xl text-[15px] leading-relaxed">
-            Real-world performance logs demonstrating sustained component durability and energy efficiency scaling across India.
-          </p>
-        </section>
+      {/* ── Case Studies List ── */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-8 sm:space-y-10">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8">
+            {CASE_STUDIES.map((cs, idx) => {
+              const matchedProduct = cs.productId
+                ? PRODUCTS_CATALOG.find((p) => p.id === cs.productId)
+                : null;
 
-        {/* Case Cards */}
-        <section ref={cardsRef} className="py-24" style={{ background: C.bgSage, borderTop: `1px solid ${C.borderLight}` }}>
-          <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {CASES.map((item) => (
-              <div
-                key={item.num}
-                className="case-study-card group bg-white rounded-3xl border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-                style={{ borderColor: C.borderLight }}
-              >
-                <div>
-                  <div className="relative overflow-hidden aspect-[16/10] border-b" style={{ borderColor: C.borderLight }}>
-                    <img src={item.img} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" style={{ filter: 'brightness(0.9) saturate(0.6)' }} />
-                  </div>
-                  <div className="p-8">
-                    <span className="font-mono text-[9px] text-[#0EA6A6] tracking-widest uppercase font-bold block mb-1">
-                      {item.sector}
-                    </span>
-                    <h3 className="text-lg font-bold text-[#0F2B46] mb-3 leading-snug">{item.title}</h3>
-                    <p className="text-[12px] text-slate-500 leading-relaxed font-light mb-6">{item.desc}</p>
-                  </div>
-                </div>
+              return (
+                <ScrollReveal key={cs.id} delay={idx * 100} direction="up" distance={16}>
+                  <article className="bg-white border border-slate-200 rounded-xl p-5 sm:p-8 space-y-5 sm:space-y-6 shadow-xs hover:border-slate-300 transition-colors">
+                    {/* Case Title & Header Bar */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4 sm:pb-5">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 font-mono text-xs font-bold text-[#1D6FA3] uppercase tracking-wider">
+                          <span>CASE LOG #{String(idx + 1).padStart(2, '0')}</span>
+                          {cs.sector && (
+                            <>
+                              <span className="text-slate-300">•</span>
+                              <span>{cs.sector}</span>
+                            </>
+                          )}
+                        </div>
+                        <h2 className="font-display font-extrabold text-lg sm:text-2xl text-[#0A192F] tracking-tight">
+                          {cs.title}
+                        </h2>
+                      </div>
 
-                <div className="p-8 pt-0">
-                  <div className="flex items-baseline gap-3 mb-6 pb-6 border-b" style={{ borderColor: C.borderLight }}>
-                    <span className="text-3xl font-mono font-bold text-[#1D6FA3] tracking-tight">{item.metric}</span>
-                    <span className="text-[9px] font-mono uppercase tracking-wider text-slate-400 font-bold">{item.label}</span>
-                  </div>
-                  <Link
-                    href="/contact"
-                    className="w-full py-3.5 bg-slate-100 group-hover:bg-[#1D6FA3] group-hover:text-white text-slate-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-all text-center block"
-                  >
-                    Inquire Similar Setup
-                  </Link>
-                </div>
-              </div>
-            ))}
+                      {/* Customer / Site Location */}
+                      {cs.location && (
+                        <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200 w-fit flex-shrink-0">
+                          <MapPin size={13} className="text-slate-400" />
+                          <span>{cs.location}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 4 Information Blocks: Requirement, Equipment, Compressor, Outcome */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-sans text-xs">
+                      {/* 01 // REQUIREMENT */}
+                      {cs.requirement && (
+                        <div className="space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between">
+                          <div className="space-y-1.5">
+                            <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                              01 // REQUIREMENT
+                            </span>
+                            <p className="text-slate-700 leading-relaxed">{cs.requirement}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 02 // ORIGINAL EQUIPMENT */}
+                      {cs.originalEquipment && (
+                        <div className="space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between">
+                          <div className="space-y-1.5">
+                            <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                              02 // ORIGINAL EQUIPMENT
+                            </span>
+                            <p className="text-slate-700 leading-relaxed">{cs.originalEquipment}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 03 // COMPRESSOR SUPPLIED */}
+                      {cs.compressorSupplied && (
+                        <div className="space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col justify-between">
+                          <div className="space-y-1.5">
+                            <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                              03 // COMPRESSOR SUPPLIED
+                            </span>
+                            <p className="text-[#1D6FA3] font-mono font-bold leading-relaxed">{cs.compressorSupplied}</p>
+                          </div>
+                          {matchedProduct && (
+                            <Link
+                              href={`/products/${matchedProduct.id}`}
+                              className="font-mono text-[11px] font-bold text-[#1D6FA3] hover:underline flex items-center gap-1 pt-2 border-t border-slate-200/80"
+                            >
+                              VIEW SPECIFICATIONS <ArrowUpRight size={12} />
+                            </Link>
+                          )}
+                        </div>
+                      )}
+
+                      {/* 04 // OUTCOME */}
+                      {cs.result && (
+                        <div className="space-y-2 bg-emerald-50/70 p-4 rounded-lg border border-emerald-200/80 flex flex-col justify-between">
+                          <div className="space-y-1.5">
+                            <span className="font-mono text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">
+                              04 // OUTCOME
+                            </span>
+                            <p className="text-emerald-900 font-medium leading-relaxed">{cs.result}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action button */}
+                    <div className="pt-2 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
+                      <RequestSimilarButton caseTitle={cs.title} />
+                    </div>
+                  </article>
+                </ScrollReveal>
+              );
+            })}
           </div>
-        </section>
 
-      </div>
-    </>
+          {/* Bottom CTA */}
+          <ScrollReveal direction="up" distance={14}>
+            <CaseStudiesBottomCTA />
+          </ScrollReveal>
+        </div>
+      </section>
+    </div>
   );
 }

@@ -1,141 +1,212 @@
-'use client';
-
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { gsap } from '../../lib/gsap';
+import { BookOpen, Camera, CheckCircle2, ArrowRight, ArrowUpRight, HelpCircle } from 'lucide-react';
+import { ARTICLES, ARTICLE_CATEGORIES } from '@/data/articles';
 import {
-  ArrowUpRight, FileText, ChevronRight, Home, ShieldCheck, Clock, Calendar
-} from 'lucide-react';
-import Preloader from '../../components/loader/Preloader';
+  BlogHeroCTA,
+  FeaturedArticleAction,
+  BlogArticlesView,
+  NameplateUploadCTA,
+  BlogBottomCTA,
+} from '@/components/blog/BlogActions';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
-const C = {
-  bgHero:        '#F1F6FA',
-  bgWarmWhite:   '#E6F1F5',
-  bgSage:        '#E2ECE9',
-  bgNeutralGray: '#EAEDF1',
-  bgDarkNavy:    '#0F2B46',
-  card:          '#FFFFFF',
-  navy:          '#0F2B46',
-  blue:          '#1D6FA3',
-  teal:          '#0EA6A6',
-  gold:          '#F2C14E',
-  slate:         '#6E7C93',
-  borderLight:   'rgba(15,43,70,0.06)',
-  borderStrong:  'rgba(15,43,70,0.12)',
+export const metadata = {
+  title: 'Compressor Knowledge Center | HVAC Guides & Identification | Zcool Enterprises',
+  description:
+    'Practical technical guides for HVAC contractors, service technicians, and facility engineers on reading compressor nameplates, scroll vs rotary selection, voltage/phase in India, and replacement matching.',
 };
 
-const POSTS = [
-  {
-    id: 'nema-ratings-guide',
-    title: 'Industrial Enclosure NEMA Classification Guidelines',
-    category: 'Standards & Ingress Defense',
-    date: 'July 02, 2026',
-    readTime: '6 Min Read',
-    desc: 'Understanding the engineering differences between NEMA 12 dust protection and NEMA 4/4X sealed closed-loop moisture parameters for side-mount panel cooling exchangers.',
-    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900&auto=format&fit=crop',
-    author: 'Z-Cool Tech Desk'
-  },
-  {
-    id: 'cop-efficiency-chillers',
-    title: 'Process Chiller Thermodynamic COP Calculations',
-    category: 'Thermodynamics & Chillers',
-    date: 'June 28, 2026',
-    readTime: '8 Min Read',
-    desc: 'Evaluating water-side evaporator scaling coefficients and scroll compressor array frequencies to maximize COP ratings above 4.2 under severe summer ambient loads.',
-    img: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=900&auto=format&fit=crop',
-    author: 'Eng. Vikram Mehta'
-  },
-  {
-    id: 'vrf-pcb-pid-loop',
-    title: 'Active PID Frequency Throttling in Inverter PCBs',
-    category: 'Electrical & Controller Boards',
-    date: 'June 15, 2026',
-    readTime: '10 Min Read',
-    desc: 'How the STM32 ARM MCU uses active feedback inputs from discharge temperature line sensors to adjust EEV electronic throttling and coordinate VRF compressors.',
-    img: '/hvac_pcb_macro.png',
-    author: 'Z-Cool Tech Desk'
-  }
-];
-
 export default function BlogPage() {
-  const [ready, setReady] = useState(false);
-  const postsGridRef = useRef(null);
+  const featuredArticle = ARTICLES.find((a) => a.featured) || ARTICLES[0];
+  const regularArticles = ARTICLES;
 
-  useEffect(() => {
-    if (!ready) return;
-    const ctx = gsap.context(() => {
-      gsap.from('.blog-card', {
-        opacity: 0, y: 35, duration: 1.0, stagger: 0.18, ease: 'power3.out',
-        scrollTrigger: { trigger: postsGridRef.current, start: 'top 80%' }
-      });
-    }, postsGridRef);
-    return () => ctx.revert();
-  }, [ready]);
+  // Schema.org structured data for Technical Knowledge Base
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Compressor Technical Knowledge Center',
+    description:
+      'Practical guides for identifying, selecting and sourcing AC and refrigeration compressors.',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Zcool Enterprises',
+      url: 'https://zcoolenterprises.com',
+    },
+    hasPart: ARTICLES.map((art) => ({
+      '@type': 'TechArticle',
+      headline: art.title,
+      description: art.summary,
+      articleSection: art.category,
+    })),
+  };
 
   return (
-    <>
-      {!ready && <Preloader onComplete={() => setReady(true)} />}
-      <div className="w-full overflow-x-hidden min-h-screen" style={{ background: C.bgHero }}>
-        
-        {/* Breadcrumb */}
-        <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 pt-8 pb-4 flex items-center gap-2 font-mono text-[10px] text-slate-400 tracking-wider">
-          <Link href="/" className="hover:text-[#1D6FA3] flex items-center gap-1">
-            <Home size={10} /> HOME
-          </Link>
-          <ChevronRight size={10} />
-          <span className="text-[#0F2B46] font-bold">TECHNICAL BLOG</span>
-        </div>
+    <div className="bg-[#F8F9FA] min-h-screen text-[#0F172A]">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-        {/* Hero Banner */}
-        <section className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 py-20 text-left">
-          <span className="font-mono text-xs text-[#1D6FA3] tracking-widest uppercase font-bold">KNOWLEDGE CENTER</span>
-          <h1 className="text-4xl lg:text-6xl font-bold tracking-tight mt-3 mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: C.navy }}>
-            The Engineering Journal
-          </h1>
-          <p className="text-slate-600 max-w-xl text-[15px] leading-relaxed">
-            Technical analysis, calculation sheets, standards compliance documents, and installation best practices curated by our HVAC engineering experts.
-          </p>
-        </section>
+      {/* ── Editorial Hero ── */}
+      <section className="bg-[#0A192F] text-white py-12 sm:py-16 border-b border-white/10 relative overflow-hidden">
+        {/* Subtle grid background */}
+        <div
+          className="absolute inset-0 opacity-5 pointer-events-none"
+          style={{
+            backgroundImage:
+              'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
 
-        {/* Blog Post Cards */}
-        <section ref={postsGridRef} className="py-24" style={{ background: C.bgWarmWhite, borderTop: `1px solid ${C.borderLight}` }}>
-          <div className="max-w-[1440px] mx-auto px-8 md:px-16 lg:px-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {POSTS.map((post) => (
-              <div
-                key={post.id}
-                className="blog-card group bg-white rounded-3xl border overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-                style={{ borderColor: C.borderLight }}
-              >
-                <div>
-                  <div className="relative aspect-[16/10] overflow-hidden border-b" style={{ borderColor: C.borderLight }}>
-                    <img src={post.img} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" style={{ filter: 'brightness(0.95) saturate(0.7)' }} />
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Hero Copy */}
+            <div className="lg:col-span-8 space-y-4">
+              <ScrollReveal delay={0} direction="up" distance={10}>
+                <div className="inline-flex items-center gap-2 font-mono text-xs text-[#0EA6A6] bg-white/5 border border-white/10 px-3 py-1.5 rounded-full uppercase tracking-wider">
+                  <BookOpen size={14} />
+                  <span>HVAC TECHNICAL RESOURCE &amp; SOURCING GUIDES</span>
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={80} direction="up" distance={14}>
+                <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
+                  THE COMPRESSOR KNOWLEDGE CENTER
+                </h1>
+              </ScrollReveal>
+
+              <ScrollReveal delay={160} direction="up" distance={14}>
+                <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-sans leading-relaxed">
+                  Practical guides for identifying, selecting, and sourcing AC and refrigeration
+                  compressors. Written for commercial HVAC contractors, service engineers, and
+                  procurement teams.
+                </p>
+              </ScrollReveal>
+
+              <ScrollReveal delay={220} direction="up" distance={14}>
+                <BlogHeroCTA />
+              </ScrollReveal>
+            </div>
+
+            {/* Hero Thumbnail / Visual */}
+            <div className="lg:col-span-4 hidden lg:flex justify-end">
+              <ScrollReveal delay={200} direction="scale" distance={16}>
+                <div className="relative bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs max-w-xs space-y-3">
+                  <div className="relative h-44 w-full bg-slate-900/40 rounded-xl overflow-hidden flex items-center justify-center p-2">
+                    <Image
+                      src="/ac_compressor.png"
+                      alt="Commercial AC Compressor"
+                      width={200}
+                      height={160}
+                      className="object-contain max-h-40 drop-shadow-md hover:scale-105 transition-transform duration-300"
+                      priority
+                    />
                   </div>
-                  <div className="p-8">
-                    <span className="font-mono text-[9px] text-[#1D6FA3] tracking-widest uppercase font-bold block mb-2">
-                      {post.category}
+                  <div className="space-y-1">
+                    <span className="font-mono text-[10px] text-[#0EA6A6] uppercase tracking-wider block font-bold">
+                      VERIFIED TECHNICAL ARTICLES
                     </span>
-                    <h3 className="text-base font-bold text-[#0F2B46] mb-3 group-hover:text-[#1D6FA3] transition-colors leading-snug">
-                      {post.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 leading-relaxed font-light mb-6">
-                      {post.desc}
-                    </p>
+                    <span className="text-xs text-slate-300 font-sans block">
+                      Practical compressor replacement &amp; identification guides for India.
+                    </span>
                   </div>
                 </div>
+              </ScrollReveal>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <div className="p-8 pt-0">
-                  <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 font-bold border-t pt-4" style={{ borderColor: C.borderLight }}>
-                    <span className="flex items-center gap-1"><Calendar size={12} /> {post.date}</span>
-                    <span>{post.readTime}</span>
-                  </div>
+      {/* ── Featured Technical Article ── */}
+      {featuredArticle && (
+        <section className="py-10 sm:py-12 border-b border-slate-200 bg-white">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+            <ScrollReveal direction="up" distance={16}>
+              <div className="bg-[#0A192F] text-white rounded-2xl p-6 sm:p-10 space-y-6 shadow-lg relative overflow-hidden">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+                  <span className="font-mono text-xs font-bold text-[#0EA6A6] uppercase tracking-wider bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+                    FEATURED TECHNICAL GUIDE
+                  </span>
+                  <span className="font-mono text-xs text-slate-400">
+                    CATEGORY: {featuredArticle.category.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="space-y-3 max-w-3xl">
+                  <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white leading-tight">
+                    {featuredArticle.title}
+                  </h2>
+                  <p className="text-slate-300 text-xs sm:text-sm font-sans leading-relaxed">
+                    {featuredArticle.summary}
+                  </p>
+                </div>
+
+                <div className="pt-2 flex items-center gap-4">
+                  <FeaturedArticleAction article={featuredArticle} />
                 </div>
               </div>
-            ))}
+            </ScrollReveal>
           </div>
         </section>
+      )}
 
-      </div>
-    </>
+      {/* ── Articles Grid & Filters ── */}
+      <section className="py-12 sm:py-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 space-y-8">
+          <ScrollReveal direction="up" distance={14}>
+            <div className="space-y-1">
+              <span className="font-mono text-xs font-bold text-[#1D6FA3] uppercase tracking-wider block">
+                TECHNICAL GUIDES &amp; MANUALS
+              </span>
+              <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#0A192F]">
+                Browse Compressor Resources
+              </h2>
+            </div>
+          </ScrollReveal>
+
+          <BlogArticlesView articles={regularArticles} categories={ARTICLE_CATEGORIES} />
+        </div>
+      </section>
+
+      {/* ── Nameplate Photo Identification Callout ── */}
+      <section className="py-12 sm:py-16 bg-[#0A192F] text-white border-y border-white/10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-8 space-y-3">
+              <ScrollReveal direction="up" distance={12}>
+                <span className="font-mono text-xs font-bold text-[#0EA6A6] uppercase tracking-wider block">
+                  TECHNICAL DESK ASSISTANCE
+                </span>
+                <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white">
+                  NEED HELP IDENTIFYING A COMPRESSOR FROM A NAMEPLATE?
+                </h2>
+                <p className="text-slate-300 text-xs sm:text-sm font-sans leading-relaxed max-w-xl">
+                  Photograph the compressor sticker or rating label clearly and upload it to our Mumbai desk. We verify model codes, voltage, and replacement stock.
+                </p>
+              </ScrollReveal>
+            </div>
+
+            <div className="lg:col-span-4 flex lg:justify-end">
+              <ScrollReveal delay={100} direction="up" distance={14}>
+                <NameplateUploadCTA />
+              </ScrollReveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Bottom Catalog CTA ── */}
+      <section className="py-12 bg-white">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <ScrollReveal direction="up" distance={12}>
+            <BlogBottomCTA />
+          </ScrollReveal>
+        </div>
+      </section>
+    </div>
   );
 }

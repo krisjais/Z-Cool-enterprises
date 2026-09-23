@@ -2,11 +2,18 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-const ThemeContext = createContext(null);
+const defaultContext = {
+  cursorHover: false,
+  setCursorHover: () => {},
+  cursorType: 'default',
+  setCursorType: () => {},
+};
+
+const ThemeContext = createContext(defaultContext);
 
 export const ThemeProvider = ({ children }) => {
   const [cursorHover, setCursorHover] = useState(false);
-  const [cursorType, setCursorType] = useState('default'); // 'default', 'pointer', 'text', 'drag'
+  const [cursorType, setCursorType] = useState('default');
 
   return (
     <ThemeContext.Provider value={{ cursorHover, setCursorHover, cursorType, setCursorType }}>
@@ -15,5 +22,5 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-export const useTheme = () => useContext(ThemeContext);
+export const useTheme = () => useContext(ThemeContext) || defaultContext;
 export default ThemeContext;

@@ -80,5 +80,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+const defaultAuthValue = { admin: null, loading: false, login: async () => ({ success: false }), logout: () => {} };
+export const useAuth = () => useContext(AuthContext) || defaultAuthValue;
 export default AuthContext;
