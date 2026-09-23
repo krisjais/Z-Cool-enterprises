@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -13,11 +13,44 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
+const NAV_TABS = [
+  { id: 'overview', name: 'Overview', icon: LayoutDashboard, href: '/admin/dashboard?tab=overview' },
+  { id: 'products', name: 'Products', icon: Box, href: '/admin/dashboard?tab=products' },
+  { id: 'orders', name: 'Orders', icon: ShoppingCart, href: '/admin/dashboard?tab=orders' },
+  { id: 'shipments', name: 'Shipments', icon: Truck, href: '/admin/dashboard?tab=shipments' },
+];
+
+function NavTabsBar() {
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'overview';
+
+  return (
+    <nav className="flex space-x-1 sm:space-x-4 overflow-x-auto py-2 no-scrollbar" aria-label="Tabs">
+      {NAV_TABS.map((tab) => {
+        const Icon = tab.icon;
+        const isSelected = activeTab === tab.id;
+        return (
+          <Link
+            key={tab.id}
+            href={tab.href}
+            className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-colors min-h-[40px] ${
+              isSelected
+                ? 'bg-[#1D6FA3] text-white shadow-xs'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Icon size={14} />
+            <span>{tab.name}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 export default function DashboardLayout({ children }) {
   const { admin, loading, logout } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'overview';
 
   // Strict JWT Authentication protection
   useEffect(() => {
@@ -40,13 +73,6 @@ export default function DashboardLayout({ children }) {
       </div>
     );
   }
-
-  const navTabs = [
-    { id: 'overview', name: 'Overview', icon: LayoutDashboard, href: '/admin/dashboard?tab=overview' },
-    { id: 'products', name: 'Products', icon: Box, href: '/admin/dashboard?tab=products' },
-    { id: 'orders', name: 'Orders', icon: ShoppingCart, href: '/admin/dashboard?tab=orders' },
-    { id: 'shipments', name: 'Shipments', icon: Truck, href: '/admin/dashboard?tab=shipments' },
-  ];
 
   return (
     <div className="w-full min-h-screen bg-slate-100 text-slate-900 flex flex-col antialiased">
@@ -91,26 +117,9 @@ export default function DashboardLayout({ children }) {
         {/* Mobile & Desktop Segmented Navigation Bar */}
         <div className="bg-[#0D213F] border-t border-slate-800/80">
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <nav className="flex space-x-1 sm:space-x-4 overflow-x-auto py-2 no-scrollbar" aria-label="Tabs">
-              {navTabs.map((tab) => {
-                const Icon = tab.icon;
-                const isSelected = activeTab === tab.id;
-                return (
-                  <Link
-                    key={tab.id}
-                    href={tab.href}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-colors min-h-[40px] ${
-                      isSelected
-                        ? 'bg-[#1D6FA3] text-white shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    <Icon size={14} />
-                    <span>{tab.name}</span>
-                  </Link>
-                );
-              })}
-            </nav>
+            <Suspense fallback={<div className="h-10 py-2 text-xs text-slate-400 font-mono">Loading tabs...</div>}>
+              <NavTabsBar />
+            </Suspense>
           </div>
         </div>
       </header>

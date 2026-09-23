@@ -143,3 +143,16 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   caret-color: #f8fafc;
 }
+
+/* Hide Next.js and development-only indicators, toasts, or preview overlays */
+[data-nextjs-toast], 
+[data-nextjs-dialog-overlay], 
+#__next-build-watcher, 
+[data-next-badge],
+div[data-nextjs-toast-errors] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+

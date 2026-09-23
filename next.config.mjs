@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   reactCompiler: true,
   outputFileTracingRoot: path.resolve(__dirname, '..'),
+  devIndicators: false,
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400,
