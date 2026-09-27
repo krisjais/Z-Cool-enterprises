@@ -7,7 +7,9 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
-  outputFileTracingRoot: path.resolve(__dirname, '..'),
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   devIndicators: false,
   images: {
     formats: ['image/avif', 'image/webp'],

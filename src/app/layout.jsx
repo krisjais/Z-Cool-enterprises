@@ -1,8 +1,7 @@
 import React from 'react';
 import '../styles/globals.css';
 import RootProvider from '../providers/RootProvider';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
+import AppShell from '../components/layout/AppShell';
 
 export const metadata = {
   title: 'Zcool Enterprises | Refurbished AC Compressors & HVAC Equipment',
@@ -14,13 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="scroll-smooth">
       <body className="bg-[#F8F9FA] text-[#0F172A] selection:bg-[#1D6FA3] selection:text-white">
         <RootProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow pt-[64px]">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <AppShell>{children}</AppShell>
         </RootProvider>
       </body>
     </html>

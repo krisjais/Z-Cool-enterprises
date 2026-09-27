@@ -62,6 +62,10 @@ export default function Header() {
     { name: 'Contact', path: '/contact' },
   ];
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <>
       <header
