@@ -2,7 +2,6 @@ import React from 'react';
 import { getProducts } from '@/lib/api';
 import ProductCatalogView from '@/components/catalog/ProductCatalogView';
 import Container from '@/components/ui/Container';
-import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export const metadata = {
   title: 'Compressor Inventory & Catalog | Zcool Enterprises',
@@ -13,45 +12,50 @@ export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
   const products = await getProducts();
-  const inventoryCount = products.length;
+  const inventoryCount = Array.isArray(products) ? products.length : 0;
 
   return (
-    <div className="bg-[#F8F9FA] min-h-screen text-[#0F172A] py-6 sm:py-10 lg:py-12">
+    <div className="bg-[#F8F9FA] min-h-screen text-[#0F172A] py-6 sm:py-8 lg:py-10">
       <Container className="space-y-6 sm:space-y-8">
         
-        {/* Page Header */}
-        <div className="bg-[#0A192F] text-white rounded-xl p-5 sm:p-8 space-y-3.5 border border-white/10 relative overflow-hidden shadow-lg">
+        {/* ── COMPACT INDUSTRIAL HERO ── */}
+        <section
+          aria-label="Catalogue Header"
+          className="bg-[#0A192F] text-white rounded-lg p-5 sm:p-7 lg:p-8 border border-white/10 relative overflow-hidden shadow-sm"
+        >
+          {/* Subtle Technical Engineering Grid */}
           <div className="absolute inset-0 pointer-events-none opacity-5 engineering-grid-dark" />
           
           <div className="relative z-10 space-y-3">
-            <ScrollReveal delay={0} direction="up" distance={10}>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="inline-flex items-center gap-2 font-mono text-[11px] sm:text-xs text-[#0EA6A6] bg-white/5 border border-white/10 px-3 py-1 rounded-full uppercase tracking-wider">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0EA6A6] animate-pulse" />
-                  <span>B2B TECHNICAL INVENTORY CATALOG</span>
-                </div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              {/* SMALL EYEBROW */}
+              <div className="inline-flex items-center gap-2 font-mono text-xs text-[#0EA6A6] tracking-wider uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0EA6A6]" />
+                <span>B2B TECHNICAL INVENTORY</span>
+              </div>
 
-                <span className="font-mono text-[11px] sm:text-xs text-slate-300 bg-white/10 px-3 py-1 rounded-full border border-white/10">
-                  STOCK INVENTORY: <strong className="text-emerald-400 font-bold">{inventoryCount} MODEL(S) AVAILABLE</strong>
+              {/* DYNAMIC STOCK INDICATOR */}
+              <div className="inline-flex items-center gap-2 font-mono text-xs text-slate-300 bg-white/5 border border-white/10 px-3 py-1.5 rounded">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-semibold text-white tracking-wide">
+                  {inventoryCount} COMPRESSOR MODEL{inventoryCount !== 1 ? 'S' : ''} AVAILABLE
                 </span>
               </div>
-            </ScrollReveal>
+            </div>
 
-            <ScrollReveal delay={80} direction="up" distance={14}>
-              <h1 className="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight leading-tight">
-                COMPRESSOR INVENTORY
-              </h1>
-            </ScrollReveal>
+            {/* MAIN HEADING */}
+            <h1 className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight">
+              COMPRESSOR INVENTORY
+            </h1>
 
-            <ScrollReveal delay={160} direction="up" distance={14}>
-              <p className="text-slate-300 text-xs sm:text-sm max-w-3xl font-sans leading-relaxed">
-                Browse refurbished and replacement compressors by brand, model, type, application, and condition. All units are checked and prepared for Pan-India freight dispatch.
-              </p>
-            </ScrollReveal>
+            {/* DESCRIPTION */}
+            <p className="text-slate-300 text-xs sm:text-sm max-w-3xl font-sans leading-relaxed">
+              Commercial and industrial HVAC compressor inventory. Verified scroll, reciprocating, rotary, and inverter replacement units inspected, bench-tested, and prepared for Pan-India freight dispatch.
+            </p>
           </div>
-        </div>
+        </section>
 
-        {/* Product Catalog View Component (Search, Filters, Mobile Bottom Sheet, Grid) */}
+        {/* ── PRODUCT CATALOG VIEW (Search, Filters, Toolbar, Grid, Mobile Drawer, Quick View) ── */}
         <ProductCatalogView products={products} />
 
       </Container>

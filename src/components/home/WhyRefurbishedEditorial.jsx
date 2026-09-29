@@ -63,32 +63,33 @@ export default function WhyRefurbishedEditorial() {
 
   return (
     <>
-      <section id="why-zcool" className="py-28 bg-white border-b border-slate-200 relative overflow-hidden">
+      <section id="why-zcool" className="py-20 lg:py-24 bg-white border-b border-slate-200 relative overflow-hidden">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Section Header: Pure Editorial Statement with Generous Whitespace */}
-          <div className="max-w-4xl mb-20 space-y-4">
-            <div className="font-mono text-xs text-[#1D6FA3] uppercase tracking-widest flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1D6FA3]" />
+          <div className="max-w-4xl mb-14 lg:mb-16 space-y-4">
+            <div className="font-mono text-xs sm:text-[13px] text-[#1D6FA3] uppercase tracking-widest flex items-center gap-2 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-[#1D6FA3]" />
               <span>THE REFURBISHED ADVANTAGE</span>
             </div>
             
-            <h2 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#0A192F] tracking-tight leading-[1.05]">
+            <h2 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-[54px] xl:text-[60px] text-[#0A192F] tracking-tight leading-[1.04]">
               WHY BUY REFURBISHED?<br />
-              <span className="text-[#1D6FA3]">NOT EVERY COMPRESSOR NEEDS TO BE NEW.</span>
+              NOT EVERY COMPRESSOR<br />
+              <span className="text-[#1D6FA3]">NEEDS TO BE NEW.</span>
             </h2>
 
-            <p className="text-slate-600 text-base sm:text-lg font-sans max-w-2xl leading-relaxed pt-2 font-normal">
+            <p className="text-slate-600 text-base sm:text-lg font-sans max-w-2xl leading-relaxed pt-1 font-normal">
               Refurbished industrial compressors deliver tested performance at a fraction of imported OEM lead times and replacement costs, keeping commercial chillers and HVAC plants online.
             </p>
           </div>
 
           {/* Clean Editorial Split Composition (No Heavy Card Boxes) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start border-t border-slate-200 pt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start border-t border-slate-200 pt-10">
             
             {/* Left Column: Minimalist Benefit Navigation Rail */}
-            <div className="lg:col-span-5 space-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400 font-semibold block mb-4">
+            <div className="lg:col-span-5 space-y-1.5">
+              <span className="font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold block mb-3">
                 CORE TECHNICAL ASSURANCES
               </span>
 
@@ -100,17 +101,17 @@ export default function WhyRefurbishedEditorial() {
                     type="button"
                     onMouseEnter={() => setActiveId(item.id)}
                     onClick={() => setActiveId(item.id)}
-                    className={`w-full text-left py-3.5 px-4 rounded-lg transition-all cursor-pointer flex items-center justify-between group ${
+                    className={`w-full text-left py-3.5 px-4.5 rounded-lg transition-all duration-200 cursor-pointer flex items-center justify-between group border-l-4 ${
                       isActive
-                        ? 'bg-[#0A192F] text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        ? 'bg-[#0A192F] text-white shadow-sm border-[#1D6FA3]'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-transparent'
                     }`}
                   >
                     <div>
-                      <div className={`font-mono text-[10px] uppercase tracking-wider ${isActive ? 'text-[#0EA6A6]' : 'text-slate-400'}`}>
+                      <div className={`font-mono text-xs uppercase tracking-wider ${isActive ? 'text-[#0EA6A6] font-semibold' : 'text-slate-400'}`}>
                         {item.sub.split('.')[0]}
                       </div>
-                      <div className={`font-display text-base tracking-tight font-bold ${isActive ? 'text-white' : 'text-slate-800'}`}>
+                      <div className={`font-display text-base sm:text-[17px] tracking-tight font-bold ${isActive ? 'text-white' : 'text-slate-800'}`}>
                         {item.label}
                       </div>
                     </div>
@@ -126,14 +127,14 @@ export default function WhyRefurbishedEditorial() {
             </div>
 
             {/* Right Column: Dominant Single Benefit Panel with Thin Dividers */}
-            <div className="lg:col-span-7 space-y-6 lg:border-l lg:border-slate-200 lg:pl-16">
+            <div className="lg:col-span-7 space-y-6 lg:border-l lg:border-slate-200 lg:pl-14">
               
               <div className="space-y-4">
-                <div className="font-mono text-xs text-[#0EA6A6] uppercase tracking-widest font-bold">
+                <div className="font-mono text-xs sm:text-[13px] text-[#1D6FA3] uppercase tracking-widest font-bold">
                   {activePoint.metrics}
                 </div>
 
-                <h3 className="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight leading-snug">
+                <h3 className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-tight leading-tight">
                   {activePoint.headline}
                 </h3>
 
@@ -142,8 +143,8 @@ export default function WhyRefurbishedEditorial() {
                 </p>
 
                 {/* Contractor Rationale with Hairline Rule */}
-                <div className="pt-6 border-t border-slate-200 flex items-start gap-3 text-sm text-slate-800">
-                  <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
+                <div className="pt-6 border-t border-slate-200 flex items-start gap-3 text-sm sm:text-base text-slate-800">
+                  <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
                   <span>Eliminates prolonged equipment downtime with ready-to-dispatch tested units from Mumbai inventory.</span>
                 </div>
               </div>
@@ -153,10 +154,10 @@ export default function WhyRefurbishedEditorial() {
                 <button
                   type="button"
                   onClick={() => setIsQuoteOpen(true)}
-                  className="px-6 py-3 rounded-lg bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+                  className="px-7 py-3.5 rounded-lg bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider flex items-center gap-2 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer shadow-sm active:scale-[0.98]"
                 >
-                  <Camera size={15} />
-                  <span>Send Model For Verification</span>
+                  <Camera size={16} />
+                  <span>SEND MODEL FOR VERIFICATION</span>
                 </button>
               </div>
 

@@ -90,7 +90,7 @@ export default function RefurbishmentProcessSticky() {
   };
 
   return (
-    <section id="process" className="py-28 bg-[#0A192F] text-white border-b border-white/10 relative overflow-hidden">
+    <section id="process" className="py-20 lg:py-24 bg-[#0A192F] text-white border-b border-white/10 relative overflow-hidden">
       {/* Restrained Background Blueprint Grid */}
       <div className="absolute inset-0 pointer-events-none opacity-10 engineering-grid-dark" />
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#0EA6A6]/10 rounded-full blur-[140px] pointer-events-none" />
@@ -98,21 +98,21 @@ export default function RefurbishmentProcessSticky() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header: Minimal & Editorial */}
-        <div className="max-w-3xl mb-16">
-          <div className="font-mono text-xs text-[#0EA6A6] uppercase tracking-widest mb-1.5 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0EA6A6]" />
+        <div className="max-w-3xl mb-12 lg:mb-14">
+          <div className="font-mono text-xs sm:text-[13px] text-[#0EA6A6] uppercase tracking-widest mb-1.5 flex items-center gap-2 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#0EA6A6]" />
             <span>TECHNICAL VALIDATION PROCESS</span>
           </div>
-          <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-white tracking-tight leading-tight">
             FROM USED COMPONENT TO READY-TO-SUPPLY COMPRESSOR
           </h2>
-          <p className="text-slate-300 text-base mt-3 font-sans leading-relaxed max-w-2xl font-normal">
+          <p className="text-slate-300 text-base sm:text-lg mt-2.5 font-sans leading-relaxed max-w-2xl font-normal">
             Every replacement compressor passes through our 6-stage technical validation protocol before dispatch from Mumbai.
           </p>
         </div>
 
-        {/* Lightweight Process Navigation Rail (Replaces Repeated Cards) */}
-        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto pb-4 mb-14 no-scrollbar border-b border-white/10">
+        {/* Mobile Horizontal Stepper Rail (< md) */}
+        <div className="flex md:hidden items-center gap-3 overflow-x-auto pb-3 mb-8 no-scrollbar border-b border-white/10">
           {PROCESS_STEPS.map((step, idx) => {
             const isActive = idx === activeStep;
             return (
@@ -120,16 +120,16 @@ export default function RefurbishmentProcessSticky() {
                 key={step.num}
                 type="button"
                 onClick={() => setActiveStep(idx)}
-                className={`group flex items-center gap-2 pb-3 -mb-[17px] border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                className={`group flex items-center gap-1.5 pb-2 -mb-[13px] border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? 'border-[#0EA6A6] text-white font-bold'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                    : 'border-transparent text-slate-500 hover:text-slate-300'
                 }`}
               >
-                <span className={`font-mono text-[11px] ${isActive ? 'text-[#0EA6A6]' : 'text-slate-500'}`}>
+                <span className={`font-mono text-xs ${isActive ? 'text-[#0EA6A6]' : 'text-slate-500'}`}>
                   {step.num}
                 </span>
-                <span className="font-mono text-xs tracking-wider uppercase">
+                <span className="font-mono text-xs uppercase tracking-wider">
                   {step.shortTitle}
                 </span>
               </button>
@@ -138,20 +138,20 @@ export default function RefurbishmentProcessSticky() {
         </div>
 
         {/* Signature Editorial Composition: Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
           {/* Left Column: Sticky Real Compressor (Cardless, Atmospheric Equipment Visual) */}
-          <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]">
+          <div className="lg:col-span-5 relative flex flex-col items-center justify-center min-h-[400px] sm:min-h-[480px] lg:min-h-[580px]">
             {/* Contact Depth Shadow */}
-            <div className="absolute bottom-6 w-3/4 max-w-[320px] h-8 bg-black/70 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute bottom-6 w-3/4 max-w-[340px] h-9 bg-black/80 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Real Compressor Photo */}
+            {/* Real Compressor Photo — Larger Presentation */}
             <img
               src="/ac_compressor.png"
               alt="Zcool Refurbished AC Compressor Validation"
-              className="relative z-10 max-h-[360px] sm:max-h-[440px] lg:max-h-[500px] w-auto object-contain filter drop-shadow-[0_25px_40px_rgba(0,0,0,0.8)] select-none transition-all duration-300"
-              width={460}
-              height={500}
+              className="relative z-10 max-h-[380px] sm:max-h-[460px] lg:max-h-[540px] xl:max-h-[580px] w-auto object-contain filter drop-shadow-[0_28px_45px_rgba(0,0,0,0.85)] select-none transition-all duration-300"
+              width={480}
+              height={580}
             />
 
             {/* Dynamic Focal Coordinate Annotation */}
@@ -160,76 +160,122 @@ export default function RefurbishmentProcessSticky() {
                 <span className="absolute -inset-1 rounded-full bg-[#0EA6A6]/40 animate-ping" />
                 <span className="relative block w-3.5 h-3.5 rounded-full bg-[#0EA6A6] border-2 border-white shadow-lg" />
               </div>
-              <div className="hidden sm:block bg-[#0A192F]/90 border border-white/20 px-2 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest text-[#0EA6A6] whitespace-nowrap shadow-md">
+              <div className="hidden sm:block bg-[#0A192F]/95 border border-white/20 px-2.5 py-1 rounded text-[10px] font-mono uppercase tracking-widest text-[#0EA6A6] whitespace-nowrap shadow-md">
                 {current.focusArea}
               </div>
             </div>
 
             {/* Baseline Engineering Line */}
-            <div className="w-full px-4 flex items-center justify-between font-mono text-[10px] text-slate-400 border-t border-white/10 pt-3 mt-4">
+            <div className="w-full px-4 flex items-center justify-between font-mono text-xs sm:text-[13px] text-slate-400 border-t border-white/10 pt-3 mt-4">
               <span>ACTIVE STAGE: <strong className="text-white">{current.num} / 06</strong></span>
-              <span className="text-[#0EA6A6]">STAGE INSPECTION ACTIVE</span>
+              <span className="text-[#0EA6A6] font-semibold">STAGE VALIDATION ACTIVE</span>
             </div>
           </div>
 
-          {/* Right Column: One Dominant Active Step in Large Editorial Typography */}
-          <div className="lg:col-span-6 space-y-6">
+          {/* Right Column: Clear Vertical Progress Line + Dominant Active Stage Content */}
+          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             
-            {/* Gigantic Step Numeral & Eyebrow */}
-            <div className="space-y-1">
-              <div className="font-mono text-5xl sm:text-7xl font-extrabold text-white/15 leading-none">
-                {current.num}
-              </div>
-              <div className="font-mono text-xs uppercase tracking-widest text-[#0EA6A6] font-bold flex items-center gap-2">
-                <StepIcon size={14} />
-                <span>STAGE {current.num} OF 06</span>
-              </div>
+            {/* Clear Vertical Progress Line (Desktop & Tablet md+) */}
+            <div className="hidden md:flex md:col-span-5 flex-col relative pl-1">
+              {/* Continuous vertical progress track */}
+              <div className="absolute left-[17px] top-5 bottom-6 w-[2px] bg-white/10 pointer-events-none" />
+
+              {PROCESS_STEPS.map((step, idx) => {
+                const isActive = idx === activeStep;
+                return (
+                  <button
+                    key={step.num}
+                    type="button"
+                    onClick={() => setActiveStep(idx)}
+                    className="relative flex items-center gap-3.5 py-3 text-left cursor-pointer group transition-all"
+                  >
+                    {/* Node on vertical line */}
+                    <div
+                      className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all duration-200 ${
+                        isActive
+                          ? 'bg-[#0EA6A6] text-[#0A192F] ring-4 ring-[#0EA6A6]/25 shadow-md scale-110'
+                          : 'bg-[#0d223f] text-slate-400 border border-white/20 group-hover:border-white/50 group-hover:text-white'
+                      }`}
+                    >
+                      {step.num}
+                    </div>
+
+                    <div className="flex flex-col">
+                      <span
+                        className={`font-mono text-xs sm:text-[13px] uppercase tracking-wider transition-colors ${
+                          isActive
+                            ? 'text-white font-extrabold'
+                            : 'text-slate-500 group-hover:text-slate-300 font-normal'
+                        }`}
+                      >
+                        {step.shortTitle}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Stage Title */}
-            <h3 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
-              {current.title}
-            </h3>
-
-            {/* Stage Detailed Description */}
-            <p className="text-slate-300 text-base sm:text-lg font-sans leading-relaxed font-normal">
-              {current.desc}
-            </p>
-
-            {/* Technical Verification Attribute */}
-            <div className="border-t border-white/10 pt-5 space-y-2 font-mono text-xs">
-              <div className="text-slate-400 text-[10px] uppercase tracking-wider">
-                VALIDATION PROTOCOL FOCUS
-              </div>
-              <div className="text-white font-semibold text-sm">
-                {current.annotation}
-              </div>
-            </div>
-
-            {/* Stepper Navigation Controls */}
-            <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  className="w-10 h-10 rounded-lg border border-white/20 hover:border-white flex items-center justify-center text-white transition-colors cursor-pointer"
-                  aria-label="Previous step"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="w-10 h-10 rounded-lg border border-white/20 hover:border-white flex items-center justify-center text-white transition-colors cursor-pointer"
-                  aria-label="Next step"
-                >
-                  <ChevronRight size={18} />
-                </button>
+            {/* Dominant Active Step in Large Editorial Typography */}
+            <div className="md:col-span-7 space-y-6">
+              
+              {/* Gigantic Step Numeral & Eyebrow */}
+              <div className="space-y-1">
+                <div className="font-mono text-5xl sm:text-7xl font-extrabold text-white/20 leading-none">
+                  {current.num}
+                </div>
+                <div className="font-mono text-xs sm:text-[13px] uppercase tracking-widest text-[#0EA6A6] font-bold flex items-center gap-2">
+                  <StepIcon size={16} />
+                  <span>STAGE {current.num} OF 06</span>
+                </div>
               </div>
 
-              <span className="font-mono text-xs text-slate-400">
-                Step {current.num} of 06
-              </span>
+              {/* Stage Title — Large and Confident */}
+              <h3 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
+                {current.title}
+              </h3>
+
+              {/* Stage Detailed Description */}
+              <p className="text-slate-300 text-base sm:text-lg font-sans leading-relaxed font-normal">
+                {current.desc}
+              </p>
+
+              {/* Technical Verification Attribute */}
+              <div className="border-t border-white/10 pt-5 space-y-2 font-mono text-xs sm:text-[13px]">
+                <div className="text-slate-400 text-xs uppercase tracking-wider">
+                  VALIDATION PROTOCOL FOCUS
+                </div>
+                <div className="text-white font-semibold text-sm sm:text-base">
+                  {current.annotation}
+                </div>
+              </div>
+
+              {/* Stepper Navigation Controls */}
+              <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="w-10 h-10 rounded-lg border border-white/20 hover:border-white flex items-center justify-center text-white transition-colors cursor-pointer active:scale-[0.98]"
+                    aria-label="Previous step"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="w-10 h-10 rounded-lg border border-white/20 hover:border-white flex items-center justify-center text-white transition-colors cursor-pointer active:scale-[0.98]"
+                    aria-label="Next step"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+
+                <span className="font-mono text-xs sm:text-[13px] text-slate-400">
+                  Step {current.num} of 06
+                </span>
+              </div>
+
             </div>
 
           </div>

@@ -102,35 +102,35 @@ export default function ProductDiscoveryRange() {
   const activeCount = counts[activeCategory.id] || 0;
 
   return (
-    <section id="discovery" className="py-24 bg-white border-b border-slate-200 relative overflow-hidden">
+    <section id="discovery" className="py-20 lg:py-24 bg-white border-b border-slate-200 relative overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header: Editorial & Clean */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <div className="font-mono text-xs text-[#1D6FA3] uppercase tracking-widest mb-1.5 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1D6FA3]" />
+            <div className="font-mono text-xs sm:text-[13px] text-[#1D6FA3] uppercase tracking-widest mb-1.5 flex items-center gap-2 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-[#1D6FA3]" />
               <span>TECHNOLOGY CLASSIFICATION</span>
             </div>
-            <h2 className="font-display text-3xl sm:text-5xl font-extrabold text-[#0A192F] tracking-tight">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-[#0A192F] tracking-tight leading-tight">
               EXPLORE THE COMPRESSOR RANGE
             </h2>
-            <p className="text-slate-600 text-base mt-2 font-sans max-w-2xl font-normal leading-relaxed">
+            <p className="text-slate-600 text-base sm:text-lg mt-2.5 font-sans max-w-2xl font-normal leading-relaxed">
               Explore compressor architectures, mechanical working mechanisms, and verified in-stock models available at our Mumbai central depot.
             </p>
           </div>
 
           <Link
             href="/products"
-            className="group inline-flex items-center gap-2 text-xs font-mono font-bold text-[#1D6FA3] hover:text-[#165680] uppercase tracking-wider whitespace-nowrap self-start md:self-end"
+            className="group inline-flex items-center gap-2 text-xs sm:text-[13px] font-mono font-bold text-[#1D6FA3] hover:text-[#165680] uppercase tracking-wider whitespace-nowrap self-start md:self-end transition-colors"
           >
             <span>View All Stock Models ({PRODUCTS_CATALOG.length})</span>
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
         {/* Minimal Architectural Category Selector Line */}
-        <div className="flex items-center gap-8 overflow-x-auto pb-4 mb-14 no-scrollbar border-b border-slate-200">
+        <div className="flex items-center gap-6 sm:gap-10 overflow-x-auto pb-3.5 mb-12 no-scrollbar border-b border-slate-200">
           {CATEGORY_DETAILS.map((cat, idx) => {
             const isActive = activeTab === cat.id;
             return (
@@ -138,20 +138,20 @@ export default function ProductDiscoveryRange() {
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveTab(cat.id)}
-                className={`group flex items-baseline gap-3 pb-3 -mb-[17px] transition-all cursor-pointer whitespace-nowrap border-b-2 ${
+                className={`group flex items-baseline gap-2.5 pb-3 -mb-[15px] transition-all cursor-pointer whitespace-nowrap border-b-2 ${
                   isActive
-                    ? 'border-[#0A192F] text-[#0A192F]'
-                    : 'border-transparent text-slate-400 hover:text-slate-700'
+                    ? 'border-[#1D6FA3] text-[#0A192F]'
+                    : 'border-transparent text-slate-400 hover:text-slate-800'
                 }`}
               >
-                <span className={`font-mono text-[11px] ${isActive ? 'text-[#1D6FA3] font-bold' : 'text-slate-400'}`}>
+                <span className={`font-mono text-xs sm:text-[13px] ${isActive ? 'text-[#1D6FA3] font-bold' : 'text-slate-400'}`}>
                   0{idx + 1}
                 </span>
-                <span className={`font-display text-sm sm:text-base tracking-tight font-bold ${isActive ? 'text-[#0A192F]' : ''}`}>
+                <span className={`font-display text-sm sm:text-base tracking-tight ${isActive ? 'font-extrabold text-[#0A192F]' : 'font-semibold'}`}>
                   {cat.shortName}
                 </span>
                 {counts[cat.id] > 0 && (
-                  <span className="font-mono text-[10px] text-slate-400">
+                  <span className={`font-mono text-xs ${isActive ? 'text-[#1D6FA3] font-semibold' : 'text-slate-400'}`}>
                     ({counts[cat.id]})
                   </span>
                 )}
@@ -161,77 +161,85 @@ export default function ProductDiscoveryRange() {
         </div>
 
         {/* Immersive Catalogue Layout (Cardless, Generous Whitespace) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           
           {/* Left Column: High-Scale Product Visual with Contact Shadow */}
-          <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]">
+          <div className="lg:col-span-6 relative flex flex-col items-center justify-center min-h-[400px] sm:min-h-[480px] lg:min-h-[540px]">
             {/* Soft Ambient Depth */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-slate-100/80 to-transparent rounded-3xl -z-10" />
-            <div className="absolute bottom-6 w-3/4 max-w-[340px] h-8 bg-slate-400/25 rounded-full blur-xl pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-slate-100/90 to-transparent rounded-3xl -z-10" />
+            <div className="absolute bottom-6 w-3/4 max-w-[360px] h-9 bg-slate-400/25 rounded-full blur-xl pointer-events-none" />
 
             {/* Immense Compressor Photo */}
             <img
               key={activeCategory.id}
               src={activeCategory.image}
               alt={activeCategory.name}
-              className="relative z-10 max-h-[360px] sm:max-h-[440px] lg:max-h-[480px] w-auto object-contain filter drop-shadow-[0_20px_35px_rgba(15,23,42,0.16)] transition-all duration-300 animate-fadeIn"
-              width={440}
-              height={480}
+              className="relative z-10 max-h-[380px] sm:max-h-[460px] lg:max-h-[520px] xl:max-h-[540px] w-auto object-contain filter drop-shadow-[0_22px_38px_rgba(15,23,42,0.18)] transition-all duration-300 animate-fadeIn select-none"
+              width={460}
+              height={520}
             />
 
             {/* Subtle Annotation Baseline */}
-            <div className="w-full px-6 flex items-center justify-between font-mono text-[11px] text-slate-400 border-t border-slate-200/80 pt-3 mt-4">
+            <div className="w-full px-4 sm:px-6 flex items-center justify-between font-mono text-xs sm:text-[13px] text-slate-400 border-t border-slate-200/80 pt-3.5 mt-4">
               <span>MODEL REF: <strong className="text-slate-800">{activeCategory.representativeModel}</strong></span>
               <span className="text-[#0EA6A6] font-semibold">VERIFIED ARCHITECTURE</span>
             </div>
           </div>
 
           {/* Right Column: Editorial Specifications with Thin Hairline Dividers */}
-          <div className="lg:col-span-6 space-y-8">
+          <div className="lg:col-span-6 space-y-6">
             
-            <div className="space-y-3">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#1D6FA3] font-bold">
+            <div className="space-y-2">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#1D6FA3] font-bold">
                 {activeCategory.code}
               </span>
-              <h3 className="font-display font-extrabold text-3xl sm:text-4xl text-[#0A192F] tracking-tight">
+              <h3 className="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl text-[#0A192F] tracking-tight leading-tight">
                 {activeCategory.name}
               </h3>
-              <p className="text-slate-600 text-base font-sans leading-relaxed pt-1">
+              <p className="text-slate-600 text-base sm:text-lg font-sans leading-relaxed pt-1 font-normal">
                 {activeCategory.description}
               </p>
             </div>
 
             {/* Technical Specifications (Thin Hairline Rules, No Heavy Cards) */}
-            <div className="space-y-3 border-t border-slate-200 pt-5 font-mono text-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-1">
-                <span className="text-slate-400 text-[10px] uppercase tracking-wider">MECHANISM / TYPE:</span>
-                <span className="font-semibold text-slate-900 text-right">{activeCategory.type}</span>
+            <div className="border-t border-slate-200/90 font-mono text-sm sm:text-[15px] pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between py-2.5 border-b border-slate-200/80 gap-1">
+                <span className="text-slate-400 text-xs sm:text-[13px] uppercase tracking-wider font-semibold w-36 shrink-0">MODEL REF</span>
+                <span className="font-bold text-slate-900 text-left sm:text-right">{activeCategory.representativeModel}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-1">
-                <span className="text-slate-400 text-[10px] uppercase tracking-wider">PRIMARY APPLICATION:</span>
-                <span className="font-semibold text-slate-900 text-right">{activeCategory.application}</span>
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between py-2.5 border-b border-slate-200/80 gap-1">
+                <span className="text-slate-400 text-xs sm:text-[13px] uppercase tracking-wider font-semibold w-36 shrink-0">TYPE</span>
+                <span className="font-semibold text-slate-900 text-left sm:text-right">{activeCategory.type}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-1">
-                <span className="text-slate-400 text-[10px] uppercase tracking-wider">REFRIGERANTS:</span>
-                <span className="font-semibold text-slate-900 text-right">{activeCategory.refrigerant}</span>
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between py-2.5 border-b border-slate-200/80 gap-1">
+                <span className="text-slate-400 text-xs sm:text-[13px] uppercase tracking-wider font-semibold w-36 shrink-0">APPLICATION</span>
+                <span className="font-semibold text-slate-900 text-left sm:text-right">{activeCategory.application}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-1">
-                <span className="text-slate-400 text-[10px] uppercase tracking-wider">AVAILABLE IN CATALOG:</span>
-                <span className="font-bold text-[#1D6FA3] text-right">
-                  {activeCount > 0 ? `${activeCount} Verified Models` : 'Available On Request'}
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between py-2.5 border-b border-slate-200/80 gap-1">
+                <span className="text-slate-400 text-xs sm:text-[13px] uppercase tracking-wider font-semibold w-36 shrink-0">CONDITION</span>
+                <span className="font-bold text-emerald-700 text-left sm:text-right">REFURBISHED & TESTED</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between py-2.5 border-b border-slate-200/80 gap-1">
+                <span className="text-slate-400 text-xs sm:text-[13px] uppercase tracking-wider font-semibold w-36 shrink-0">REFRIGERANT</span>
+                <span className="font-semibold text-slate-900 text-left sm:text-right">{activeCategory.refrigerant}</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between py-2.5 border-b border-slate-200/80 gap-1">
+                <span className="text-slate-400 text-xs sm:text-[13px] uppercase tracking-wider font-semibold w-36 shrink-0">CATALOG STOCK</span>
+                <span className="font-bold text-[#1D6FA3] text-left sm:text-right">
+                  {activeCount > 0 ? `${activeCount} Verified Models Available` : 'Available On Verified Request'}
                 </span>
               </div>
             </div>
 
-            {/* Engineering Highlights */}
+            {/* Engineering Merits */}
             <div className="space-y-2 pt-1">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-slate-400 font-semibold block">
+              <span className="font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold block">
                 ENGINEERING MERITS
               </span>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {activeCategory.highlightPoints.map((point, pIdx) => (
-                  <div key={pIdx} className="flex items-start gap-2.5 text-xs text-slate-700 font-sans">
-                    <span className="text-[#0EA6A6] mt-0.5">―</span>
+                  <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 font-sans">
+                    <span className="text-[#0EA6A6] font-bold mt-0.5">―</span>
                     <span>{point}</span>
                   </div>
                 ))}
@@ -242,10 +250,10 @@ export default function ProductDiscoveryRange() {
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
                 href={`/products?type=${encodeURIComponent(activeCategory.slug)}`}
-                className="px-6 py-3.5 rounded-lg bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-sm"
+                className="px-7 py-3.5 rounded-lg bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider flex items-center gap-2 transition-all duration-200 hover:-translate-y-0.5 shadow-sm active:scale-[0.98]"
               >
                 <span>Browse {activeCategory.shortName} Inventory</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={15} />
               </Link>
             </div>
 

@@ -8,6 +8,9 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 export function resolveImageUrl(src) {
   if (!src) return '/ac_compressor.png';
   if (typeof src !== 'string') return '/ac_compressor.png';
+  if (src.includes('images-1789419905409') || src.includes('images-1789419921622') || src.includes('images-1789419911636')) {
+    return '/ac_compressor.png';
+  }
   if (src.startsWith('http://') || src.startsWith('https://')) return src;
   if (src.startsWith('/uploads/')) {
     return `${API_BASE}${src}`;

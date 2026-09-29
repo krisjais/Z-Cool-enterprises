@@ -80,28 +80,28 @@ export default function Header() {
           {/* Brand Logo & Tagline */}
           <Link
             href="/"
-            className="flex items-center gap-2.5 flex-shrink-0 group focus:outline-none focus:ring-2 focus:ring-[#1D6FA3] rounded-lg p-0.5"
+            className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0 group focus:outline-none focus:ring-2 focus:ring-[#1D6FA3] rounded-lg p-0.5"
             aria-label="Zcool Enterprises Homepage"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#1D6FA3] text-white flex items-center justify-center font-mono font-bold text-sm shadow-xs group-hover:bg-[#165680] transition-colors">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#1D6FA3] text-white flex items-center justify-center font-mono font-bold text-sm sm:text-base shadow-sm group-hover:bg-[#165680] transition-colors border border-white/20">
               Z
             </div>
             <div className="flex flex-col">
               <span
-                className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-display leading-tight transition-colors ${
+                className={`font-extrabold text-xs sm:text-sm lg:text-[15px] tracking-wider uppercase font-display leading-tight transition-colors ${
                   scrolled ? 'text-[#0A192F]' : 'text-white'
                 }`}
               >
                 ZCOOL ENTERPRISES
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[#0EA6A6] font-semibold">
-                COMPRESSOR SPECIALISTS
+              <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#0EA6A6] font-semibold">
+                INDUSTRIAL HVAC COMPRESSORS
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links (Visible on lg+) */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label="Main Navigation">
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5" aria-label="Main Navigation">
             {navLinks.map((link) => {
               const isActive =
                 link.path === '/'
@@ -112,15 +112,22 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.path}
-                  className={`text-[11px] font-mono uppercase tracking-wider transition-colors px-2.5 py-1.5 rounded-md focus:outline-none focus:ring-1 focus:ring-[#1D6FA3] ${
+                  className={`relative text-[13px] font-sans font-medium transition-colors px-2.5 py-1.5 focus:outline-none group ${
                     isActive
-                      ? 'text-[#1D6FA3] font-bold bg-slate-100/80 border-b-2 border-[#1D6FA3]'
+                      ? scrolled ? 'text-[#1D6FA3] font-semibold' : 'text-white font-semibold'
                       : scrolled
-                      ? 'text-slate-600 hover:text-[#0A192F] hover:bg-slate-50'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      ? 'text-slate-600 hover:text-[#0A192F]'
+                      : 'text-slate-300 hover:text-white'
                   }`}
                 >
-                  {link.name}
+                  <span>{link.name}</span>
+                  <span
+                    className={`absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full transition-all duration-200 ${
+                      isActive
+                        ? scrolled ? 'bg-[#1D6FA3]' : 'bg-[#0EA6A6]'
+                        : 'bg-transparent group-hover:bg-slate-400/40'
+                    }`}
+                  />
                 </Link>
               );
             })}
@@ -132,7 +139,11 @@ export default function Header() {
               href="https://wa.me/919920691707"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-emerald-700 hover:bg-emerald-800 text-white transition-all duration-150 shadow-xs active:scale-[0.98]"
+              className={`flex items-center gap-1.5 min-h-[38px] px-3.5 py-2 rounded-lg text-xs font-mono font-semibold uppercase tracking-wider transition-all duration-200 active:scale-[0.98] ${
+                scrolled
+                  ? 'text-emerald-700 hover:bg-emerald-50 border border-emerald-600/30'
+                  : 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 border border-emerald-500/30'
+              }`}
             >
               <MessageSquare size={14} />
               <span>WhatsApp</span>
@@ -140,14 +151,10 @@ export default function Header() {
 
             <button
               onClick={() => setIsQuoteModalOpen(true)}
-              className={`flex items-center gap-1.5 min-h-[36px] px-4 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                scrolled
-                  ? 'bg-[#1D6FA3] hover:bg-[#165680] text-white shadow-xs'
-                  : 'bg-white hover:bg-slate-100 text-[#0A192F] shadow-xs'
-              }`}
+              className="flex items-center gap-1.5 min-h-[38px] px-4.5 py-2 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-[#1D6FA3] hover:bg-[#165680] text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer active:scale-[0.98]"
             >
               <Camera size={14} />
-              <span>Get Quote</span>
+              <span>GET A QUOTE</span>
             </button>
           </div>
 

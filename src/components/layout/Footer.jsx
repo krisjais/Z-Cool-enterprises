@@ -17,21 +17,21 @@ export default function Footer() {
                 Z
               </div>
               <div>
-                <span className="font-bold text-white text-sm tracking-wider uppercase font-display block">
+                <span className="font-bold text-white text-sm sm:text-base tracking-wider uppercase font-display block">
                   ZCOOL ENTERPRISES
                 </span>
-                <span className="font-mono text-[9px] text-[#0EA6A6] uppercase tracking-widest block">
-                  COMPRESSOR SPECIALISTS
+                <span className="font-mono text-[10px] text-[#0EA6A6] uppercase tracking-widest block font-semibold">
+                  INDUSTRIAL HVAC COMPRESSORS
                 </span>
               </div>
             </div>
 
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm font-sans">
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm font-sans">
               Specialized B2B supplier of refurbished and replacement scroll, rotary, and reciprocating AC compressors for commercial HVAC, chillers, and industrial cooling across India.
             </p>
 
-            <div className="flex items-center gap-2 font-mono text-[10px] text-emerald-400 bg-white/5 border border-white/10 px-2.5 py-1 rounded w-fit">
-              <ShieldCheck size={13} />
+            <div className="flex items-center gap-2 font-mono text-xs text-emerald-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded w-fit">
+              <ShieldCheck size={14} />
               <span>TESTED & CHECKED INVENTORY</span>
             </div>
           </div>
