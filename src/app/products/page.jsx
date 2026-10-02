@@ -1,5 +1,5 @@
 import React from 'react';
-import { getProducts } from '@/lib/api';
+import { getProducts, getCategories } from '@/lib/api';
 import ProductCatalogView from '@/components/catalog/ProductCatalogView';
 import Container from '@/components/ui/Container';
 
@@ -10,8 +10,15 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-export default async function ProductsPage() {
-  const products = await getProducts();
+export default async function ProductsPage({ searchParams }) {
+  const resolvedParams = await searchParams;
+  const initialCategory = resolvedParams?.category || 'All';
+
+  const [products, catData] = await Promise.all([
+    getProducts(),
+    getCategories(),
+  ]);
+
   const inventoryCount = Array.isArray(products) ? products.length : 0;
 
   return (
@@ -56,7 +63,11 @@ export default async function ProductsPage() {
         </section>
 
         {/* ── PRODUCT CATALOG VIEW (Search, Filters, Toolbar, Grid, Mobile Drawer, Quick View) ── */}
-        <ProductCatalogView products={products} />
+        <ProductCatalogView
+          products={products}
+          initialCategory={initialCategory}
+          availableCategories={catData?.categories || []}
+        />
 
       </Container>
     </div>

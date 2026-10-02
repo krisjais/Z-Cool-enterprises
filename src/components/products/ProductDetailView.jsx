@@ -105,13 +105,14 @@ export default function ProductDetailView({
 
     // Group 1: IDENTIFICATION & ARCHITECTURE
     const idRows = [
-      { label: 'EQUIPMENT CODE', value: product.code },
+      { label: 'EQUIPMENT CODE / MODEL', value: product.modelNumber || product.code },
       { label: 'MANUFACTURER BRAND', value: product.brand },
       { label: 'MODEL NAME', value: product.name },
       { label: 'COMPRESSOR DESIGN', value: product.type || product.category },
       { label: 'INVENTORY CATEGORY', value: product.category },
       { label: 'CONDITION STANDARD', value: product.condition },
       { label: 'STOCK AVAILABILITY', value: product.availability },
+      { label: 'PRICE ESTIMATE', value: product.price > 0 ? `₹${Number(product.price).toLocaleString('en-IN')}` : null },
     ].filter((r) => Boolean(r.value && typeof r.value === 'string' && r.value.trim() !== ''));
 
     if (idRows.length > 0) {
@@ -216,6 +217,24 @@ export default function ProductDetailView({
         title: 'APPLICATION & INTEGRATION',
         rows: appRows,
       });
+    }
+
+    // Group 6: CUSTOM SPECIFICATIONS
+    if (Array.isArray(product.specifications) && product.specifications.length > 0) {
+      const specRows = product.specifications
+        .filter((s) => s && s.key && s.value)
+        .map((s) => ({
+          label: String(s.key).toUpperCase(),
+          value: String(s.value),
+        }));
+
+      if (specRows.length > 0) {
+        groups.push({
+          number: String(groups.length + 1).padStart(2, '0'),
+          title: 'CUSTOM TECHNICAL SPECIFICATIONS',
+          rows: specRows,
+        });
+      }
     }
 
     return groups;
@@ -415,9 +434,21 @@ export default function ProductDetailView({
               </h1>
 
               {/* Prominent Model Code */}
-              {product.code && (
+              {(product.modelNumber || product.code) && (
                 <div className="font-mono text-sm sm:text-base font-bold text-slate-800 tracking-wide uppercase pt-0.5">
-                  MODEL: <span className="text-[#1D6FA3]">{product.code}</span>
+                  MODEL: <span className="text-[#1D6FA3]">{product.modelNumber || product.code}</span>
+                </div>
+              )}
+
+              {/* Price Display */}
+              {product.price > 0 && (
+                <div className="pt-1 flex items-baseline gap-2 font-mono">
+                  <span className="text-xl sm:text-2xl font-extrabold text-[#0A192F]">
+                    ₹{Number(product.price).toLocaleString('en-IN')}
+                  </span>
+                  <span className="text-xs text-slate-500 font-sans">
+                    (Ex-Works / Verified Industrial Unit)
+                  </span>
                 </div>
               )}
 

@@ -1,21 +1,33 @@
-import { PRODUCTS_CATALOG } from '@/data/products';
+import { PRODUCTS_CATALOG, CATEGORIES_LIST } from '@/data/products';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 /**
- * Resolves relative /uploads paths to full backend URL if needed
+ * Resolves relative /uploads paths to full backend URL, supports Cloudinary URLs and object format
  */
 export function resolveImageUrl(src) {
   if (!src) return '/ac_compressor.png';
-  if (typeof src !== 'string') return '/ac_compressor.png';
-  if (src.includes('images-1789419905409') || src.includes('images-1789419921622') || src.includes('images-1789419911636')) {
-    return '/ac_compressor.png';
+
+  // Handle { url, publicId } object format
+  if (typeof src === 'object' && src !== null && src.url) {
+    src = src.url;
   }
-  if (src.startsWith('http://') || src.startsWith('https://')) return src;
-  if (src.startsWith('/uploads/')) {
-    return `${API_BASE}${src}`;
+
+  if (typeof src !== 'string' || !src.trim()) return '/ac_compressor.png';
+
+  const cleanSrc = src.trim();
+
+  // Cloudinary or absolute web URLs
+  if (cleanSrc.startsWith('http://') || cleanSrc.startsWith('https://')) {
+    return cleanSrc;
   }
-  return src;
+
+  // Local backend uploaded file paths
+  if (cleanSrc.startsWith('/uploads/')) {
+    return `${API_BASE}${cleanSrc}`;
+  }
+
+  return cleanSrc;
 }
 
 /**
@@ -27,7 +39,9 @@ export async function getProducts(query = {}) {
     if (query.category && query.category !== 'all') params.append('category', query.category);
     if (query.brand && query.brand !== 'all') params.append('brand', query.brand);
     if (query.availability && query.availability !== 'all') params.append('availability', query.availability);
+    if (query.status && query.status !== 'all') params.append('status', query.status);
     if (query.search) params.append('search', query.search);
+    if (query.limit) params.append('limit', query.limit);
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
     const res = await fetch(`${API_BASE}/api/products${queryString}`, {
@@ -43,6 +57,40 @@ export async function getProducts(query = {}) {
     console.warn('API getProducts fallback to static catalog:', err.message);
   }
   return PRODUCTS_CATALOG;
+}
+
+/**
+ * Public categories fetcher with product counts
+ */
+export async function getCategories() {
+  try {
+    const res = await fetch(`${API_BASE}/api/categories`, {
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        return {
+          categories: json.data,
+          totalProducts: json.totalProducts || 0,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('API getCategories fallback:', err.message);
+  }
+
+  // Fallback to static categories list if backend unavailable
+  return {
+    categories: CATEGORIES_LIST.map((c) => ({
+      _id: c.id,
+      name: c.name,
+      slug: c.id,
+      description: c.desc,
+      productCount: 0,
+    })),
+    totalProducts: PRODUCTS_CATALOG.length,
+  };
 }
 
 /**
@@ -77,6 +125,42 @@ export async function getProductById(id) {
   ).slice(0, 4);
 
   return { product: staticProduct, related: staticRelated };
+}
+
+/**
+ * Public category products fetcher
+ */
+export async function getProductsByCategory(slug) {
+  try {
+    const res = await fetch(`${API_BASE}/api/products/category/${encodeURIComponent(slug)}`, {
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        return {
+          category: json.category,
+          products: json.data,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('API getProductsByCategory fallback:', err.message);
+  }
+
+  const matched = PRODUCTS_CATALOG.filter((p) => {
+    const cleanSlug = slug.replace(/-/g, ' ').toLowerCase();
+    return (
+      p.category?.toLowerCase() === cleanSlug ||
+      p.category?.toLowerCase().includes(cleanSlug) ||
+      p.type?.toLowerCase().includes(cleanSlug)
+    );
+  });
+
+  return {
+    category: { name: slug.replace(/-/g, ' '), slug },
+    products: matched,
+  };
 }
 
 /**
@@ -128,6 +212,15 @@ export async function adminUploadImages(files, token) {
     method: 'POST',
     headers: authHeaders(token, false), // Browser automatically sets multipart boundary
     body: formData,
+  });
+  return res.json();
+}
+
+export async function adminDeleteCloudinaryImage(publicId, token) {
+  const res = await fetch(`${API_BASE}/api/upload/delete`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ publicId }),
   });
   return res.json();
 }
@@ -201,3 +294,47 @@ export async function adminDeleteShipment(id, token) {
   });
   return res.json();
 }
+
+/**
+ * Category Management API methods
+ */
+export async function getCategoryBySlug(slugOrId) {
+  try {
+    const res = await fetch(`${API_BASE}/api/categories/${encodeURIComponent(slugOrId)}`, {
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('API getCategoryBySlug fallback:', err.message);
+  }
+  return { success: false, message: 'Failed to fetch category' };
+}
+
+export async function adminCreateCategory(data, token) {
+  const res = await fetch(`${API_BASE}/api/categories`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+export async function adminUpdateCategory(id, data, token) {
+  const res = await fetch(`${API_BASE}/api/categories/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+export async function adminDeleteCategory(id, token, force = false) {
+  const res = await fetch(`${API_BASE}/api/categories/${encodeURIComponent(id)}${force ? '?force=true' : ''}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+  return res.json();
+}
+

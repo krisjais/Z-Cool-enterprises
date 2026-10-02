@@ -20,6 +20,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import {
   getProducts,
+  getCategories,
   adminCreateProduct,
   adminUpdateProduct,
   adminDeleteProduct,
@@ -34,12 +35,34 @@ import {
   adminDeleteShipment,
   resolveImageUrl,
 } from '@/lib/api';
+import ProductManagementSection from '@/components/admin/ProductManagementSection';
 
 const CATEGORIES = [
-  'Scroll Compressors',
-  'Rotary Compressors',
-  'Reciprocating Compressors',
-  'VRF / VRV Compressors',
+  'AC Compressor',
+  'Scroll Compressor',
+  'Refrigeration Compressors',
+  'Copeland Scroll Compressor',
+  'Air Compressor',
+  'Rotary Compressor',
+  'Air Conditioner',
+  'Danfoss Scroll Compressor',
+  'Air Conditioning Compressors',
+  'Copeland Compressor',
+  'Screw Compressor',
+  'AC AMC Service',
+  'VRF System',
+  'Relays',
+  'Air Conditioner Installation Service',
+  'Air Conditioner Motor',
+  'Air Conditioner Maintenance Service',
+  'Rotary And Refrigerator Compressor',
+  'Emerson Scroll Compressor',
+  'Daikin Compressor',
+  'Air Conditioner Compressor',
+  '3D Bed Sheet',
+  'Pump And Valve',
+  'AACSR Conductor',
+  'New Items',
 ];
 
 const AVAILABILITY_STATUSES = [
@@ -59,6 +82,7 @@ export default function AdminDashboardPage() {
 
   // Data states
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [orders, setOrders] = useState([]);
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,13 +169,17 @@ export default function AdminDashboardPage() {
     const token = getToken();
 
     try {
-      const [prodRes, ordRes, shpRes] = await Promise.all([
+      const [prodRes, catRes, ordRes, shpRes] = await Promise.all([
         getProducts(),
+        getCategories(),
         token ? adminGetOrders(token) : { data: [] },
         token ? adminGetShipments(token) : { data: [] },
       ]);
 
       setProducts(Array.isArray(prodRes) ? prodRes : []);
+      if (catRes && Array.isArray(catRes.categories)) {
+        setCategories(catRes.categories);
+      }
       if (ordRes && ordRes.success && Array.isArray(ordRes.data)) {
         setOrders(ordRes.data);
       }
@@ -719,246 +747,13 @@ export default function AdminDashboardPage() {
       {/* TAB 2: PRODUCTS (CATALOG MANAGEMENT)                               */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {activeTab === 'products' && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                Product Catalog
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Manage live compressor inventory, specifications, and multiple images.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={openAddProduct}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#1D6FA3] hover:bg-[#15537d] text-white font-semibold text-xs rounded-md shadow-xs min-h-[40px] transition-colors"
-            >
-              <Plus size={15} />
-              <span>Add New Product</span>
-            </button>
-          </div>
-
-          {/* Search and Filters - Mobile Friendly */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div className="relative">
-              <Search
-                size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-              />
-              <input
-                type="text"
-                placeholder="Search by code, model, brand..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-md text-xs text-slate-800 focus:outline-none focus:border-[#1D6FA3] min-h-[40px]"
-              />
-            </div>
-
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-xs text-slate-800 focus:outline-none focus:border-[#1D6FA3] min-h-[40px]"
-            >
-              <option value="all">All Categories</option>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={filterAvailability}
-              onChange={(e) => setFilterAvailability(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-800 focus:outline-none focus:border-[#1D6FA3] min-h-[40px]"
-            >
-              <option value="all">All Availabilities</option>
-              {AVAILABILITY_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Mobile Stacked Product Cards (<= 768px) */}
-          <div className="block md:hidden space-y-3">
-            {filteredProducts.map((prod) => {
-              const rawImg =
-                Array.isArray(prod.images) && prod.images.length > 0
-                  ? prod.images[0]
-                  : '/ac_compressor.png';
-              const primaryImg = resolveImageUrl(rawImg);
-              return (
-                <div
-                  key={prod._id || prod.id}
-                  className="bg-white border border-slate-200 rounded-lg p-3.5 space-y-3 shadow-xs"
-                >
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={primaryImg}
-                      alt={prod.name}
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/ac_compressor.png';
-                      }}
-                      className="w-16 h-16 object-contain bg-slate-50 rounded border border-slate-200 shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <span className="font-mono text-[10px] font-bold text-[#1D6FA3] block">
-                        {prod.code}
-                      </span>
-                      <h3 className="font-bold text-slate-900 text-xs leading-snug line-clamp-2">
-                        {prod.name}
-                      </h3>
-                      <span className="text-[11px] text-slate-500 block mt-0.5">
-                        {prod.brand} • {prod.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                    <div>
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          prod.availability === 'IN STOCK'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : prod.availability === 'OUT OF STOCK'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        {prod.availability}
-                      </span>
-                      <span className="text-[10px] text-slate-400 ml-2">
-                        {Array.isArray(prod.images) ? prod.images.length : 0} photo(s)
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => openEditProduct(prod)}
-                        className="p-2 text-slate-600 hover:text-[#1D6FA3] bg-slate-50 hover:bg-slate-100 rounded border border-slate-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
-                        title="Edit Product"
-                      >
-                        <Edit2 size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setDeleteConfirm({ type: 'product', id: prod.id || prod._id, name: prod.name })
-                        }
-                        className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded border border-red-200 min-h-[36px] min-w-[36px] flex items-center justify-center"
-                        title="Delete Product"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Desktop Table View (>= 768px) */}
-          <div className="hidden md:block bg-white border border-slate-200 rounded-lg overflow-hidden shadow-xs">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-600 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-200">
-                <tr>
-                  <th className="py-3 px-4">Item</th>
-                  <th className="py-3 px-4">Brand &amp; Category</th>
-                  <th className="py-3 px-4">Availability</th>
-                  <th className="py-3 px-4">Photos</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {filteredProducts.map((prod) => {
-                  const rawImg =
-                    Array.isArray(prod.images) && prod.images.length > 0
-                      ? prod.images[0]
-                      : '/ac_compressor.png';
-                  const primaryImg = resolveImageUrl(rawImg);
-                  return (
-                    <tr key={prod._id || prod.id} className="hover:bg-slate-50/80">
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={primaryImg}
-                            alt={prod.name}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = '/ac_compressor.png';
-                            }}
-                            className="w-10 h-10 object-contain bg-slate-50 rounded border border-slate-200 shrink-0"
-                          />
-                          <div>
-                            <span className="font-mono text-[10px] font-bold text-[#1D6FA3] block">
-                              {prod.code}
-                            </span>
-                            <span className="font-bold text-slate-900 block max-w-sm truncate">
-                              {prod.name}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-slate-600">
-                        <span className="font-medium text-slate-900 block">{prod.brand}</span>
-                        <span className="text-[11px] text-slate-500 block">{prod.category}</span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                            prod.availability === 'IN STOCK'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : prod.availability === 'OUT OF STOCK'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-amber-100 text-amber-800'
-                          }`}
-                        >
-                          {prod.availability}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-slate-600">
-                        <span className="font-medium">
-                          {Array.isArray(prod.images) ? prod.images.length : 0} image(s)
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <div className="inline-flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => openEditProduct(prod)}
-                            className="p-1.5 text-slate-600 hover:text-[#1D6FA3] hover:bg-slate-100 rounded"
-                            title="Edit"
-                          >
-                            <Edit2 size={15} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setDeleteConfirm({
-                                type: 'product',
-                                id: prod.id || prod._id,
-                                name: prod.name,
-                              })
-                            }
-                            className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded"
-                            title="Delete"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ProductManagementSection
+          products={products}
+          categories={categories}
+          token={getToken()}
+          onRefresh={loadData}
+          notify={notify}
+        />
       )}
 
       {/* ══════════════════════════════════════════════════════════════════ */}
@@ -1198,337 +993,6 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* MODAL: ADD / EDIT PRODUCT                                          */}
-      {/* ══════════════════════════════════════════════════════════════════ */}
-      {isProductModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200">
-            {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between">
-              <h3 className="font-bold text-base sm:text-lg text-slate-900">
-                {editingProduct ? 'Edit Product' : 'Add New Product'}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsProductModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <form onSubmit={handleSaveProduct} className="p-4 sm:p-6 overflow-y-auto space-y-5">
-              {/* Group 1: Basic Information */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block border-b border-slate-100 pb-1">
-                  1. Basic Information
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Product Code *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Z-COP-ZR72"
-                      value={productForm.code}
-                      onChange={(e) => setProductForm({ ...productForm, code: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Brand *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Copeland, Daikin, LG"
-                      value={productForm.brand}
-                      onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Product Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Copeland Scroll Compressor ZR72KC-TFD"
-                    value={productForm.name}
-                    onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Category *
-                    </label>
-                    <select
-                      value={productForm.category}
-                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    >
-                      {CATEGORIES.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Availability Status *
-                    </label>
-                    <select
-                      value={productForm.availability}
-                      onChange={(e) =>
-                        setProductForm({ ...productForm, availability: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    >
-                      {AVAILABILITY_STATUSES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Compressor Type
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Hermetic Scroll"
-                      value={productForm.type}
-                      onChange={(e) => setProductForm({ ...productForm, type: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Condition
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Refurbished & Pressure Tested"
-                      value={productForm.condition}
-                      onChange={(e) =>
-                        setProductForm({ ...productForm, condition: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Group 2: Multi-Image Manager */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block border-b border-slate-100 pb-1">
-                  2. Product Images ({productForm.images.length})
-                </span>
-
-                {/* Thumbnails Row (Mobile Scrollable) */}
-                {productForm.images.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic">No images added yet.</p>
-                ) : (
-                  <div className="flex items-center gap-3 overflow-x-auto py-2">
-                    {productForm.images.map((rawUrl, idx) => {
-                      const imgUrl = resolveImageUrl(rawUrl);
-                      return (
-                        <div
-                          key={idx}
-                          className={`relative group shrink-0 w-20 h-20 rounded border bg-slate-50 flex items-center justify-center p-1 ${
-                            idx === 0 ? 'border-[#1D6FA3] ring-2 ring-[#1D6FA3]/20' : 'border-slate-300'
-                          }`}
-                        >
-                          <img
-                            src={imgUrl}
-                            alt={`Product ${idx + 1}`}
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = '/ac_compressor.png';
-                            }}
-                            className="w-full h-full object-contain"
-                          />
-                          {idx === 0 && (
-                            <span className="absolute top-1 left-1 bg-[#1D6FA3] text-white text-[8px] font-bold px-1 rounded">
-                              PRIMARY
-                            </span>
-                          )}
-                          <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-1 transition-opacity">
-                            {idx !== 0 && (
-                              <button
-                                type="button"
-                                onClick={() => handleSetPrimaryImage(idx)}
-                                title="Set as primary"
-                                className="p-1 bg-white text-slate-900 rounded-full hover:bg-slate-100"
-                              >
-                                <Star size={12} />
-                              </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveImage(idx)}
-                              title="Remove image"
-                              className="p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
-                            >
-                              <Trash2 size={12} />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Add Image by URL or Local File */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <div className="space-y-1">
-                    <label className="block text-[11px] font-semibold text-slate-700">
-                      Add Image by Path / URL
-                    </label>
-                    <div className="flex gap-1.5">
-                      <input
-                        type="text"
-                        placeholder="e.g. /ac_compressor_2.png"
-                        value={newImageUrl}
-                        onChange={(e) => setNewImageUrl(e.target.value)}
-                        className="flex-1 px-3 py-1.5 border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddImageUrl}
-                        className="px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded hover:bg-slate-900"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="block text-[11px] font-semibold text-slate-700">
-                      Or Upload Image Files (Persistent)
-                    </label>
-                    <label className="flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded text-xs font-semibold text-slate-700 cursor-pointer min-h-[34px]">
-                      <UploadCloud size={15} />
-                      <span>Choose File(s)</span>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Group 3: Technical Details */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block border-b border-slate-100 pb-1">
-                  3. Technical Specifications
-                </span>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    rows={2}
-                    placeholder="Short summary of application and compatibility..."
-                    value={productForm.description}
-                    onChange={(e) =>
-                      setProductForm({ ...productForm, description: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Voltage
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 380V - 415V AC"
-                      value={productForm.voltage}
-                      onChange={(e) =>
-                        setProductForm({ ...productForm, voltage: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Displacement
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 17.1 m³/h"
-                      value={productForm.displacement}
-                      onChange={(e) =>
-                        setProductForm({ ...productForm, displacement: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                      Refrigerant
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. R22 / R407C"
-                      value={productForm.refrigerant}
-                      onChange={(e) =>
-                        setProductForm({ ...productForm, refrigerant: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-300 rounded-md text-xs text-slate-900 focus:outline-none focus:border-[#1D6FA3]"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setIsProductModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-md text-xs font-semibold text-slate-700 hover:bg-slate-50 min-h-[38px]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 bg-[#1D6FA3] hover:bg-[#15537d] text-white text-xs font-semibold rounded-md shadow-xs min-h-[38px] disabled:opacity-50"
-                >
-                  {submitting ? 'Saving...' : editingProduct ? 'Save Changes' : 'Create Product'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* ══════════════════════════════════════════════════════════════════ */}
       {/* MODAL: RECORD ORDER                                                */}

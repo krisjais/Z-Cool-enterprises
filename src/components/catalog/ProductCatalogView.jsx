@@ -21,9 +21,14 @@ import QuoteModal from '@/components/ui/QuoteModal';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import { resolveImageUrl } from '@/lib/api';
 
-export default function ProductCatalogView({ products = [] }) {
+export default function ProductCatalogView({
+  products = [],
+  initialCategory = 'All',
+  categoryInfo = null,
+  availableCategories = [],
+}) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState('All');
+  const [selectedType, setSelectedType] = useState(initialCategory || 'All');
   const [selectedBrand, setSelectedBrand] = useState('All');
   const [selectedCondition, setSelectedCondition] = useState('All');
   const [selectedAvailability, setSelectedAvailability] = useState('All');
@@ -79,6 +84,20 @@ export default function ProductCatalogView({ products = [] }) {
 
   // Extract actual unique filter options present in the dataset with real counts
   const availableTypes = useMemo(() => {
+    if (availableCategories && availableCategories.length > 0) {
+      return [
+        { label: 'All', count: products.length },
+        ...availableCategories.map((cat) => {
+          const catName = typeof cat === 'string' ? cat : cat.name;
+          const count = typeof cat === 'object' && cat.productCount !== undefined
+            ? cat.productCount
+            : products.filter(
+                (p) => (p.category || '').toLowerCase() === catName.toLowerCase()
+              ).length;
+          return { label: catName, count, slug: cat.slug };
+        }),
+      ];
+    }
     const map = new Map();
     products.forEach((p) => {
       const type = p.category || p.type;
@@ -90,7 +109,7 @@ export default function ProductCatalogView({ products = [] }) {
       { label: 'All', count: products.length },
       ...Array.from(map.entries()).map(([label, count]) => ({ label, count })),
     ];
-  }, [products]);
+  }, [products, availableCategories]);
 
   const availableBrands = useMemo(() => {
     const map = new Map();
@@ -150,11 +169,18 @@ export default function ProductCatalogView({ products = [] }) {
         product.refrigerant?.toLowerCase().includes(query) ||
         product.condition?.toLowerCase().includes(query);
 
-      // 2. Type Filter
+      // 2. Type / Category Filter
+      const normSelected = selectedType.toLowerCase().replace(/[- ]/g, '');
+      const prodCategoryNorm = (product.category || '').toLowerCase().replace(/[- ]/g, '');
+      const prodTypeNorm = (product.type || '').toLowerCase().replace(/[- ]/g, '');
+
       const matchesType =
         selectedType === 'All' ||
         product.category === selectedType ||
-        product.type === selectedType;
+        product.type === selectedType ||
+        prodCategoryNorm === normSelected ||
+        prodTypeNorm === normSelected ||
+        prodCategoryNorm.includes(normSelected);
 
       // 3. Brand Filter
       const matchesBrand =

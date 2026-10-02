@@ -266,32 +266,30 @@ export const PRODUCTS_CATALOG = [
 ];
 
 export const CATEGORIES_LIST = [
-  {
-    id: 'scroll',
-    name: 'Scroll Compressors',
-    count: 'Available Models',
-    desc: 'High-efficiency hermetic scroll units for commercial package AC, VRF, and water chillers.',
-    image: '/ac_compressor.png'
-  },
-  {
-    id: 'rotary',
-    name: 'Rotary Compressors',
-    count: 'Available Models',
-    desc: 'Compact single and twin rotary compressors for commercial split, cassette, and tower ACs.',
-    image: '/ac_compressor_2.png'
-  },
-  {
-    id: 'reciprocating',
-    name: 'Reciprocating Compressors',
-    count: 'Available Models',
-    desc: 'Robust piston compressors built for commercial refrigeration, cold rooms, and process cooling.',
-    image: '/ac_compressor_3.png'
-  },
-  {
-    id: 'vrf-vrv',
-    name: 'VRF / VRV Compressors',
-    count: 'Available Models',
-    desc: 'Specialized DC Inverter scroll replacement units for Daikin, Mitsubishi, and LG multi-split systems.',
-    image: '/ac_compressor_2.png'
-  }
+  { id: 'ac-compressor', name: 'AC Compressor', slug: 'ac-compressor', count: 'Available Models', desc: 'Air conditioning compressors for residential and commercial cooling systems.' },
+  { id: 'scroll-compressor', name: 'Scroll Compressor', slug: 'scroll-compressor', count: 'Available Models', desc: 'Scroll compressors for air conditioning, refrigeration and HVAC applications.' },
+  { id: 'refrigeration-compressors', name: 'Refrigeration Compressors', slug: 'refrigeration-compressors', count: 'Available Models', desc: 'Compressors designed for refrigeration and cooling applications.' },
+  { id: 'copeland-scroll-compressor', name: 'Copeland Scroll Compressor', slug: 'copeland-scroll-compressor', count: 'Available Models', desc: 'Copeland scroll compressors engineered for commercial and industrial cooling systems.' },
+  { id: 'air-compressor', name: 'Air Compressor', slug: 'air-compressor', count: 'Available Models', desc: 'Industrial and commercial air compressor units and air systems.' },
+  { id: 'rotary-compressor', name: 'Rotary Compressor', slug: 'rotary-compressor', count: 'Available Models', desc: 'Rotary compressors designed for high-efficiency residential and light commercial cooling.' },
+  { id: 'air-conditioner', name: 'Air Conditioner', slug: 'air-conditioner', count: 'Available Models', desc: 'Air conditioner units, systems, and modular cooling equipment.' },
+  { id: 'danfoss-scroll-compressor', name: 'Danfoss Scroll Compressor', slug: 'danfoss-scroll-compressor', count: 'Available Models', desc: 'Danfoss scroll compressors for commercial air conditioning and refrigeration applications.' },
+  { id: 'air-conditioning-compressors', name: 'Air Conditioning Compressors', slug: 'air-conditioning-compressors', count: 'Available Models', desc: 'Compressors for residential, commercial, and industrial air conditioning systems.' },
+  { id: 'copeland-compressor', name: 'Copeland Compressor', slug: 'copeland-compressor', count: 'Available Models', desc: 'Copeland compressors including semi-hermetic, reciprocating, and scroll models.' },
+  { id: 'screw-compressor', name: 'Screw Compressor', slug: 'screw-compressor', count: 'Available Models', desc: 'Screw compressors for large-scale industrial chilling and refrigeration systems.' },
+  { id: 'ac-amc-service', name: 'AC AMC Service', slug: 'ac-amc-service', count: 'Available Services', desc: 'Annual maintenance contract (AMC) services for commercial and industrial air conditioning.' },
+  { id: 'vrf-system', name: 'VRF System', slug: 'vrf-system', count: 'Available Systems', desc: 'Variable Refrigerant Flow (VRF) systems and multi-split cooling solutions.' },
+  { id: 'relays', name: 'Relays', slug: 'relays', count: 'Available Models', desc: 'Electrical relays and protection components for HVAC and compressor equipment.' },
+  { id: 'air-conditioner-installation-service', name: 'Air Conditioner Installation Service', slug: 'air-conditioner-installation-service', count: 'Available Services', desc: 'Professional installation and commissioning services for air conditioning systems.' },
+  { id: 'air-conditioner-motor', name: 'Air Conditioner Motor', slug: 'air-conditioner-motor', count: 'Available Models', desc: 'Fan and blower motors for residential, commercial, and industrial air conditioners.' },
+  { id: 'air-conditioner-maintenance-service', name: 'Air Conditioner Maintenance Service', slug: 'air-conditioner-maintenance-service', count: 'Available Services', desc: 'Preventive and corrective maintenance services for air conditioning units.' },
+  { id: 'rotary-and-refrigerator-compressor', name: 'Rotary And Refrigerator Compressor', slug: 'rotary-and-refrigerator-compressor', count: 'Available Models', desc: 'Rotary and reciprocating compressor units for domestic and commercial refrigeration.' },
+  { id: 'emerson-scroll-compressor', name: 'Emerson Scroll Compressor', slug: 'emerson-scroll-compressor', count: 'Available Models', desc: 'Emerson Copeland scroll compressors for HVAC and process cooling applications.' },
+  { id: 'daikin-compressor', name: 'Daikin Compressor', slug: 'daikin-compressor', count: 'Available Models', desc: 'Daikin scroll and inverter compressors for VRV, VRF, and commercial split systems.' },
+  { id: 'air-conditioner-compressor', name: 'Air Conditioner Compressor', slug: 'air-conditioner-compressor', count: 'Available Models', desc: 'Replacement air conditioner compressors for all major cooling equipment brands.' },
+  { id: '3d-bed-sheet', name: '3D Bed Sheet', slug: '3d-bed-sheet', count: 'Available Items', desc: 'Specialty industrial fabric and 3D protective bed sheets.' },
+  { id: 'pump-and-valve', name: 'Pump And Valve', slug: 'pump-and-valve', count: 'Available Items', desc: 'Industrial pumps, expansion valves, and fluid control accessories for cooling plants.' },
+  { id: 'aacsr-conductor', name: 'AACSR Conductor', slug: 'aacsr-conductor', count: 'Available Items', desc: 'Aluminum Alloy Conductor Steel Reinforced (AACSR) electrical transmission conductors.' },
+  { id: 'new-items', name: 'New Items', slug: 'new-items', count: 'Available Items', desc: 'Newly arrived industrial cooling components, compressors, and specialized equipment.' },
 ];
+
