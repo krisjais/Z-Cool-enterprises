@@ -15,7 +15,9 @@ import {
   Star, 
   ArrowRight,
   RefreshCw,
-  AlertTriangle
+  AlertTriangle,
+  Users,
+  BarChart2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -575,169 +577,125 @@ export default function AdminDashboardPage() {
       {/* TAB 1: OVERVIEW                                                    */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {activeTab === 'overview' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
+        <div className="space-y-6 max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                Operations Overview
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Good Morning, {admin?.username}!
               </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Real-time metrics from live database records.
+              <p className="text-sm text-slate-500 mt-1">
+                Here is what's happening with your store today.
               </p>
             </div>
             <button
               type="button"
               onClick={loadData}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 min-h-[36px] self-start sm:self-auto"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shadow-sm transition-all h-10"
             >
-              <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
               <span>Refresh Data</span>
             </button>
           </div>
 
-          {/* Real Metrics Grid - Mobile First */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
-                Total Products
-              </span>
-              <span className="text-2xl font-bold text-slate-900 mt-1 block">
-                {loading ? '...' : totalProducts}
-              </span>
-              <span className="text-[10px] text-slate-400 mt-0.5 block">Catalog Models</span>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 rounded-full bg-[#1D6FA3]/10 text-[#1D6FA3] flex items-center justify-center shrink-0">
+                <ShoppingCart size={24} />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-slate-500 block">Total Orders</span>
+                <span className="text-2xl font-bold text-slate-900 mt-1 block">{loading ? '...' : onlineOrdersCount + offlineOrdersCount}</span>
+              </div>
             </div>
 
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider block">
-                Available In Stock
-              </span>
-              <span className="text-2xl font-bold text-emerald-700 mt-1 block">
-                {loading ? '...' : availableProducts}
-              </span>
-              <span className="text-[10px] text-slate-400 mt-0.5 block">Ready for Freight</span>
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <Box size={24} />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-slate-500 block">Total Products</span>
+                <span className="text-2xl font-bold text-slate-900 mt-1 block">{loading ? '...' : totalProducts}</span>
+              </div>
             </div>
 
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-blue-600 uppercase tracking-wider block">
-                Online Sales
-              </span>
-              <span className="text-2xl font-bold text-blue-700 mt-1 block">
-                {loading ? '...' : onlineOrdersCount}
-              </span>
-              <span className="text-[10px] text-slate-400 mt-0.5 block">Units via Web</span>
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <Users size={24} />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-slate-500 block">Categories</span>
+                <span className="text-2xl font-bold text-slate-900 mt-1 block">{loading ? '...' : (categories?.length || 0)}</span>
+              </div>
             </div>
 
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs">
-              <span className="text-[11px] font-semibold text-purple-600 uppercase tracking-wider block">
-                Offline Sales
-              </span>
-              <span className="text-2xl font-bold text-purple-700 mt-1 block">
-                {loading ? '...' : offlineOrdersCount}
-              </span>
-              <span className="text-[10px] text-slate-400 mt-0.5 block">Units via B2B/Desk</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs col-span-2 sm:col-span-1">
-              <span className="text-[11px] font-semibold text-amber-600 uppercase tracking-wider block">
-                Active Shipments
-              </span>
-              <span className="text-2xl font-bold text-amber-700 mt-1 block">
-                {loading ? '...' : activeShipmentsCount}
-              </span>
-              <span className="text-[10px] text-slate-400 mt-0.5 block">In Transit / Dispatched</span>
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <Truck size={24} />
+              </div>
+              <div>
+                <span className="text-sm font-medium text-slate-500 block">Active Dispatches</span>
+                <span className="text-2xl font-bold text-slate-900 mt-1 block">{loading ? '...' : activeShipmentsCount}</span>
+              </div>
             </div>
           </div>
 
-          {/* Quick Real Activity Lists */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Orders */}
-            <div className="bg-white rounded-lg border border-slate-200 p-4 sm:p-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
-                  Recent Orders
-                </h2>
-                <a
-                  href="/admin/dashboard?tab=orders"
-                  className="text-xs font-semibold text-[#1D6FA3] hover:underline flex items-center gap-1"
-                >
-                  View all ({orders.length}) <ArrowRight size={12} />
-                </a>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Overview Section */}
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-slate-900">Overview</h2>
+                <div className="text-xs font-medium text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Live Data</div>
               </div>
-              {orders.length === 0 ? (
-                <p className="text-xs text-slate-400 py-4 text-center">No orders recorded yet.</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {orders.slice(0, 4).map((ord) => (
-                    <div
-                      key={ord._id || ord.id}
-                      className="p-2.5 rounded bg-slate-50 border border-slate-100 text-xs flex items-center justify-between gap-2"
-                    >
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900">{ord.id}</span>
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              ord.orderType === 'ONLINE'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-purple-100 text-purple-800'
-                            }`}
-                          >
-                            {ord.orderType}
-                          </span>
-                        </div>
-                        <p className="text-slate-600 truncate mt-0.5">{ord.productName}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="font-bold text-slate-900">{ord.quantity} Unit(s)</span>
-                        <span className="block text-[10px] text-slate-400">{ord.status}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="flex-1 flex items-center justify-center bg-slate-50 rounded-xl border border-slate-100 border-dashed min-h-[300px]">
+                 <div className="text-center p-6">
+                   <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-4 text-[#1D6FA3]">
+                     <BarChart2 size={32} />
+                   </div>
+                   <h3 className="text-base font-bold text-slate-900 mb-1">Analytics overview</h3>
+                   <p className="text-sm text-slate-500 max-w-xs mx-auto">
+                     Data visualization features will be available in the next release.
+                   </p>
+                 </div>
+              </div>
             </div>
 
-            {/* Recent Active Shipments */}
-            <div className="bg-white rounded-lg border border-slate-200 p-4 sm:p-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
-                  Active Dispatches &amp; Tracking
-                </h2>
-                <a
-                  href="/admin/dashboard?tab=shipments"
-                  className="text-xs font-semibold text-[#1D6FA3] hover:underline flex items-center gap-1"
-                >
-                  View all ({shipments.length}) <ArrowRight size={12} />
+            {/* Recent Sales Section */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-slate-900">Recent Sales</h2>
+                <a href="/admin/dashboard?tab=orders" className="text-sm font-semibold text-[#1D6FA3] hover:underline">
+                  View All
                 </a>
               </div>
-              {shipments.length === 0 ? (
-                <p className="text-xs text-slate-400 py-4 text-center">No shipments recorded yet.</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {shipments.slice(0, 4).map((shp) => (
-                    <div
-                      key={shp._id || shp.id}
-                      className="p-2.5 rounded bg-slate-50 border border-slate-100 text-xs flex items-center justify-between gap-2"
-                    >
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900">{shp.trackingNumber}</span>
-                          <span className="text-[10px] font-medium text-slate-500">
-                            via {shp.courier}
-                          </span>
+              
+              <div className="space-y-6 flex-1 overflow-y-auto pr-2">
+                {orders.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <ShoppingCart size={32} className="text-slate-200 mb-3" />
+                    <p className="text-sm text-slate-500">No recent sales recorded yet.</p>
+                  </div>
+                ) : (
+                  orders.slice(0, 6).map((ord, idx) => (
+                    <div key={ord._id || ord.id || idx} className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                          <ShoppingCart size={16} className="text-slate-500" />
                         </div>
-                        <p className="text-slate-600 truncate mt-0.5">To: {shp.shippedTo}</p>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-900 truncate pr-2">{ord.customer?.name || ord.customerName || ord.id}</p>
+                          <p className="text-xs text-slate-500 truncate max-w-[140px] mt-0.5">{ord.productName}</p>
+                        </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900">
-                          {shp.status}
-                        </span>
+                        <p className="text-sm font-bold text-emerald-600">+{ord.quantity}</p>
+                        <p className="text-[10px] uppercase font-bold text-slate-400 mt-0.5">{ord.orderType}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
