@@ -35,21 +35,23 @@ export default function ProductCatalogView({
     { id: 'VRF / DC Inverter', label: 'VRF / Inverter' },
   ];
 
-  // Verified Brands in Catalogue
-  const brands = [
-    'All',
-    'Copeland',
-    'Daikin',
-    'Danfoss',
-    'LG'
-  ];
+  // Dynamically extract verified brands from catalogue products
+  const brands = useMemo(() => {
+    const set = new Set();
+    products.forEach((p) => {
+      if (p.brand && !p.brand.startsWith('Generic') && p.brand !== 'Multi-Brand') {
+        set.add(p.brand);
+      }
+    });
+    return ['All', ...Array.from(set).sort()];
+  }, [products]);
 
   // Filtering Logic
   const filteredProducts = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
 
     return products.filter((product) => {
-      // 1. Text Search (Matches name, model code, brand, application, refrigerant)
+      // 1. Text Search (Matches name, model code, brand, application, refrigerant, legacyTitle)
       const matchesSearch =
         !q ||
         product.name?.toLowerCase().includes(q) ||
@@ -57,7 +59,8 @@ export default function ProductCatalogView({
         product.catalogCode?.toLowerCase().includes(q) ||
         product.brand?.toLowerCase().includes(q) ||
         product.application?.toLowerCase().includes(q) ||
-        product.refrigerant?.toLowerCase().includes(q);
+        product.refrigerant?.toLowerCase().includes(q) ||
+        product.legacyTitle?.toLowerCase().includes(q);
 
       // 2. Category Filter
       const matchesCategory =
@@ -71,7 +74,8 @@ export default function ProductCatalogView({
       // 3. Brand Filter
       const matchesBrand =
         selectedBrand === 'All' ||
-        product.brand?.toLowerCase() === selectedBrand.toLowerCase();
+        product.brand?.toLowerCase() === selectedBrand.toLowerCase() ||
+        (product.brand && product.brand.toLowerCase().includes(selectedBrand.toLowerCase()));
 
       return matchesSearch && matchesCategory && matchesBrand;
     });
@@ -142,11 +146,10 @@ export default function ProductCatalogView({
                 className="w-full min-h-[44px] px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-slate-800 font-medium focus:outline-none focus:bg-white focus:border-[#0E4B75] focus:ring-2 focus:ring-[#0E4B75]/20 cursor-pointer transition-all"
                 aria-label="Filter by manufacturer brand"
               >
-                <option value="All">All Manufacturers</option>
-                <option value="Copeland">Copeland / Emerson</option>
-                <option value="Daikin">Daikin</option>
-                <option value="Danfoss">Danfoss</option>
-                <option value="LG">LG Commercial</option>
+                <option value="All">All Manufacturers ({products.length} models)</option>
+                {brands.filter(b => b !== 'All').map((brand) => (
+                  <option key={brand} value={brand}>{brand}</option>
+                ))}
               </select>
             </div>
           </div>
