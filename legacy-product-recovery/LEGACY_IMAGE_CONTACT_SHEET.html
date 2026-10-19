@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Z Cool Enterprises — Legacy Product Image Contact Sheet</title>
+  <style>
+    :root {
+      --primary: #0E4B75;
+      --bg: #F8F9FA;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #1E293B;
+      --text-muted: #64748B;
+      --badge-green-bg: #DCFCE7;
+      --badge-green-text: #15803D;
+      --badge-amber-bg: #FEF3C7;
+      --badge-amber-text: #B45309;
+      --badge-red-bg: #FEE2E2;
+      --badge-red-text: #B91C1C;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 30px 20px;
+      line-height: 1.4;
+    }
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+    .header h1 {
+      font-size: 26px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .stat-card {
+      background: #FFFFFF;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-col: column;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      border-color: #CBD5E1;
+    }
+    .card-top {
+      padding: 8px 12px;
+      background: #F1F5F9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    .seq-badge {
+      background: var(--primary);
+      color: #FFF;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .img-wrap {
+      height: 200px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    .img-wrap img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+    .card-body {
+      padding: 12px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0F172A;
+      line-height: 1.3;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      align-self: flex-start;
+    }
+    .badge-verified { background: var(--badge-green-bg); color: var(--badge-green-text); }
+    .badge-check { background: var(--badge-amber-bg); color: var(--badge-amber-text); }
+    .badge-verify { background: var(--badge-red-bg); color: var(--badge-red-text); }
+    .badge-logo { background: #E0E7FF; color: #4338CA; }
+    .meta-list {
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px dashed var(--border);
+      padding-top: 6px;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .meta-mono {
+      font-family: monospace;
+      font-size: 10px;
+    }
+    .notes-box {
+      background: #F8FAFC;
+      border-left: 3px solid var(--primary);
+      padding: 6px 8px;
+      font-size: 10.5px;
+      color: #334155;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Z Cool Enterprises — Legacy Product Image Contact Sheet</h1>
+    <p>Visual verification sheet of 41 assets recovered from <code>zcoolenterprises.co.in/ac-compressor.html</code> via Apify Website Image Downloader.</p>
+    
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-val">41</div>
+        <div class="stat-label">Total Apify Records</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">41</div>
+        <div class="stat-label">Downloaded Files</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">41</div>
+        <div class="stat-label">Unique SHA-256 Hashes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">40</div>
+        <div class="stat-label">Product Compressor Images</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">1</div>
+        <div class="stat-label">Non-Product Brand Logo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">20</div>
+        <div class="stat-label">High Confidence Models</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#1</span>
+          <span>Generic / Multi-Brand</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor1-73e93547.webp" alt="1ton Split Ac Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verify">Needs Verification</span>
+          <div class="card-title">1ton Split Ac Compressor</div>
+          <div class="notes-box">Photo shows two black rotary compressors on wooden bench; generic 1-Ton split entry.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor1-73e93547.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>40.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">73e93547fa92ca86...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#2</span>
+          <span>LG</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor2-651af61b.webp" alt="LG VRV Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">LG VRV Air Conditioner Compressor</div>
+          <div class="notes-box">Top-down workshop photo of black cylindrical compressor; commercial VRF / Multi-V application.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor2-651af61b.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>31.0 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">651af61b8d966856...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#3</span>
+          <span>Generic / Commercial</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor3-eea3c088.webp" alt="Ductable Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verify">Needs Verification</span>
+          <div class="card-title">Ductable Air Conditioner Compressor</div>
+          <div class="notes-box">Photo shows four black commercial compressors in a row; batch inventory photo.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor3-eea3c088.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×281 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>21.0 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">eea3c0882be51f17...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#4</span>
+          <span>Mitsubishi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor4-52dac4e5.webp" alt="Mitsubishi AC Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">Mitsubishi AC Compressor</div>
+          <div class="notes-box">Overhead workshop photo of two black compressors on cardboard; Mitsubishi rotary.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor4-52dac4e5.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>31.8 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">52dac4e5fe0e5292...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#5</span>
+          <span>Samsung</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor5-cf8223c1.webp" alt="Samsung Ac Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">Samsung Ac Compressor</div>
+          <div class="notes-box">Studio product photo of black Samsung rotary compressor.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor5-cf8223c1.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>17.9 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">cf8223c125c0b6b3...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#6</span>
+          <span>Highly / Hitachi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor6-3d4c0d5e.webp" alt="ANB52FKRMT AC Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">ANB52FKRMT AC Compressor</div>
+          <div class="notes-box">Close-up workshop photo showing ANB52FKRMT label and yellow/blue/red wiring leads.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor6-3d4c0d5e.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>41.0 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">3d4c0d5ee674f93f...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#7</span>
+          <span>Daikin</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor7-9e846a50.webp" alt="Daikin Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">Daikin Air Conditioner Compressor</div>
+          <div class="notes-box">Authentic workshop photo of Daikin scroll compressor standing on red carpet against white wall.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor7-9e846a50.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>27.5 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">9e846a50b5169dd6...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#8</span>
+          <span>Multi-Brand</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor8-6b648442.webp" alt="Rotary Compressor GMCC HIGHLY PANASONIC LG SAMSUNG" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verify">Needs Verification</span>
+          <div class="card-title">Rotary Compressor GMCC HIGHLY PANASONIC LG SAMSUNG</div>
+          <div class="notes-box">Isolated photo of Highly rotary compressor with accumulator; umbrella listing for GMCC/Highly/Panasonic/LG/Samsung.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor8-6b648442.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>339×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>15.4 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">6b6484428bab5eeb...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#9</span>
+          <span>Hitachi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor9-000a9bec.webp" alt="Hitachi Rotary Compressor 1.5 Ton" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Capacity</span>
+          <div class="card-title">Hitachi Rotary Compressor 1.5 Ton</div>
+          <div class="notes-box">Isolated cutout of black rotary compressor with suction accumulator; 1.5 Ton capacity.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor9-000a9bec.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>8.9 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">000a9bec0b8e8c62...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#10</span>
+          <span>Daikin</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor10-b2cafdd3.webp" alt="Daikin Refrigeration Compressors" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Daikin Refrigeration Compressors</div>
+          <div class="notes-box">Authentic close-up workshop photograph of Daikin nameplate showing JT160 model series.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor10-b2cafdd3.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>24.0 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">b2cafdd3d733cea2...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#11</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor11-21a63ba1.webp" alt="Zr125 Scroll Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Zr125 Scroll Compressor</div>
+          <div class="notes-box">Studio photo of commercial 10-Ton Copeland Scroll compressor with green Emerson/Copeland label.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor11-21a63ba1.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>11.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">21a63ba15b30a869...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#12</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor12-812a9015.webp" alt="Zr190 Emerson Copeland" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Zr190 Emerson Copeland</div>
+          <div class="notes-box">Studio photo of commercial 15-Ton Copeland Scroll compressor with side electrical terminal box.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor12-812a9015.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>17.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">812a9015673194ac...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#13</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor13-30df9d9f.webp" alt="ZB150 EMERSON COPELAND" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">ZB150 EMERSON COPELAND</div>
+          <div class="notes-box">Studio photo of tall teal/green Copeland scroll refrigeration compressor (ZB150KCE).</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor13-30df9d9f.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>12.6 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">30df9d9f0c781af7...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#14</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor14-b41709f7.webp" alt="ZPD72 EMERSON SCROLL COMPRESSOR" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">ZPD72 EMERSON SCROLL COMPRESSOR</div>
+          <div class="notes-box">Studio photo of Copeland Digital Scroll compressor showing top modulation solenoid unloader valve.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor14-b41709f7.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>10.3 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">b41709f72c2dbf52...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#15</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor15-38744453.webp" alt="Zr190kce Copeland Scroll Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Zr190kce Copeland Scroll Compressor</div>
+          <div class="notes-box">Studio cutout of 15-Ton Copeland scroll compressor for R407C/POE oil with terminal box.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor15-38744453.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>288×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>14.8 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">387444532fad2e4b...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#16</span>
+          <span>Danfoss</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor16-edf2a5e4.webp" alt="Danfoss Sm185s4rc Scroll Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Danfoss Sm185s4rc Scroll Compressor</div>
+          <div class="notes-box">Manufacturer/catalog photo of large blue Danfoss Performer commercial 15-Ton scroll compressor.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor16-edf2a5e4.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>460×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>10.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">edf2a5e4e02ab1dd...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#17</span>
+          <span>GMCC</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor17-10d9a476.webp" alt="Rotary 1.5 Ton , R22 GMCC" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Spec</span>
+          <div class="card-title">Rotary 1.5 Ton , R22 GMCC</div>
+          <div class="notes-box">Product photo of black GMCC rotary compressor with accumulator for R22 refrigerant.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor17-10d9a476.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>14.1 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">10d9a47672c5d3c2...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#18</span>
+          <span>Daikin</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor18-cd943799.webp" alt="DAIKIN Jt300d SCROLL COMPRESSOR" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">DAIKIN Jt300d SCROLL COMPRESSOR</div>
+          <div class="notes-box">Product photo of tall black Daikin commercial scroll compressor JT300D.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor18-cd943799.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>265×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>11.8 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">cd9437995a2684dc...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#19</span>
+          <span>Daikin</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor19-278c06c9.webp" alt="Daikin JT125 SCROLL COMPRESSOR" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Daikin JT125 SCROLL COMPRESSOR</div>
+          <div class="notes-box">Studio photo of black Daikin commercial scroll compressor (approx. 4 TR).</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor19-278c06c9.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>260×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>9.8 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">278c06c97339e855...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#20</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor20-3ef88758.webp" alt="ZF15K4E EMERSON COPELAND" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">ZF15K4E EMERSON COPELAND</div>
+          <div class="notes-box">Product photo of black Copeland low-temperature scroll with liquid injection fitting.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor20-3ef88758.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>394×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>18.8 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">3ef887584b2e4b1c...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#21</span>
+          <span>Mitsubishi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor21-15b60a62.webp" alt="Mitsubishi RB233 ROTARY COMPRESSOR" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Mitsubishi RB233 ROTARY COMPRESSOR</div>
+          <div class="notes-box">Product photo of black rotary compressor with accumulator; model RB233.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor21-15b60a62.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>489×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>13.1 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">15b60a62eb99274a...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#22</span>
+          <span>Mitsubishi Electric</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor22-30aea93a.webp" alt="HNB83FB-YE-C Mitsubishi electric compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">HNB83FB-YE-C Mitsubishi electric compressor</div>
+          <div class="notes-box">Workshop photo showing label on compressor body; specific model code HNB83FB-YE-C.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor22-30aea93a.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>27.5 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">30aea93a08d75602...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#23</span>
+          <span>LG</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor23-936c8491.webp" alt="LG Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">LG Air Conditioner Compressor</div>
+          <div class="notes-box">Workshop photo of black LG compressor; exact model code pending nameplate.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor23-936c8491.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>27.1 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">936c8491dbb9dc1c...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#24</span>
+          <span>Mitsubishi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor24-e2a56c56.webp" alt="Mitsubishi Compressor TNB306FPNMT" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Mitsubishi Compressor TNB306FPNMT</div>
+          <div class="notes-box">Workshop/studio photo showing model label; specific twin-rotary model TNB306FPNMT.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor24-e2a56c56.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>297×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>21.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">e2a56c56da26062f...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#25</span>
+          <span>Generic / Multi-Brand</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor25-c9b6dc9a.webp" alt="Split Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verify">Needs Verification</span>
+          <div class="card-title">Split Air Conditioner Compressor</div>
+          <div class="notes-box">Workshop photo of multiple split AC compressors standing together.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor25-c9b6dc9a.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>12.3 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">c9b6dc9a42ff313d...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#26</span>
+          <span>Carrier</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor26-346394ec.webp" alt="Carrier Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">Carrier Air Conditioner Compressor</div>
+          <div class="notes-box">Product photo of Carrier commercial compressor; exact model pending nameplate.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor26-346394ec.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>310×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>8.2 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">346394ec83d224d8...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#27</span>
+          <span>Mitsubishi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor27-de153194.webp" alt="Mitsubishi TNB306FPGMT AC Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Mitsubishi TNB306FPGMT AC Compressor</div>
+          <div class="notes-box">Product photo showing label details; specific twin-rotary variant TNB306FPGMT.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor27-de153194.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×375 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>18.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">de1531941acf443b...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#28</span>
+          <span>Sanyo / Panasonic</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor28-fd12d544.webp" alt="Sanyo compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Needs Suffix</span>
+          <div class="card-title">Sanyo compressor</div>
+          <div class="notes-box">Studio photo of black Sanyo commercial compressor.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor28-fd12d544.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>20.2 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">fd12d544c7e02f09...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#29</span>
+          <span>Mitsubishi / SCI</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor29-73704b79.webp" alt="1.5 Ton Mitsubishi SCI Rotary Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Capacity</span>
+          <div class="card-title">1.5 Ton Mitsubishi SCI Rotary Compressor</div>
+          <div class="notes-box">Cutout of black rotary compressor with accumulator; 1.5 Ton Siam Compressor Industry (SCI).</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor29-73704b79.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>12.2 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">73704b7987280ba8...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#30</span>
+          <span>Hitachi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor30-f24c0ecf.webp" alt="Hitachi AC DC Inverter Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Inverter Tech</span>
+          <div class="card-title">Hitachi AC DC Inverter Compressor</div>
+          <div class="notes-box">Product photo of Hitachi DC Inverter variable-speed compressor for inverter AC.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor30-f24c0ecf.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>281×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>37.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">f24c0ecf8760535a...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#31</span>
+          <span>Hitachi</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor31-9de4f015.webp" alt="Hitachi Scroll Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Type</span>
+          <div class="card-title">Hitachi Scroll Compressor</div>
+          <div class="notes-box">Product photo of Hitachi commercial scroll compressor.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor31-9de4f015.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>281×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>37.3 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">9de4f015119b4bb1...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#32</span>
+          <span>Highly</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor32-6b91a9f4.webp" alt="1 Ton Rotary Highly Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Brand / Capacity</span>
+          <div class="card-title">1 Ton Rotary Highly Compressor</div>
+          <div class="notes-box">Product photo of Highly 1 Ton rotary compressor.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor32-6b91a9f4.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>408×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>27.3 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">6b91a9f45fa99288...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#33</span>
+          <span>Danfoss / Blue Star</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor33-3572b3fe.webp" alt="Bluestar danfoss AC compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-check">Verified Application</span>
+          <div class="card-title">Bluestar danfoss AC compressor</div>
+          <div class="notes-box">Workshop photo of Danfoss blue compressor installed in Blue Star packaged chiller unit.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor33-3572b3fe.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>37.2 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">3572b3feaf09e26c...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#34</span>
+          <span>Generic / Commercial</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor34-23010b21.webp" alt="Air Conditioner Compressor" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verify">Needs Verification</span>
+          <div class="card-title">Air Conditioner Compressor</div>
+          <div class="notes-box">General stock photo of compressor shell; generic umbrella listing.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor34-23010b21.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>27.6 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">23010b218cf64acc...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#35</span>
+          <span>GMCC</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor35-0a78f75f.webp" alt="Gmcc 2.0 Tr Rotary R22 Compressor 24840 Btu" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Gmcc 2.0 Tr Rotary R22 Compressor 24840 Btu</div>
+          <div class="notes-box">Studio photo of GMCC rotary compressor; 2.0 TR (24,840 BTU/h) R22.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor35-0a78f75f.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>7.8 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">0a78f75fe1927b6f...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#36</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor36-418aaab1.webp" alt="Emerson Copeland Compressor KCN 463" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Emerson Copeland Compressor KCN 463</div>
+          <div class="notes-box">Product photo of small hermetic reciprocating compressor for bottle coolers/deep freezers.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor36-418aaab1.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>11.4 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">418aaab137670fdc...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#37</span>
+          <span>Copeland</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor37-945e55c6.webp" alt="Emerson Copeland Compressor ZB 114 KCE" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">Emerson Copeland Compressor ZB 114 KCE</div>
+          <div class="notes-box">Product photo of tall green Copeland refrigeration scroll compressor (approx. 15 HP).</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor37-945e55c6.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>13.1 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">945e55c69127d3f6...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#38</span>
+          <span>Panasonic</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor38-fc59e0c9.webp" alt="SBN453 PANASONIC SCROLL" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">SBN453 PANASONIC SCROLL</div>
+          <div class="notes-box">Studio photo of commercial 6-Ton Panasonic scroll compressor model SBN453.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor38-fc59e0c9.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>500×450 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>8.7 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">fc59e0c9f3f7fd7b...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#39</span>
+          <span>Danfoss</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor39-40c1c0c4.webp" alt="MT72 DANFOSS COMPRESSOR" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">MT72 DANFOSS COMPRESSOR</div>
+          <div class="notes-box">Product photo of round blue Danfoss Maneurop reciprocating compressor with rotolock valves.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor39-40c1c0c4.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>16.1 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">40c1c0c464589792...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#40</span>
+          <span>Daikin</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/compressor40-c178cb21.webp" alt="JT15 DAIKIN DC COMPRESSOR" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-verified">High Confidence</span>
+          <div class="card-title">JT15 DAIKIN DC COMPRESSOR</div>
+          <div class="notes-box">Product photo of small Daikin DC inverter compressor for mini-VRV / split systems.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">compressor40-c178cb21.webp</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>375×500 (WEBP)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>24.5 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">c178cb21fb2eb775...</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="card">
+        <div class="card-top">
+          <span class="seq-badge">#N/A (Header Asset)</span>
+          <span>Z Cool Enterprises</span>
+        </div>
+        <div class="img-wrap">
+          <img src="extracted-images/logo-0e3689be.jpg" alt="logo" loading="lazy">
+        </div>
+        <div class="card-body">
+          <span class="badge badge-logo">Non-Product Header Asset</span>
+          <div class="card-title">Company Logo Mark (Non-Product)</div>
+          <div class="notes-box">Primary logo image extracted from legacy website header nav.</div>
+          <div class="meta-list">
+            <div class="meta-row"><span>File:</span> <span class="meta-mono">logo-0e3689be.jpg</span></div>
+            <div class="meta-row"><span>Dims:</span> <span>426×210 (JPG)</span></div>
+            <div class="meta-row"><span>Size:</span> <span>16.2 KB</span></div>
+            <div class="meta-row"><span>SHA:</span> <span class="meta-mono">0e3689be7d222413...</span></div>
+          </div>
+        </div>
+      </div>
+      
+  </div>
+</body>
+</html>
