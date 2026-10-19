@@ -104,31 +104,31 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
       <div className="relative w-full max-w-xl bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="bg-[#0A192F] text-white px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-[#1D6FA3] flex items-center justify-center font-mono font-bold text-xs text-white">
+        <div className="bg-[#0A192F] text-white px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded bg-[#1D6FA3] flex items-center justify-center font-mono font-bold text-xs text-white shrink-0">
               Z
             </div>
             <div>
-              <h3 id="quote-modal-title" className="font-display font-bold text-base text-white">
+              <h3 id="quote-modal-title" className="font-display font-bold text-sm sm:text-base text-white">
                 REQUEST COMPRESSOR QUOTE
               </h3>
-              <p className="font-mono text-[10px] text-[#0EA6A6] uppercase tracking-widest">
+              <p className="font-mono text-[9px] sm:text-[10px] text-[#0EA6A6] uppercase tracking-widest">
                 TECHNICAL PROCUREMENT & AVAILABILITY DESK
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 transition-colors rounded hover:bg-white/10 cursor-pointer"
+            className="text-slate-400 hover:text-white p-1.5 transition-colors rounded hover:bg-white/10 cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
             aria-label="Close modal"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto flex-grow">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-grow">
           {submitted ? (
             <div className="py-8 flex flex-col items-center justify-center text-center space-y-3">
               <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
