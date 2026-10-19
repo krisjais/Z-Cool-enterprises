@@ -3,26 +3,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  ShieldCheck,
+  ArrowLeft,
   Camera,
   MessageSquare,
-  Phone,
-  ArrowLeft,
-  CheckCircle2,
-  Cpu,
   PackageCheck,
-  ChevronRight,
-  ChevronLeft,
   Eye,
   X,
   Send,
-  Building2,
-  SlidersHorizontal,
   Info,
+  ChevronRight,
+  ShieldAlert,
+  Cpu
 } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
-import ProductCard from '../ui/ProductCard';
-import ScrollReveal from '../ui/ScrollReveal';
 import { resolveImageUrl } from '@/lib/api';
 
 export default function ProductDetailView({
@@ -32,21 +25,20 @@ export default function ProductDetailView({
 }) {
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
-  const [quoteInitialTab, setQuoteInitialTab] = useState('quote');
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenImgIdx, setFullscreenImgIdx] = useState(0);
-  const [showStickyBar, setShowStickyBar] = useState(false);
 
-  // Determine whether this model has genuine verified photographic assets
+  // Determine whether this model has authentic photographic assets
   const hasRealImage = useMemo(() => {
     return (
       product?.imageType !== 'placeholder' &&
       Array.isArray(product?.images) &&
-      product.images.length > 0
+      product.images.length > 0 &&
+      Boolean(product.images[0])
     );
   }, [product?.imageType, product?.images]);
 
-  // Safe images list only when real images are present
+  // Clean local image list
   const images = useMemo(() => {
     if (!hasRealImage) return [];
     return product.images.map(resolveImageUrl);
@@ -54,20 +46,7 @@ export default function ProductDetailView({
 
   const currentImage = images[selectedImgIdx] || images[0] || null;
 
-  // Open Quote Modal helper
-  const handleOpenQuote = (tab = 'quote') => {
-    setQuoteInitialTab(tab);
-    setIsQuoteOpen(true);
-  };
-
-  // Open Fullscreen Image Inspection
-  const openFullscreen = (index) => {
-    if (!hasRealImage) return;
-    setFullscreenImgIdx(index);
-    setIsFullscreenOpen(true);
-  };
-
-  // Fullscreen keyboard navigation (Left/Right arrows & Escape)
+  // Fullscreen keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isFullscreenOpen) return;
@@ -84,7 +63,7 @@ export default function ProductDetailView({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreenOpen, images.length]);
 
-  // Lock body scroll when fullscreen inspection is open
+  // Lock body scroll when fullscreen modal is open
   useEffect(() => {
     if (isFullscreenOpen) {
       document.body.style.overflow = 'hidden';
@@ -96,16 +75,7 @@ export default function ProductDetailView({
     };
   }, [isFullscreenOpen]);
 
-  // Scroll listener for desktop sticky enquiry bar (> 450px)
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowStickyBar(window.scrollY > 450);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // ── RECONCILED TECHNICAL SPECIFICATIONS GROUPS ──
+  // ── STRUCTURED SPECIFICATION GROUPS (ONLY SUPPORTED DATA) ──
   const technicalGroups = useMemo(() => {
     if (!product) return [];
     const groups = [];
@@ -115,10 +85,11 @@ export default function ProductDetailView({
       { label: 'EQUIPMENT MODEL CODE', value: product.code || product.modelNumber },
       { label: 'CATALOG CODE / SKU', value: product.catalogCode },
       { label: 'MANUFACTURER BRAND', value: product.brand },
-      { label: 'MODEL NAME', value: product.name },
       { label: 'COMPRESSOR DESIGN', value: product.type },
       { label: 'CATALOGUE CATEGORY', value: product.category },
-      { label: 'SOURCING CLASSIFICATION', value: product.verificationStatus || product.condition },
+      { label: 'VERIFICATION STATUS', value: product.verificationStatus || product.statusBadge },
+      { label: 'ORIGINAL SOURCE TITLE', value: product.legacyTitle },
+      { label: 'HISTORICAL LISTING REF', value: product.legacyOrder ? `Item #${product.legacyOrder} of 40` : null },
     ].filter((r) => Boolean(r.value && typeof r.value === 'string' && r.value.trim() !== ''));
 
     if (idRows.length > 0) {
@@ -129,17 +100,14 @@ export default function ProductDetailView({
       });
     }
 
-    // Group 2: Key Operating Parameters
+    // Group 2: Key Operating Parameters (Only where supported)
     const electricalSpecs = product.specs?.electrical || {};
     const electricalRows = [
       { label: 'OPERATING VOLTAGE', value: product.voltage || electricalSpecs['Input Voltage'] },
       { label: 'NOMINAL POWER / CAPACITY', value: product.coolingCapacity || electricalSpecs['Nominal HP'] },
-      {
-        label: 'RUNNING CURRENT (RLA)',
-        value: electricalSpecs['RLA (Running Amps)'] || electricalSpecs['RLA'],
-      },
+      { label: 'RUNNING CURRENT (RLA)', value: electricalSpecs['RLA (Running Amps)'] || electricalSpecs['RLA'] },
       { label: 'LOCKED ROTOR AMPS (LRA)', value: electricalSpecs['LRA (Locked Rotor)'] },
-      { label: 'DRIVE / CONTROL TYPE', value: electricalSpecs['Control'] || 'Direct Online / Induction' },
+      { label: 'CONTROL / DRIVE TYPE', value: electricalSpecs['Control'] },
     ].filter((r) => Boolean(r.value && typeof r.value === 'string' && r.value.trim() !== ''));
 
     if (electricalRows.length > 0) {
@@ -150,16 +118,12 @@ export default function ProductDetailView({
       });
     }
 
-    // Group 3: Refrigeration & Thermal Specifications
+    // Group 3: Refrigeration & Thermal Specifications (Only where supported)
     const thermalSpecs = product.specs?.thermal || {};
     const thermalRows = [
       { label: 'VOLUMETRIC DISPLACEMENT', value: product.displacement || thermalSpecs['Displacement'] },
       { label: 'REFRIGERANT COMPATIBILITY', value: product.refrigerant },
       { label: 'APPLICATION DUTY RANGE', value: thermalSpecs['Application'] || product.application },
-      {
-        label: 'OIL CHARGE & COMPATIBILITY',
-        value: thermalSpecs['Oil Type'] || thermalSpecs['Oil Charge'] || (product.refrigerant?.includes('R404A') ? 'POE Lubricant' : 'Verified Factory Charge'),
-      },
     ].filter((r) => Boolean(r.value && typeof r.value === 'string' && r.value.trim() !== ''));
 
     if (thermalRows.length > 0) {
@@ -170,30 +134,13 @@ export default function ProductDetailView({
       });
     }
 
-    // Group 4: Mechanical & Physical Dimensions
+    // Group 4: Mechanical & Physical Dimensions (Only where supported)
     const mechSpecs = product.specs?.mechanical || {};
     const mechRows = [
-      {
-        label: 'SUCTION FITTING',
-        value:
-          mechSpecs['Suction Rotolock'] ||
-          mechSpecs['Suction Valve'] ||
-          mechSpecs['Suction Line Size'] ||
-          mechSpecs['Suction Connection'],
-      },
-      {
-        label: 'DISCHARGE FITTING',
-        value:
-          mechSpecs['Discharge Rotolock'] ||
-          mechSpecs['Discharge Valve'] ||
-          mechSpecs['Discharge Line Size'] ||
-          mechSpecs['Discharge Connection'],
-      },
+      { label: 'SUCTION LINE SIZE', value: mechSpecs['Suction Line Size'] || mechSpecs['Suction Connection'] },
+      { label: 'DISCHARGE LINE SIZE', value: mechSpecs['Discharge Line Size'] || mechSpecs['Discharge Connection'] },
       { label: 'NET UNIT WEIGHT', value: mechSpecs['Net Weight'] },
-      {
-        label: 'MOUNTING FOOTPRINT',
-        value: mechSpecs['Mounting Footprint'] || mechSpecs['Mounting'] || 'Standard OEM Footprint',
-      },
+      { label: 'MOUNTING FOOTPRINT', value: mechSpecs['Mounting Footprint'] || mechSpecs['Mounting'] },
     ].filter((r) => Boolean(r.value && typeof r.value === 'string' && r.value.trim() !== ''));
 
     if (mechRows.length > 0) {
@@ -207,81 +154,68 @@ export default function ProductDetailView({
     return groups;
   }, [product]);
 
-  // ── DYNAMIC RELATED PRODUCTS SELECTION ──
+  // ── DYNAMIC RELATED PRODUCTS (STRICTLY SAME CATEGORY) ──
   const related = useMemo(() => {
     const pool = allProducts && allProducts.length > 0 ? allProducts : backendRelated;
-    if (!pool || pool.length === 0) return [];
+    if (!pool || pool.length === 0 || !product?.category) return [];
 
-    const candidates = pool.filter(
-      (p) => p.id !== product.id && p.code !== product.code
-    );
-
-    // Score relevance without fabricating relationships:
-    // 1. Same compressor category: +3
-    // 2. Same brand: +2
-    const scored = candidates.map((cand) => {
-      let score = 0;
-      if (cand.category && cand.category === product.category) score += 3;
-      if (cand.brand && cand.brand === product.brand) score += 2;
-      return { product: cand, score };
-    });
-
-    scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, 3).map((s) => s.product);
+    return pool
+      .filter((p) => p.id !== product.id && p.category === product.category)
+      .slice(0, 3);
   }, [allProducts, backendRelated, product]);
 
   if (!product) return null;
 
   const statusBadgeText = product.verificationStatus || product.statusBadge || 'Sourcing Reference';
+  const whatsappMessage = encodeURIComponent(
+    `Hello Z Cool Enterprises, I am inquiring about compressor model: ${product.name} (Code: ${product.code || 'N/A'}, Catalog: ${product.catalogCode || product.id}). Please share current availability and procurement quotation.`
+  );
 
   return (
-    <div className="bg-[#FBFBFA] min-h-screen text-slate-900 py-4 sm:py-8 lg:py-10 pb-28 lg:pb-16 overflow-x-hidden">
-      <div className="max-w-[1360px] mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
-        
-        {/* ── 1. BREADCRUMB NAVIGATION ── */}
-        <nav
-          aria-label="Breadcrumb"
-          className="flex items-center gap-1.5 font-mono text-[11px] sm:text-xs text-slate-500 overflow-x-auto no-scrollbar whitespace-nowrap py-1 max-w-full"
-        >
-          <Link
-            href="/"
-            className="hover:text-[#0E4B75] flex items-center gap-1 font-semibold transition-colors focus:outline-none rounded shrink-0"
-          >
-            HOME
-          </Link>
-          <span className="text-slate-300 shrink-0">/</span>
+    <div className="bg-[#FBFBFA] min-h-screen text-slate-900 py-6 sm:py-8 lg:py-10 pb-32 lg:pb-16 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+
+        {/* ── 1. BREADCRUMB & BACK TO CATALOGUE LINK ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3">
           <Link
             href="/products"
-            className="hover:text-[#0E4B75] flex items-center gap-1 font-semibold transition-colors focus:outline-none rounded shrink-0"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E4B75] hover:text-[#093757] transition-colors cursor-pointer group"
           >
-            <span>COMPRESSORS</span>
+            <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span>Back to Compressor Catalogue</span>
           </Link>
-          <span className="text-slate-300 shrink-0">/</span>
-          {product.brand && (
-            <>
-              <span className="text-slate-700 font-semibold uppercase shrink-0">{product.brand}</span>
-              <span className="text-slate-300 shrink-0">/</span>
-            </>
-          )}
-          <span className="text-[#0E4B75] font-bold uppercase tracking-wide truncate max-w-[180px] sm:max-w-[280px]">
-            {product.code || product.name}
-          </span>
-        </nav>
 
-        {/* ── 2. PRODUCT HERO GRID (Split ~55% Left / ~45% Right) ── */}
-        <section
-          aria-label="Product Summary"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start"
-        >
-          
-          {/* ── LEFT COLUMN: MEDIA DISPLAY & AUTHENTIC VERIFICATION (~55%) ── */}
-          <div className="lg:col-span-7 space-y-4 min-w-0">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1.5 font-mono text-[11px] text-slate-500 overflow-x-auto no-scrollbar whitespace-nowrap"
+          >
+            <Link href="/" className="hover:text-slate-800">HOME</Link>
+            <span>/</span>
+            <Link href="/products" className="hover:text-slate-800">COMPRESSORS</Link>
+            <span>/</span>
+            {product.brand && (
+              <>
+                <span className="text-slate-700 uppercase">{product.brand}</span>
+                <span>/</span>
+              </>
+            )}
+            <span className="text-[#0E4B75] font-bold uppercase truncate max-w-[180px] sm:max-w-[280px]">
+              {product.code || product.name}
+            </span>
+          </nav>
+        </div>
+
+        {/* ── 2. TWO-COLUMN LAYOUT (DESKTOP STICKY IMAGE / MOBILE NATURAL SCROLL) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
+          {/* ── LEFT COLUMN: PRODUCT VISUAL (STICKY ON DESKTOP) ── */}
+          <div className="lg:col-span-6 lg:sticky lg:top-24 space-y-4">
             
-            {/* Main Product Image Container or Blueprint Box */}
+            {/* Visual Canvas Card */}
             <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
               
-              {/* Header inside media card */}
-              <div className="px-3.5 sm:px-4 py-2.5 bg-[#FAF9F6] border-b border-stone-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+              {/* Card Header Bar */}
+              <div className="px-4 py-2.5 bg-[#FAF9F6] border-b border-stone-200 flex items-center justify-between gap-2 text-xs">
                 <span className="font-bold text-slate-900 tracking-tight uppercase truncate">
                   {product.brand || 'INDUSTRIAL'}
                 </span>
@@ -292,45 +226,54 @@ export default function ProductDetailView({
                 </span>
               </div>
 
-              {/* Media Display Area */}
-              <div className="relative min-h-[260px] sm:min-h-[340px] lg:min-h-[380px] bg-[#FBFBFA] flex flex-col items-center justify-center p-4 sm:p-6 select-none overflow-hidden">
+              {/* Contained Image Display */}
+              <div className="relative min-h-[280px] sm:min-h-[340px] bg-[#FBFBFA] flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden">
                 {hasRealImage ? (
-                  /* Verified Product Photography */
                   <>
                     <div
-                      onClick={() => openFullscreen(selectedImgIdx)}
+                      onClick={() => {
+                        setFullscreenImgIdx(selectedImgIdx);
+                        setIsFullscreenOpen(true);
+                      }}
                       className="w-full h-full flex flex-col items-center justify-center cursor-zoom-in relative z-0 py-2 sm:py-4"
                       role="button"
                       tabIndex={0}
                       aria-label={`Inspect full size image of ${product.name}`}
-                      onKeyDown={(e) => e.key === 'Enter' && openFullscreen(selectedImgIdx)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          setFullscreenImgIdx(selectedImgIdx);
+                          setIsFullscreenOpen(true);
+                        }
+                      }}
                     >
                       <img
                         src={currentImage}
                         alt={`${product.brand || ''} ${product.code || product.name}`}
-                        className="max-h-[220px] sm:max-h-[300px] lg:max-h-[340px] w-auto max-w-[90%] object-contain hover:scale-[1.02] transition-transform duration-300 ease-out"
+                        className="max-h-[250px] sm:max-h-[320px] w-auto max-w-[85%] object-contain select-none transition-transform duration-200 hover:scale-[1.02]"
                         loading="eager"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = '/ac_compressor.png';
                         }}
                       />
-                      {/* Floor Contact Shadow */}
-                      <div className="w-36 sm:w-56 h-2 bg-slate-900/10 rounded-full blur-[3px] mt-2 pointer-events-none" />
+                      <div className="w-32 sm:w-48 h-1.5 bg-slate-900/10 rounded-full blur-[2px] mt-2 pointer-events-none" />
                     </div>
 
-                    {/* Inspect Fullscreen Button */}
                     <button
                       type="button"
-                      onClick={() => openFullscreen(selectedImgIdx)}
-                      className="absolute bottom-3 right-3 z-10 font-mono text-[10px] sm:text-[11px] font-semibold bg-white/95 hover:bg-white text-slate-700 hover:text-slate-900 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded border border-stone-200 shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      onClick={() => {
+                        setFullscreenImgIdx(selectedImgIdx);
+                        setIsFullscreenOpen(true);
+                      }}
+                      className="absolute bottom-3 right-3 z-10 text-[11px] font-semibold bg-white/95 hover:bg-white text-slate-700 hover:text-slate-900 px-2.5 py-1 rounded border border-stone-200 shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      aria-label="Inspect fullscreen photo"
                     >
                       <Eye size={13} className="text-[#0E4B75]" />
-                      <span>Inspect Fullscreen</span>
+                      <span>Inspect Photo</span>
                     </button>
                   </>
                 ) : (
-                  /* Honest Technical Blueprint Silhouette Box (NO Copeland Scroll cutout mismatch!) */
+                  /* Honest Technical Silhouette Blueprint Box */
                   <div className="w-full py-10 px-4 sm:px-6 flex flex-col items-center justify-center text-center bg-stone-50/90 rounded-lg border-2 border-dashed border-stone-300">
                     <div className="w-12 h-12 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-slate-500 mb-2.5 shadow-2xs">
                       <Cpu size={24} className="text-[#0E4B75]" />
@@ -339,632 +282,381 @@ export default function ProductDetailView({
                       Technical Blueprint Silhouette
                     </span>
                     <p className="text-[11px] sm:text-xs text-slate-600 max-w-sm mt-1 leading-relaxed font-medium">
-                      Physical photograph with factory valve fittings awaiting workshop verification.
+                      Physical photograph awaiting workshop verification.
                     </p>
                     <div className="mt-2.5 inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono text-slate-500 bg-white border border-stone-200 px-2.5 py-1 rounded">
                       <Info size={12} className="text-[#0E4B75] shrink-0" />
-                      <span>Sourced and tested to OEM nameplate specifications</span>
+                      <span>Sourced and displacement-matched to OEM nameplate</span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* ── DEDICATED DISCLAIMER SUB-BAR (CLEAN SEPARATION) ── */}
+              {/* Dedicated Image Disclaimer Sub-bar */}
               <div className="px-3.5 sm:px-4 py-2 bg-stone-50 border-t border-stone-200 text-center">
                 <p className="text-[11px] text-slate-600 leading-snug font-medium">
-                  {product.imageDisclaimer || 'Representative model — confirm exact specifications by nameplate.'}
+                  {product.imageDisclaimer || 'Authentic legacy catalogue photograph — confirm exact specifications on physical nameplate.'}
                 </p>
               </div>
 
             </div>
 
-            {/* Thumbnail Navigation Strip (Only when multiple authentic images exist) */}
+            {/* Thumbnail Strip (Rendered ONLY when multiple verified photos exist) */}
             {hasRealImage && images.length > 1 && (
-              <div
-                className="flex items-center gap-2.5 overflow-x-auto pb-1 no-scrollbar"
-                role="region"
-                aria-label="Image gallery thumbnails"
-              >
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
                 {images.map((img, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImgIdx(idx)}
-                    aria-label={`Select compressor photo ${idx + 1}`}
-                    className={`h-16 w-20 rounded-lg bg-white border p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all shrink-0 focus:outline-none ${
+                    className={`h-16 w-20 rounded-lg bg-white border p-1 flex flex-col items-center justify-between cursor-pointer transition-all shrink-0 ${
                       selectedImgIdx === idx
                         ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/20 shadow-xs bg-stone-50'
                         : 'border-stone-200 hover:border-slate-300 opacity-80 hover:opacity-100'
                     }`}
+                    aria-label={`Select photo ${idx + 1}`}
                   >
                     <span className="font-mono text-[9px] font-bold text-slate-400 self-start">
-                      {String(idx + 1).padStart(2, '0')}
+                      #{idx + 1}
                     </span>
-                    <img
-                      src={img}
-                      alt={`Thumbnail ${idx + 1}`}
-                      className="max-h-[32px] w-auto max-w-full object-contain"
-                    />
+                    <img src={img} alt="" className="max-h-[32px] w-auto max-w-full object-contain" />
                   </button>
                 ))}
               </div>
             )}
 
-            {/* Bench Verification Guarantee Bar */}
-            <div className="bg-stone-50 border border-stone-200 rounded-lg p-3 sm:p-3.5 flex items-start sm:items-center gap-2.5 sm:gap-3 text-xs text-slate-700">
-              <PackageCheck size={18} className="text-[#0E4B75] shrink-0 mt-0.5 sm:mt-0" />
-              <div className="font-sans leading-snug">
-                <strong className="font-mono text-slate-900 font-bold uppercase block text-[11px] tracking-wide">
-                  BENCH CERTIFIED & FREIGHT READY
-                </strong>
-                <span className="text-slate-600 text-[11px] sm:text-xs">
-                  Inspected, pressure-tested, megger insulation verified, and dry nitrogen sealed for express Pan-India industrial dispatch.
+            {/* Honest Sourcing & Testing Notice */}
+            <div className="bg-stone-50 border border-stone-200 rounded-lg p-3.5 flex items-start gap-2.5 text-xs text-slate-700">
+              <PackageCheck size={18} className="text-[#0E4B75] shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <span className="font-mono font-bold text-slate-900 uppercase block text-[11px] tracking-wide">
+                  TECHNICAL SOURCING & DISPLACEMENT MATCHING
                 </span>
+                <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
+                  Electrical megger testing, nitrogen pressure holding, and physical nameplate verification conducted prior to final dispatch from our Mumbai workshop.
+                </p>
               </div>
             </div>
 
           </div>
 
-          {/* ── RIGHT COLUMN: IDENTITY, PARAMETRICS & ACTIONS (~45%) ── */}
-          <div className="lg:col-span-5 space-y-5 sm:space-y-6 min-w-0">
-            
-            {/* Identity Header */}
+          {/* ── RIGHT COLUMN: HIERARCHICAL PRODUCT INFORMATION ── */}
+          <div className="lg:col-span-6 space-y-6">
+
+            {/* 1. Manufacturer & Model Identity */}
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
+              <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
                 <span>{product.brand}</span>
-                {product.type && <span className="text-slate-400">• {product.type}</span>}
+                {product.category && <span className="text-slate-400">• {product.category}</span>}
               </div>
 
-              <h1 className="font-extrabold text-xl sm:text-2xl lg:text-3xl text-slate-900 leading-snug sm:leading-tight tracking-tight break-words">
+              <h1 className="font-extrabold text-2xl sm:text-3xl text-slate-900 leading-tight tracking-tight break-words">
                 {product.name}
               </h1>
 
-              {/* Prominent Model Code */}
+              {/* Prominent Model Code Box */}
               {(product.code || product.modelNumber) && (
                 <div className="pt-0.5">
-                  <span className="inline-block font-mono text-xs sm:text-sm font-bold text-[#0E4B75] bg-blue-50/80 border border-blue-200 px-2.5 sm:px-3 py-1 rounded">
+                  <span className="inline-block font-mono text-xs sm:text-sm font-bold text-[#0E4B75] bg-blue-50 border border-blue-200 px-3 py-1 rounded">
                     MODEL REF: {product.code || product.modelNumber}
                   </span>
                 </div>
               )}
 
-              {/* Tagline / Subtitle */}
-              {product.tagline && (
-                <p className="font-mono text-[11px] sm:text-xs font-semibold text-[#0E4B75] uppercase tracking-wide pt-0.5">
-                  {product.tagline}
-                </p>
+              {/* Historical Listing Source Line (if applicable) */}
+              {product.legacyTitle && (
+                <div className="text-xs text-slate-500 font-mono pt-0.5">
+                  Legacy Source Title: <span className="text-slate-700 font-semibold">&ldquo;{product.legacyTitle}&rdquo;</span>
+                  {product.legacyOrder && <span> (Listing #{product.legacyOrder})</span>}
+                </div>
               )}
 
-              {/* Concise Description */}
-              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed pt-0.5">
+              {/* Short Product Description */}
+              <p className="text-slate-600 text-sm leading-relaxed pt-1">
                 {product.shortDescription || product.description}
               </p>
             </div>
 
-            {/* Quick Parametric Grid (Verified Fields) */}
-            <div className="bg-white border border-stone-200 rounded-xl p-3 sm:p-4 grid grid-cols-1 min-[360px]:grid-cols-2 gap-2.5 sm:gap-3.5 font-mono text-xs shadow-xs">
+            {/* 2. Key Specifications Grid (Displacement, Electrical, Rated Capacity) */}
+            <div className="bg-white border border-stone-200 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 gap-3.5 font-mono text-xs shadow-xs">
               {product.displacement && (
                 <div className="space-y-0.5">
-                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">
-                    DISPLACEMENT
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                    DISPLACEMENT (SWEPT VOLUME)
                   </span>
-                  <strong className="text-slate-900 font-bold block text-xs sm:text-[13px]">
+                  <span className="font-bold text-slate-900 text-xs sm:text-sm">
                     {product.displacement}
-                  </strong>
+                  </span>
                 </div>
               )}
 
               {product.coolingCapacity && (
                 <div className="space-y-0.5">
-                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">
-                    RATED CAPACITY / POWER
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                    RATED CAPACITY
                   </span>
-                  <strong className="text-slate-900 font-bold block text-xs sm:text-[13px]">
+                  <span className="font-bold text-slate-900 text-xs sm:text-sm">
                     {product.coolingCapacity}
-                  </strong>
+                  </span>
                 </div>
               )}
 
               {product.voltage && (
                 <div className="space-y-0.5">
-                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">
                     ELECTRICAL RATING
                   </span>
-                  <strong className="text-slate-900 font-bold block text-xs sm:text-[13px] break-words">
+                  <span className="font-bold text-slate-900 text-xs sm:text-sm">
                     {product.voltage}
-                  </strong>
+                  </span>
                 </div>
               )}
 
               {product.refrigerant && (
                 <div className="space-y-0.5">
-                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">
                     REFRIGERANT
                   </span>
-                  <strong className="text-slate-900 font-bold block text-xs sm:text-[13px] break-words">
+                  <span className="font-bold text-slate-900 text-xs sm:text-sm">
                     {product.refrigerant}
-                  </strong>
-                </div>
-              )}
-
-              {product.category && (
-                <div className="space-y-0.5">
-                  <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">
-                    CATEGORY
-                  </span>
-                  <span className="text-slate-800 font-medium block text-xs">
-                    {product.category}
                   </span>
                 </div>
               )}
 
-              <div className="space-y-0.5">
-                <span className="text-slate-500 block text-[10px] uppercase tracking-wider font-semibold">
-                  SOURCING STATUS
+              {/* Fallback Key Specs for Legacy Items */}
+              {(!product.displacement && !product.voltage && product.keySpecs) && (
+                product.keySpecs.map((spec) => (
+                  <div key={spec.label} className="space-y-0.5">
+                    <span className="text-slate-500 block text-[10px] uppercase font-semibold">
+                      {spec.label}
+                    </span>
+                    <span className="font-bold text-slate-900 text-xs sm:text-sm">
+                      {spec.value}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* 3. Availability & Sourcing Status Box */}
+            <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-mono text-slate-500 uppercase font-semibold">Availability State</span>
+                <span className="font-semibold text-slate-800 bg-white border border-stone-200 px-2.5 py-0.5 rounded">
+                  {product.availability || 'Enquire for availability'}
                 </span>
-                <span className="text-slate-800 font-medium flex items-center gap-1.5 text-xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0E4B75] shrink-0" />
-                  <span className="truncate">{statusBadgeText}</span>
-                </span>
               </div>
-            </div>
-
-            {/* Primary Action Buttons */}
-            <div className="space-y-3 pt-1">
-              <div className="flex flex-col sm:flex-row items-stretch gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleOpenQuote('quote')}
-                  className="w-full sm:flex-1 min-h-[46px] py-3 px-4 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors active:scale-[0.99] text-center"
-                >
-                  <Send size={14} className="rotate-45 shrink-0" />
-                  <span>REQUEST PRICE & AVAILABILITY</span>
-                </button>
-
-                <a
-                  href={`https://wa.me/919920691707?text=Hello%2C%20I%20am%20inquiring%20about%20compressor%20model%20${encodeURIComponent(
-                    product.code || product.name
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto min-h-[46px] py-3 px-4 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs active:scale-[0.99] shrink-0 text-center"
-                >
-                  <MessageSquare size={16} className="shrink-0" />
-                  <span>WHATSAPP DESK</span>
-                </a>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] sm:text-xs text-slate-500 font-mono px-1">
-                <a
-                  href="tel:+919920691707"
-                  className="flex items-center gap-1.5 hover:text-[#0E4B75] transition-colors"
-                >
-                  <Phone size={12} className="text-[#0E4B75] shrink-0" />
-                  <span>Mumbai Desk: +91 99206 91707</span>
-                </a>
-                <span>Pan-India Commercial Freight</span>
-              </div>
-            </div>
-
-            {/* Nameplate Sourcing Assistance Card */}
-            <div className="bg-[#FAF9F6] border border-stone-200 rounded-xl p-5 space-y-3 shadow-2xs">
-              <div className="flex items-center gap-2 text-[#0E4B75] font-mono text-xs font-bold uppercase tracking-wider">
-                <Camera size={15} />
-                <span>NOT SURE THIS IS THE RIGHT MATCH?</span>
-              </div>
-              <p className="text-slate-600 text-xs font-sans leading-relaxed">
-                Send us your compressor nameplate photograph. Our technical desk will verify mounting footprint, terminal voltage, and displacement match before dispatch.
-              </p>
-              <div className="pt-1 flex flex-col sm:flex-row items-stretch gap-2 font-mono text-xs">
-                <button
-                  type="button"
-                  onClick={() => handleOpenQuote('photo')}
-                  className="flex-1 min-h-[40px] py-2 px-3 bg-[#0E4B75] hover:bg-[#093757] text-white font-bold uppercase rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
-                >
-                  <Camera size={13} />
-                  <span>Upload Nameplate Photo</span>
-                </button>
-                <a
-                  href={`https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20nameplate%20photo%20for%20verification%20related%20to%20${encodeURIComponent(
-                    product.code || product.name
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 min-h-[40px] py-2 px-3 bg-white hover:bg-stone-50 text-slate-800 border border-stone-300 font-bold uppercase rounded-lg flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <MessageSquare size={13} className="text-emerald-600" />
-                  <span>WhatsApp Engineer</span>
-                </a>
-              </div>
-            </div>
-
-          </div>
-
-        </section>
-
-        {/* ── 3. TECHNICAL SPECIFICATIONS DATASHEET (Clean Open Tables) ── */}
-        <section
-          aria-label="Technical Specifications"
-          className="bg-white border border-stone-200 rounded-xl p-6 sm:p-8 space-y-8 shadow-xs"
-        >
-          <div className="border-b border-stone-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
-                ENGINEERING DATASHEET
-              </div>
-              <h2 className="font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-tight">
-                Verified Technical Specifications
-              </h2>
-              <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-                Reconciled parameters verified against manufacturer documentation and workshop standards.
-              </p>
-            </div>
-            {product.code && (
-              <span className="font-mono text-xs font-bold text-slate-800 bg-stone-100 px-3.5 py-1.5 rounded-lg border border-stone-200 self-start sm:self-auto">
-                RECORD ID: {product.code}
-              </span>
-            )}
-          </div>
-
-          {/* Structured Technical Tables (2 Columns on Desktop, 1 on Mobile) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            {technicalGroups.map((group) => (
-              <div key={group.number} className="space-y-2">
-                {/* Technical Group Header */}
-                <div className="font-mono text-xs font-bold text-[#0E4B75] tracking-widest uppercase pb-2 border-b-2 border-[#0E4B75] flex items-center justify-between">
-                  <span>[{group.number}] {group.title}</span>
-                  <span className="text-[10px] text-slate-400 font-normal">RECONCILED</span>
-                </div>
-
-                {/* Technical Rows */}
-                <div className="divide-y divide-stone-100 font-mono">
-                  {group.rows.map((row) => (
-                    <div
-                      key={row.label}
-                      className="py-2.5 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4"
-                    >
-                      <span className="text-slate-500 text-xs uppercase font-medium tracking-wider shrink-0">
-                        {row.label}:
-                      </span>
-                      <span className="text-slate-900 text-xs sm:text-sm font-semibold text-left sm:text-right break-words max-w-full sm:max-w-[65%]">
-                        {row.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── 4. VERIFIED REFURBISHMENT & TESTING PROTOCOL ── */}
-        <section
-          aria-label="Condition and Verification"
-          className="bg-white border border-stone-200 rounded-xl p-6 sm:p-8 space-y-6 shadow-xs"
-        >
-          <div className="border-b border-stone-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
-                QUALITY ASSURANCE
-              </div>
-              <h2 className="font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-tight">
-                Refurbishment & Testing Protocol
-              </h2>
-            </div>
-            <div className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-slate-800 bg-stone-100 border border-stone-200 px-3 py-1 rounded-lg uppercase">
-              <ShieldCheck size={14} className="text-[#0E4B75]" />
-              <span>{statusBadgeText}</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-mono">
-            {/* Step 01 */}
-            <div className="p-4 bg-stone-50 border border-stone-200 rounded-lg space-y-2">
-              <div className="text-[#0E4B75] font-bold text-xs uppercase tracking-widest flex items-center justify-between">
-                <span>01 / MECHANICAL INSPECTION</span>
-                <CheckCircle2 size={15} className="text-emerald-600" />
-              </div>
-              <p className="font-sans text-xs text-slate-600 leading-relaxed">
-                Scroll flank and bearing clearance tolerance checks, rotor shaft runout measurement, and internal sump inspection.
-              </p>
-            </div>
-
-            {/* Step 02 */}
-            <div className="p-4 bg-stone-50 border border-stone-200 rounded-lg space-y-2">
-              <div className="text-[#0E4B75] font-bold text-xs uppercase tracking-widest flex items-center justify-between">
-                <span>02 / INSULATION & PRESSURE TEST</span>
-                <CheckCircle2 size={15} className="text-emerald-600" />
-              </div>
-              <p className="font-sans text-xs text-slate-600 leading-relaxed">
-                Winding insulation resistance verification (Megger test &gt; 100MΩ) and dry nitrogen pressure holding test.
-              </p>
-            </div>
-
-            {/* Step 03 */}
-            <div className="p-4 bg-stone-50 border border-stone-200 rounded-lg space-y-2">
-              <div className="text-[#0E4B75] font-bold text-xs uppercase tracking-widest flex items-center justify-between">
-                <span>03 / DEHYDRATION & SEALING</span>
-                <CheckCircle2 size={15} className="text-emerald-600" />
-              </div>
-              <p className="font-sans text-xs text-slate-600 leading-relaxed">
-                Dehydration under deep vacuum, verified oil charge, and sealed with a dry nitrogen holding charge for freight transit.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 5. SYSTEM INTEGRATION & COMPATIBILITY ── */}
-        {(product.application ||
-          (product.compatDetails && Object.keys(product.compatDetails).length > 0)) && (
-          <section
-            aria-label="Suitable Applications"
-            className="bg-white border border-stone-200 rounded-xl p-6 sm:p-8 space-y-5 shadow-xs"
-          >
-            <div className="border-b border-stone-200 pb-3 flex items-center justify-between">
-              <div>
-                <div className="font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
-                  SYSTEM INTEGRATION
-                </div>
-                <h2 className="font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-tight">
-                  Application & OEM Equipment Compatibility
-                </h2>
-              </div>
-              <Building2 size={20} className="text-[#0E4B75] hidden sm:block" />
-            </div>
-
-            {product.application && (
-              <div className="p-4 bg-stone-50 border border-stone-200 rounded-lg space-y-1">
-                <span className="font-mono text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  PRIMARY APPLICATION TARGET:
-                </span>
-                <p className="font-sans text-sm sm:text-base font-semibold text-slate-900">
-                  {product.application}
+              <div className="flex items-start gap-2 text-xs text-slate-600 pt-1">
+                <ShieldAlert size={15} className="text-[#0E4B75] shrink-0 mt-0.5" />
+                <p className="leading-snug">
+                  All commercial compressor models are supplied upon exact technical matching. Please submit your physical nameplate photograph to confirm terminal orientation, displacement, and mounting footprint before dispatch.
                 </p>
               </div>
-            )}
+            </div>
 
-            {product.compatDetails && Object.keys(product.compatDetails).length > 0 && (
-              <div className="space-y-3 pt-2">
-                <span className="font-mono text-xs font-bold text-slate-700 uppercase tracking-wider block">
-                  MATCHED OEM EQUIPMENT FRAMES:
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {Object.entries(product.compatDetails).map(([brandName, details]) => (
+            {/* 4. Primary Product Enquiry Actions */}
+            <div className="space-y-2.5 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsQuoteOpen(true)}
+                  className="w-full min-h-[46px] px-5 py-2.5 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                >
+                  <Send size={15} />
+                  <span>Request Availability & Quote</span>
+                </button>
+
+                <a
+                  href={`https://wa.me/919920691707?text=${whatsappMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full min-h-[46px] px-5 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                >
+                  <MessageSquare size={15} />
+                  <span>WhatsApp Technical Desk</span>
+                </a>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsQuoteOpen(true)}
+                className="w-full min-h-[42px] px-4 py-2 rounded-lg bg-white hover:bg-stone-50 border border-stone-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Camera size={14} className="text-[#0E4B75]" />
+                <span>Upload Nameplate Photo for Custom Match</span>
+              </button>
+            </div>
+
+            {/* 5. Reconciled Technical Specifications Groups */}
+            {technicalGroups.length > 0 && (
+              <div className="space-y-4 pt-4 border-t border-stone-200">
+                <h3 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  Verified Technical Data & Sourcing Records
+                </h3>
+
+                <div className="space-y-3">
+                  {technicalGroups.map((group) => (
                     <div
-                      key={brandName}
-                      className="p-3.5 bg-stone-50 border border-stone-200 rounded-lg flex items-start gap-3"
+                      key={group.number}
+                      className="bg-white border border-stone-200 rounded-lg overflow-hidden shadow-2xs"
                     >
-                      <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
-                      <div className="space-y-0.5">
-                        <span className="font-mono text-xs uppercase font-bold text-slate-900 block">
-                          {brandName}
-                        </span>
-                        <span className="font-sans text-xs text-slate-600 leading-snug block">
-                          {details}
-                        </span>
+                      <div className="px-3.5 py-2 bg-stone-50 border-b border-stone-200 flex items-center gap-2 font-mono text-[11px] font-bold text-slate-800 uppercase tracking-wide">
+                        <span className="text-[#0E4B75]">{group.number}</span>
+                        <span>{group.title}</span>
+                      </div>
+
+                      <div className="divide-y divide-stone-100 font-mono text-xs">
+                        {group.rows.map((row) => (
+                          <div
+                            key={row.label}
+                            className="px-3.5 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 hover:bg-stone-50/50"
+                          >
+                            <span className="text-slate-500 text-[11px] font-medium shrink-0">
+                              {row.label}
+                            </span>
+                            <span className="text-slate-900 font-semibold text-left sm:text-right text-[11px] sm:text-xs break-words">
+                              {row.value}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-          </section>
-        )}
 
-        {/* ── 6. RELATED PRODUCTS / ALTERNATIVES ── */}
-        {related.length > 0 && (
-          <section aria-label="Related Products" className="space-y-5 pt-2">
-            <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-              <div>
-                <div className="font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
-                  INVENTORY ALTERNATIVES
-                </div>
-                <h2 className="font-extrabold text-xl sm:text-2xl text-slate-900 uppercase tracking-tight">
-                  Related Compressor Models
-                </h2>
-                <p className="text-slate-500 text-xs font-sans mt-0.5">
-                  Compatible compressor models matched by category, displacement, or manufacturer.
+            {/* 6. Applications & Sourcing Scope */}
+            {product.application && (
+              <div className="space-y-2 pt-2 border-t border-stone-200">
+                <h4 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  Typical Application Scope
+                </h4>
+                <p className="text-slate-600 text-xs leading-relaxed">
+                  {product.application}
                 </p>
               </div>
-              <Link
-                href="/products"
-                className="font-mono text-xs text-[#0E4B75] font-bold hover:underline flex items-center gap-1"
-              >
-                <span>View Full Catalogue</span>
-                <ChevronRight size={14} />
-              </Link>
-            </div>
+            )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {related.map((relProd, idx) => (
-                <ScrollReveal key={relProd.id} delay={idx * 50} direction="up" distance={12}>
-                  <ProductCard product={relProd} />
-                </ScrollReveal>
-              ))}
-            </div>
-          </section>
-        )}
+            {/* 7. Related Models (Strictly Same Category) */}
+            {related.length > 0 && (
+              <div className="space-y-3 pt-4 border-t border-stone-200">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                    Related {product.category}
+                  </h4>
+                  <Link
+                    href={`/products?category=${encodeURIComponent(product.category)}`}
+                    className="text-xs font-semibold text-[#0E4B75] hover:text-[#093757] flex items-center gap-1"
+                  >
+                    <span>View All</span>
+                    <ChevronRight size={13} />
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {related.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/products/${item.id}`}
+                      className="bg-white border border-stone-200 rounded-lg p-2.5 flex flex-col justify-between hover:border-slate-400 hover:shadow-2xs transition-all group"
+                    >
+                      <div className="h-20 bg-stone-50 rounded flex items-center justify-center p-1 mb-2 overflow-hidden">
+                        {item.images && item.images[0] ? (
+                          <img
+                            src={resolveImageUrl(item.images[0])}
+                            alt=""
+                            className="max-h-16 w-auto object-contain group-hover:scale-105 transition-transform"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <Cpu size={18} className="text-slate-400" />
+                        )}
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-mono font-bold text-[#0E4B75] uppercase block truncate">
+                          {item.brand}
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 block truncate group-hover:text-[#0E4B75] transition-colors">
+                          {item.code || item.name}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+
+        </div>
 
       </div>
 
-      {/* ── 7. FULLSCREEN IMAGE INSPECTION MODAL (Only when real images exist) ── */}
+      {/* ── 3. MOBILE STICKY BOTTOM ENQUIRY DOCK (< 1024px) ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 p-3 shadow-lg">
+        <div className="max-w-md mx-auto grid grid-cols-2 gap-2.5">
+          <a
+            href={`https://wa.me/919920691707?text=${whatsappMessage}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+          >
+            <MessageSquare size={15} />
+            <span>WhatsApp Desk</span>
+          </a>
+
+          <button
+            type="button"
+            onClick={() => setIsQuoteOpen(true)}
+            className="min-h-[44px] px-3 py-2 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+          >
+            <Send size={14} />
+            <span>Request Quote</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── 4. ACCESSIBLE FULLSCREEN IMAGE LIGHTBOX ── */}
       {isFullscreenOpen && hasRealImage && (
         <div
-          className="fixed inset-0 z-[99999] bg-[#0A192F]/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 transition-opacity duration-200"
           role="dialog"
           aria-modal="true"
-          aria-label="Fullscreen Product Inspection"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIsFullscreenOpen(false);
-          }}
+          aria-label={`High-resolution view of ${product.name}`}
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-between p-4"
         >
-          {/* Inspection Top Bar */}
-          <div className="flex items-center justify-between text-white border-b border-white/10 pb-3">
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0EA6A6]">
-                {product.brand}
-              </span>
-              <span className="text-white/30">•</span>
-              <span className="font-mono text-xs text-white/90 uppercase">
-                {product.code || product.name}
-              </span>
-              {images.length > 1 && (
-                <>
-                  <span className="text-white/30">•</span>
-                  <span className="font-mono text-xs text-slate-400">
-                    [ {String(fullscreenImgIdx + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')} ]
-                  </span>
-                </>
-              )}
-            </div>
-            
+          {/* Lightbox Header */}
+          <div className="w-full flex items-center justify-between text-white text-xs font-mono max-w-5xl">
+            <span>
+              {product.brand} · {product.code || product.name} ({fullscreenImgIdx + 1}/{images.length})
+            </span>
             <button
               type="button"
               onClick={() => setIsFullscreenOpen(false)}
-              className="p-2 text-white/70 hover:text-white rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-              aria-label="Close fullscreen inspection"
+              className="p-2 text-slate-300 hover:text-white rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
+              aria-label="Close fullscreen view"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
 
-          {/* Centered Large Inspection Image */}
-          <div className="relative flex-grow flex items-center justify-center p-4">
-            {images.length > 1 && (
-              <button
-                type="button"
-                onClick={() =>
-                  setFullscreenImgIdx((prev) => (prev - 1 + images.length) % images.length)
-                }
-                className="absolute left-2 sm:left-6 z-10 p-3 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={24} />
-              </button>
-            )}
-
+          {/* Lightbox Center Image */}
+          <div className="relative flex-grow flex items-center justify-center p-4 max-h-[85vh] w-full">
             <img
               src={images[fullscreenImgIdx]}
-              alt={`${product.name} large view`}
-              className="max-h-[70vh] max-w-[90vw] object-contain select-none shadow-2xl transition-transform duration-200"
+              alt={product.name}
+              className="max-h-[80vh] max-w-[90vw] object-contain select-none"
             />
-
-            {images.length > 1 && (
-              <button
-                type="button"
-                onClick={() =>
-                  setFullscreenImgIdx((prev) => (prev + 1) % images.length)
-                }
-                className="absolute right-2 sm:right-6 z-10 p-3 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
-                aria-label="Next image"
-              >
-                <ChevronRight size={24} />
-              </button>
-            )}
           </div>
 
-          {/* Bottom Thumbnail Strip */}
-          {images.length > 1 && (
-            <div className="flex items-center justify-center gap-3 py-2 border-t border-white/10">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setFullscreenImgIdx(idx)}
-                  className={`w-16 h-14 rounded bg-white p-1 flex items-center justify-center cursor-pointer transition-all ${
-                    fullscreenImgIdx === idx
-                      ? 'ring-2 ring-[#0EA6A6] opacity-100 scale-105'
-                      : 'opacity-50 hover:opacity-100'
-                  }`}
-                  aria-label={`Inspect photo ${idx + 1}`}
-                >
-                  <img
-                    src={img}
-                    alt=""
-                    className="max-h-full max-w-full object-contain"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── 8. DESKTOP STICKY ENQUIRY BAR (Scroll Triggered) ── */}
-      {showStickyBar && (
-        <div className="hidden lg:flex fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-8 py-3.5 items-center justify-between shadow-lg animate-in slide-in-from-bottom duration-200">
-          <div className="flex items-center gap-4">
-            {hasRealImage && currentImage ? (
-              <img
-                src={currentImage}
-                alt=""
-                className="w-11 h-11 object-contain bg-stone-50 rounded p-0.5 border border-stone-200 shrink-0"
-              />
-            ) : (
-              <div className="w-11 h-11 flex items-center justify-center bg-stone-100 rounded border border-dashed border-stone-300 shrink-0 text-[#0E4B75]">
-                <Cpu size={18} />
-              </div>
-            )}
-            <div>
-              <div className="flex items-center gap-2 font-mono text-xs">
-                <span className="font-bold text-slate-900 uppercase">{product.brand}</span>
-                {product.code && <span className="text-[#0E4B75]">• {product.code}</span>}
-                <span className="text-slate-500 text-[11px]">• {statusBadgeText}</span>
-              </div>
-              <p className="text-slate-600 text-xs truncate max-w-lg font-sans">
-                {product.name}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 font-mono text-xs">
-            <a
-              href={`https://wa.me/919920691707?text=Hello%2C%20I%20am%20inquiring%20about%20compressor%20model%20${encodeURIComponent(
-                product.code || product.name
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shadow-2xs"
-            >
-              <MessageSquare size={14} />
-              <span>WhatsApp Desk</span>
-            </a>
-            <button
-              type="button"
-              onClick={() => handleOpenQuote('quote')}
-              className="px-5 py-2 bg-[#0E4B75] hover:bg-[#093757] text-white rounded-lg font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
-            >
-              <Send size={13} className="rotate-45" />
-              <span>Request Price & Quote</span>
-            </button>
+          {/* Lightbox Footer Disclaimer */}
+          <div className="text-center text-slate-400 text-xs max-w-xl pb-2">
+            {product.imageDisclaimer || 'Authentic legacy catalogue photograph — confirm exact model on physical nameplate.'}
           </div>
         </div>
       )}
 
-      {/* ── 9. MOBILE STICKY BOTTOM ACTION BAR (Narrow Screen Priority) ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 p-2 sm:p-3 flex items-center gap-2 lg:hidden shadow-lg pb-[calc(0.6rem+env(safe-area-inset-bottom))]">
-        <a
-          href={`https://wa.me/919920691707?text=Hello%2C%20I%20am%20inquiring%20about%20compressor%20model%20${encodeURIComponent(
-            product.code || product.name
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 min-h-[44px] px-2.5 sm:px-3.5 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-[11px] min-[360px]:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors active:scale-[0.99] shadow-2xs whitespace-nowrap"
-        >
-          <MessageSquare size={14} className="shrink-0" />
-          <span>WHATSAPP</span>
-        </a>
-        <button
-          type="button"
-          onClick={() => handleOpenQuote('quote')}
-          className="flex-1 min-h-[44px] px-2.5 sm:px-4 py-2.5 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white font-mono text-[11px] min-[360px]:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-xs transition-colors active:scale-[0.99] cursor-pointer whitespace-nowrap"
-        >
-          <Send size={13} className="rotate-45 shrink-0" />
-          <span>GET QUOTE</span>
-        </button>
-      </div>
-
-      {/* Phase 1 Verified MongoDB Inquiry Pipeline Modal */}
+      {/* ── 5. SHARED COMMERCIAL QUOTE INQUIRY MODAL ── */}
       <QuoteModal
         isOpen={isQuoteOpen}
         onClose={() => setIsQuoteOpen(false)}

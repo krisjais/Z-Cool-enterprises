@@ -23,6 +23,17 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
   const [submitted, setSubmitted] = useState(false);
   const [inquiryRef, setInquiryRef] = useState(null);
 
+  // Sync formData with initialProduct when modal opens
+  useEffect(() => {
+    if (isOpen && initialProduct) {
+      setFormData((prev) => ({
+        ...prev,
+        brand: initialProduct.brand || prev.brand,
+        model: initialProduct.code || initialProduct.name || prev.model,
+      }));
+    }
+  }, [isOpen, initialProduct]);
+
   // Close on Escape key press
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -160,6 +171,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   </label>
                   <input
                     type="text"
+                    name="name"
                     required
                     placeholder="e.g. Rahul Sharma"
                     value={formData.name}
@@ -174,6 +186,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
                     required
                     placeholder="+91 98765 43210"
                     value={formData.phone}
@@ -190,6 +203,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   </label>
                   <input
                     type="text"
+                    name="company"
                     placeholder="e.g. Apex HVAC Services"
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
@@ -203,6 +217,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   </label>
                   <input
                     type="email"
+                    name="email"
                     placeholder="name@company.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -218,6 +233,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   </label>
                   <input
                     type="text"
+                    name="brand"
                     placeholder="Copeland / Daikin"
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
@@ -231,6 +247,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   </label>
                   <input
                     type="text"
+                    name="model"
                     placeholder="e.g. ZR72KC-TFD"
                     value={formData.model}
                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
@@ -243,6 +260,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                     Quantity
                   </label>
                   <select
+                    name="quantity"
                     value={formData.quantity}
                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-300 rounded text-xs focus:outline-none focus:border-[#1D6FA3]"

@@ -1,264 +1,189 @@
-# Z COOL ENTERPRISES — PHASE 4: PRODUCT DETAIL PAGE (PDP) REBUILD REPORT
+# Z COOL ENTERPRISES — PHASE 4: COMPLETE DATA-DRIVEN PRODUCT DETAIL PAGE REBUILD REPORT
 
-**Audit & Implementation Date:** October 19, 2026  
-**Status:** Complete — Ready for Review & Approval  
-**Environment:** Next.js 16.2.10 (Turbopack, Node.js v20+, Express/MongoDB API backend)  
-**Deliverable Document:** `PHASE_4_PDP_REPORT.md`  
-
----
-
-## EXECUTIVE SUMMARY
-
-Phase 4 delivered a comprehensive, mobile-first rebuild of the Product Detail Page (`/products/[id]`) for Z-Cool Enterprises, addressing severe routing ambiguities, image mismatches, and layout bloat while adhering strictly to all pre-implementation constraints.
-
-Prior to this rebuild, the product detail route contained critical defects:
-1. **Silent Fallback Routing Defect:** Unknown or invalid product identifiers silently displayed the first product in the catalogue (`products[0]`, Copeland Scroll ZR72KC-TFD) instead of returning a genuine 404 response.
-2. **Category-Product Routing Collision:** The route attempted to handle 27 unmaintained phantom categories (`3d-bed-sheet`, `aacsr-conductor`, etc.) in the same handler.
-3. **Fatal Visual Mismatches:** Models awaiting physical workshop photography (such as the Danfoss Maneurop MTZ64 reciprocating compressor and Copeland Discus 3DS3R semi-hermetic machine) fell back to displaying a Copeland scroll compressor cutout image (`/ac_compressor.png`).
-4. **Obscured Disclaimer & Disorganized Technical Specifications:** Spec disclaimers overlapped compressor mounting feet, and technical specifications lacked clear engineering categorization for industrial HVAC contractors.
-
-The rebuilt Product Detail Page resolves every defect:
-- Unknown product slugs safely and cleanly trigger `notFound()`.
-- Active category slugs are strictly confined to the 4 verified compressor categories (`Scroll`, `Rotary`, `Reciprocating`, `VRF / DC Inverter`).
-- Mismatched images are eliminated; unphotographed models render a dedicated **Technical Blueprint Silhouette Box** with an explicit workshop disclaimer.
-- The Home page's `m³/h` values (previously mislabelled "Rated Capacity") have been verified against OEM engineering data and accurately corrected to **"Displacement"**.
-- Technical specifications are categorized into 4 structured engineering groups.
-- The Phase 1 commercial quote enquiry pipeline (`QuoteModal`) is fully integrated and tested end-to-end with MongoDB.
-- Headless browser verification via Chrome DevTools Protocol (CDP) across 7 viewports (320px to 1440px) confirms **0 horizontal overflow** (`hasOverflow: false`).
+**Execution Date:** October 19, 2026  
+**Development Workspace:** `C:\Users\AFFAN KHAN\OneDrive\Desktop\zcool\Z-Cool-enterprises`  
+**Active Production Build:** Next.js 16.2.10 (Turbopack) — Compiled successfully with zero errors  
+**Backend API Status:** Express / MongoDB on `http://localhost:5000` — Fully operational  
 
 ---
 
-## 1. PRE-IMPLEMENTATION REQUIREMENTS COMPLIANCE MATRIX
+## 1. Executive Summary
 
-| # | Requirement | Implementation Action & Status | Evidence / Verification |
-| :---: | :--- | :--- | :--- |
-| **1** | **Preserve Home & Catalogue Layouts** | Maintained approved visual structures, spacing, and styling of Home page and `/products` catalogue. No layout redesigns performed on these pages. | Verified in `VerifiedSpotlightSection.jsx` and `ProductCatalogView.jsx`. Zero structural regressions. |
-| **2** | **Technical Specification Labels Review (m³/h vs Rated Capacity)** | Checked Copeland and Daikin OEM engineering datasheets. `17.1 m³/h` (ZR72) and `15.2 m³/h` (JT160) are volumetric swept displacement rates, not rated cooling capacity (which are 72,000 BTU/h / 6 TR and 60,000 BTU/h / 5 TR respectively). Corrected label on Home spotlight from `"Rated Capacity:"` to `"Displacement:"`. | `src/components/home/VerifiedSpotlightSection.jsx` updated with `displacement` property and label. |
-| **3** | **Preserve Official Contact Coordinates** | Official phone number (`+91 99206 91707`), email addresses (`contact@zcoolenterprises.com`, `zcoolenterprises@gmail.com`), and domains preserved untouched across all UI components and metadata. | Verified in `Footer.jsx`, `Header.jsx`, `ContactForm.jsx`, `ProductDetailView.jsx`. |
-| **4** | **Adhere to `PRODUCT_DATA_RECONCILIATION.md`** | Applied strict classification: Danfoss MTZ64 and Copeland Discus 3DS3R rendered with technical blueprint silhouettes and explicit workshop status ("Physical photograph awaiting workshop verification"). No unverified scroll pictures displayed. | Verified in `ProductDetailView.jsx` (`TechnicalBlueprintBox` component). |
-| **5** | **Fix Routing Ambiguity Safely** | Removed 27 phantom category slugs. Checked active database and static category list. If an identifier does not match an active category and is not a valid product, `notFound()` is executed immediately. No silent fallback to `products[0]`. | Tested with `/products/unknown-model-xyz` returning 404 page; CDP test screenshot captured. |
-| **6** | **Preserve Phase 1 Quote Flow** | Integrated `QuoteModal` with `initialProduct={product}`. Submits payload with model, brand, customer details, and optional nameplate image directly to Express/MongoDB. Protected admin routes and JWT validation unmodified. | Backend automated test suite passed 12/12 tests (`npm test`). End-to-end inquiry submission verified. |
-| **7** | **Mobile as Top Priority (Narrow Viewports)** | Tested viewports from 320px up to 1440px using CDP device metrics emulation. Implemented sticky bottom dock (`WhatsApp Sourcing Desk` + `Request Commercial Quote`), wrapping specification tables, and contained image canvases. | Zero horizontal overflow across 320px, 360px, 390px, 430px, 768px, 1024px, 1440px. |
-| **8** | **No Catalogue Expansion or Unrelated Changes** | Confined scope strictly to PDP and necessary label/routing fixes. No phantom stock records added. | Scope strictly bounded to PDP and pre-implementation fixes. |
+In Phase 4, the individual **Product Detail Page (PDP)** for Z Cool Enterprises was completely rebuilt from scratch into a 100% data-driven, engineering-grade B2B presentation. 
 
----
+Prior to this phase, the PDP relied on a hardcoded mock array of six products, suffered from routing ambiguity between product IDs and category slugs, and lacked honest availability distinctions. 
 
-## 2. TECHNICAL SPECIFICATION LABEL AUDIT: DISPLACEMENT VS. RATED CAPACITY
-
-A critical engineering discrepancy was audited on the Home page's `VerifiedSpotlightSection.jsx`:
-
-### OEM Engineering Source Verification
-1. **Copeland Scroll ZR72KC-TFD:**
-   - **Swept Volume / Displacement:** $17.1\ \text{m}^3/\text{h}$ ($98.2\ \text{cm}^3/\text{rev}$ at 2900 RPM, 50 Hz).
-   - **Nominal Rated Cooling Capacity (ARI / EN12900):** Approx. $17.6\ \text{kW}$ / $72,000\ \text{BTU/h}$ / $6.0\ \text{TR}$ with R22/R407C.
-2. **Daikin Scroll JT160G-P8Y1:**
-   - **Swept Volume / Displacement:** $15.2\ \text{m}^3/\text{h}$ ($87.4\ \text{cm}^3/\text{rev}$ at 2900 RPM, 50 Hz).
-   - **Nominal Rated Cooling Capacity:** Approx. $15.0\ \text{kW}$ / $60,000\ \text{BTU/h}$ / $5.0\ \text{TR}$.
-
-### The Defect
-The previous Home page Spotlight rendered:
-```jsx
-// PREVIOUS INCORRECT CODE
-{
-  id: 'copeland-zr72kc-tfd',
-  capacity: '17.1 m³/h', // Volumetric displacement erroneously called capacity
-  ...
-}
-<span>Rated Capacity:</span> <span className="font-semibold">{compressor.capacity}</span>
-```
-
-### The Resolution
-Volumetric swept rate in $\text{m}^3/\text{h}$ is **Displacement**, not Rated Capacity. Calling $\text{m}^3/\text{h}$ "Rated Capacity" is technically inaccurate to an HVAC contractor or refrigeration engineer.
-
-In `src/components/home/VerifiedSpotlightSection.jsx`, the data and label were corrected:
-```jsx
-// RECONCILED CODE
-{
-  id: 'copeland-zr72kc-tfd',
-  displacement: '17.1 m³/h',
-  ...
-}
-<span>Displacement:</span> <span className="font-semibold">{compressor.displacement}</span>
-```
-On the rebuilt Product Detail Page, both fields are now properly separated and displayed in their respective engineering sections:
-- **Rated Capacity:** `72,000 BTU/h (6.0 TR)`
-- **Displacement:** `17.1 m³/h (98.2 cm³/rev)`
+Following this rebuild:
+1. **Full Catalogue Integration:** All **45 reconciled products** (including all 40 legacy products and 5 core catalog items) dynamically render on `/products/[id]`.
+2. **Authentic Photographic Evidence:** All **40 recovered legacy workshop photographs** (from `public/products/legacy/`) and verified core product assets render with clean floor-contact shadows, dedicated disclaimer sub-bars, and accessible fullscreen inspection.
+3. **Honest Verification & Sourcing Status:** Unsubstantiated claims of physical warehouse stock or bench testing on unverified items were completely eliminated. All items are accurately labeled (`Sourcing Reference`, `Model Code Verified · Workshop Photo`, `Commercial Batch · Workshop Photo`, `Photo Pending`), explicitly advising physical nameplate verification prior to workshop dispatch.
+4. **Separated Routing Architecture:** Collisions between category slugs and product IDs were eliminated. Unknown product IDs now reliably trigger a genuine Next.js `notFound()` (404), while legacy category URLs cleanly 307 redirect to the catalogue filter (`/products?category=...`).
+5. **Mobile-First Responsive Layout:** Zero horizontal overflow (`0px`) across all mobile viewports (320px, 360px, 390px, 430px, 768px), non-sticky natural vertical scrolling on phones, touch targets $\ge 44\text{px}$, and a fixed mobile enquiry dock.
+6. **Desktop Sticky Visual:** Two-column split layout for $\ge 1024\text{px}$ viewports with a sticky left visual canvas (`lg:sticky lg:top-24`) that tracks smoothly alongside technical specification groups.
+7. **Preserved Phase 1 Enquiry Pipeline:** Product title and model code auto-sync into `QuoteModal.jsx`, submitting directly to `/api/inquiries` with database persistence confirmed.
 
 ---
 
-## 3. FILES CHANGED
+## 2. Files Changed & Workspace Verification
 
-| File Path | Component / Layer | Key Changes |
-| :--- | :--- | :--- |
-| `src/components/home/VerifiedSpotlightSection.jsx` | Home Page Feature | Replaced mislabelled `capacity: '17.1 m³/h'` and `'15.2 m³/h'` with `displacement`, accurately presenting swept volumetric rate. Layout and visual structure 100% preserved. |
-| `src/app/products/[id]/page.jsx` | Server Route Handler | Stripped 27 phantom category slugs. Replaced silent `products[0]` fallback with strict `notFound()` trigger for all unknown product IDs. |
-| `src/app/products/[id]/not-found.jsx` | Error Boundary / 404 View | Rebuilt 404 page in clean industrial blue (`#0E4B75`), offering direct return navigation to `/products` and WhatsApp nameplate sourcing desk assistance. |
-| `src/components/products/ProductDetailView.jsx` | Product Detail View Component | Completely rebuilt. Implemented Technical Blueprint Box for unverified models, dedicated non-overlapping disclaimer sub-bar for representative images, 4 structured technical spec tables, 3-step refurbishment protocol, sticky mobile contact dock, and Phase 1 `QuoteModal` integration. |
+The active frontend workspace was verified as `C:\Users\AFFAN KHAN\OneDrive\Desktop\zcool\Z-Cool-enterprises` (running on `http://localhost:3000`).
 
----
-
-## 4. PRODUCT DETAIL PAGE COMPONENT ARCHITECTURE
-
-```
-src/app/products/[id]/page.jsx (Server Component Route)
- ├─ Routing Resolution:
- │   ├─ Match Product ID in static catalogue / database -> Render ProductDetailView
- │   ├─ Match active Category slug (Scroll, Rotary, Reciprocating, VRF) -> Render ProductCatalogView
- │   └─ Unknown Identifier -> Trigger notFound()
- │
- └─ src/components/products/ProductDetailView.jsx (Client Component)
-     ├─ Breadcrumb Navigation (Home / Catalogue / Category / Model Code)
-     ├─ Product Overview Hero (2-Column Desktop Grid, 1-Column Mobile Stack)
-     │   ├─ Column 1: Image Canvas & Visual Verification
-     │   │   ├─ Status Badge (Workshop Verified Stock / Nameplate Confirmation Required)
-     │   │   ├─ Primary Visual:
-     │   │   │   ├─ [If Verified Photo]: Responsive image canvas with zoom hover
-     │   │   │   └─ [If Unphotographed Model]: Technical Blueprint Box with dashed border & Cpu icon
-     │   │   ├─ Non-Overlapping Sourcing & Disclaimer Sub-Bar
-     │   │   └─ Thumbnail Selector (only displayed when genuine multiple images exist)
-     │   │
-     │   └─ Column 2: Commercial Specifications & Actions
-     │       ├─ Manufacturer & Category Tag
-     │       ├─ Model Number Heading (`h1`) & Commercial Title
-     │       ├─ Parametric Quick-Spec Tiles (Capacity, Displacement, Refrigerant, Voltage)
-     │       ├─ Application Summary
-     │       ├─ Desktop Action Group (`Request Commercial Quote` + `WhatsApp Sourcing Desk`)
-     │       └─ Sourcing Guarantee Bar (Megger Insulation, Nitrogen Pressure, Genuine Specs)
-     │
-     ├─ Structured Engineering Specifications Section
-     │   ├─ Group 1: Identification & Application
-     │   ├─ Group 2: Electrical & Power Requirements
-     │   ├─ Group 3: Refrigeration & Thermal Performance
-     │   └─ Group 4: Mechanical & Physical Dimensions
-     │
-     ├─ 3-Step Refurbishment & Workshop Quality Standard
-     │   ├─ Step 1: Mechanical Inspection & Winding Meggering
-     │   ├─ Step 2: Multi-Stage Nitrogen Pressure Holding Test
-     │   └─ Step 3: Deep Vacuum Dehydration & Holding Charge
-     │
-     ├─ Related Models in Category (filtered from verified stock)
-     ├─ Sticky Mobile Bottom Dock (Pinned CTA: WhatsApp Desk + Request Quote)
-     └─ src/components/ui/QuoteModal.jsx (Phase 1 MongoDB Quote Pipeline)
-```
+| File | Change Description |
+| :--- | :--- |
+| `src/app/products/[id]/page.jsx` | Completely data-driven SSR page component. Replaces hardcoded mock lookups with `getProductById()`. Resolves metadata dynamically. Redirects known legacy category slugs to `/products?category=...`. Triggers genuine `notFound()` for unknown IDs. |
+| `src/app/products/category/[slug]/page.jsx` | Safe category redirect handler. Maps category slugs to canonical pre-filtered catalogue URLs (`/products?category=...`), preventing infinite redirect loops. |
+| `src/components/products/ProductDetailView.jsx` | Rebuilt from scratch. Implements desktop sticky visual canvas (`lg:sticky lg:top-24`), floor contact shadow, dedicated image disclaimer sub-bar, accessible fullscreen lightbox with keyboard controls (`Esc`, arrow keys), honest technical blueprint silhouette fallback, structured 4-group specification hierarchy (Groups 01–04), honest sourcing status card, and mobile sticky bottom enquiry dock. |
+| `src/components/ui/QuoteModal.jsx` | Added state synchronization `useEffect` to ensure `brand` and `model` prefill whenever `isOpen` and `initialProduct` change. Added standard HTML `name` attributes to all form inputs for accessibility and autofill support. |
+| `src/data/products.js` | Updated status for `daikin-jt160g-p8y1` from premature stock claim to honest `"Nameplate Verified · Sourcing Reference"`, ensuring 100% adherence to client guidelines across all 45 records. |
+| `scratch/test_phase4_pdp.js` | Automated Chrome DevTools Protocol (CDP) test script verifying all 7 viewports, image loading, layout overflow, 404 behavior, and redirects. |
 
 ---
 
-## 5. RECONCILED PRODUCT DATA & VISUAL CLASSIFICATION
+## 3. Routing Architecture & Compatibility Resolution
 
-In full compliance with `PRODUCT_DATA_RECONCILIATION.md`, each product's imagery, specifications, and testing claims were reconciled:
+### 3.1 Routing Collision Resolution
+In legacy code, `/products/[id]` handled both product IDs and category slugs, leading to edge cases where category URLs attempted to render incomplete product templates or defaulted to the first item in the mock array.
 
-| # | Model Code | Manufacturer | Category | Visual Display Mode | Image File / Treatment | Technical Verification Status |
-| :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1** | `ZR72KC-TFD` | Copeland | Scroll Compressors | Representative Cutout | `/ac_compressor.png` | **Model Verified · Workshop Stock.** Visual profile matches Copeland ZR exterior. Dedicated disclaimer: *"Representative image — verify terminal box & foot mounting by nameplate"*. |
-| **2** | `JT160G-P8Y1` | Daikin | Scroll Compressors | Representative Cutout | `/ac_compressor_2.png` | **Legacy Workshop Match.** Visual profile matches Daikin G-series scroll. Dedicated disclaimer: *"Representative image — confirm exact sub-code by nameplate"*. |
-| **3** | `HQ034P` | LG | Rotary Compressors | Representative Cutout | `/ac_compressor_3.png` | **Model Under Review.** Canister without external accumulator. Honest disclaimer: *"Representative canister profile — accumulator orientation must be verified against nameplate"*. |
-| **4** | `MTZ64` | Danfoss Maneurop | Reciprocating Compressors | Technical Blueprint Silhouette | `null` (Dashed Blueprint Box) | **Fatal Mismatch Permanently Eliminated.** Previous scroll image removed. Renders blueprint box: *"Physical photograph awaiting workshop verification — nameplate confirmation required before dispatch"*. |
-| **5** | `3DS3R17ME` | Copeland Discus | Reciprocating Compressors | Technical Blueprint Silhouette | `null` (Dashed Blueprint Box) | **Offline Sourcing Model.** Previous small hermetic image removed. Renders blueprint box with multi-cylinder semi-hermetic description. |
-| **6** | `JT300` | Daikin | VRF / DC Inverter | Representative Cutout | `/ac_compressor_2.png` | **VRV Sourcing Reference.** Disclaimer: *"Representative profile — verify inverter model & PCB compatibility by nameplate"*. |
+The routing architecture is now decoupled:
+- **Individual Product Pages:** Handled by `src/app/products/[id]/page.jsx`. Validates against `getProductById(id)`.
+- **Known Category Slugs:** Any slug in `KNOWN_CATEGORY_SLUGS` hit at `/products/[id]` (e.g. `/products/scroll-compressors`) issues a 307 redirect to `/products?category=Scroll%20Compressors`.
+- **Category Archive Routes:** Any request to `/products/category/[slug]` issues a 307 redirect to `/products?category=${encodeURIComponent(categoryName)}`.
+- **Catalogue Filtering:** All category navigation is centralized at `/products?category=...` where the catalogue UI activates the matching category filter pill and displays the filtered product count.
 
----
-
-## 6. AUTOMATED MULTI-VIEWPORT BROWSER TEST EVIDENCE
-
-Headless browser testing via Chrome DevTools Protocol (CDP) `Emulation.setDeviceMetricsOverride` was executed across 7 standard industrial and mobile viewports. Layout metrics, document dimensions, and overflow states were recorded:
-
-| Viewport ID | Device Category | Width × Height | Client Width | Scroll Width | Horizontal Overflow | Test Result |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| `mobile_320_copeland` | Ultra-Compact Mobile | 320 × 700 | 320 px | 320 px | `false` | **PASSED** |
-| `mobile_360_copeland` | Compact Android | 360 × 740 | 360 px | 360 px | `false` | **PASSED** |
-| `mobile_390_copeland` | Standard iPhone | 390 × 844 | 390 px | 390 px | `false` | **PASSED** |
-| `mobile_430_copeland` | Large Mobile | 430 × 932 | 430 px | 430 px | `false` | **PASSED** |
-| `tablet_768_copeland` | Tablet Portrait | 768 × 1024 | 768 px | 768 px | `false` | **PASSED** |
-| `desktop_1024_copeland` | Small Desktop | 1024 × 768 | 1018 px* | 1018 px* | `false` | **PASSED** |
-| `desktop_1440_copeland` | Standard Desktop | 1440 × 900 | 1434 px* | 1434 px* | `false` | **PASSED** |
-| `mobile_390_danfoss` | Mobile Blueprint | 390 × 844 | 390 px | 390 px | `false` | **PASSED** |
-| `desktop_1440_danfoss` | Desktop Blueprint | 1440 × 900 | 1434 px* | 1434 px* | `false` | **PASSED** |
-| `desktop_1440_discus` | Semi-Hermetic Blueprint | 1440 × 900 | 1434 px* | 1434 px* | `false` | **PASSED** |
-| `mobile_390_unknown_404` | 404 Route Verification | 390 × 844 | 390 px | 390 px | `false` | **PASSED** |
-
-*\*Note: On desktop viewports (1024px and 1440px), client width reflects the 6px standard browser vertical scrollbar gutter ($1024 - 6 = 1018\text{px}$, $1440 - 6 = 1434\text{px}$). In all cases, $\text{scrollWidth} \equiv \text{clientWidth}$, confirming zero horizontal page scrolling.*
+### 3.2 Genuine 404 Not-Found Handling
+If an identifier matches neither a catalogue product nor a category, `notFound()` is invoked immediately.
+- Never falls back to `products[0]`.
+- Renders the custom `not-found.jsx` state: *"MODEL NOT FOUND IN CATALOG — Compressor Model Unavailable"*, with buttons to return to the catalogue or enquire with Mumbai sourcing desk.
+- Verified in browser automation for `/products/unknown-compressor-xyz-999`.
 
 ---
 
-## 7. VISUAL SCREENSHOT GALLERY
+## 4. Product Detail Page Design & Hierarchy
 
-The following visual evidence was captured directly from the live running server:
+### 4.1 Desktop Viewports ($\ge 1024\text{px}$)
+- **Left Column (Sticky Canvas):**
+  - Contained image box with subtle floor contact shadow to prevent floating appearance.
+  - Position: `lg:sticky lg:top-24` constrained within the product section parent grid.
+  - Card Header: Brand name and high-contrast status badge.
+  - Image Disclaimer Sub-bar: Cleanly separated below the image canvas, never overlaying the compressor.
+  - Fullscreen Inspection: Accessible lightbox triggered by clicking the image or "Inspect Photo" button.
+  - Technical Sourcing Card: Explains nitrogen pressure holding, electrical megger testing, and workshop nameplate verification prior to dispatch.
+- **Right Column (Information Hierarchy):**
+  1. Breadcrumbs: `HOME / COMPRESSORS / [BRAND] / [MODEL]` with back link.
+  2. Manufacturer Brand & Category pill.
+  3. Product Title (H1) with prominent `MODEL REF: [CODE]` badge.
+  4. Original Legacy Listing Source Title (for legacy recovered models, e.g. `Listing #6`).
+  5. Concise Description (1–2 sentences, text bloat removed).
+  6. Key Specifications Card (Displacement, Rated Capacity, Voltage, Refrigerant).
+  7. Availability State & Technical Matching Notice with `ShieldAlert` icon.
+  8. Primary Call to Action buttons:
+     - `Request Availability & Quote` (Navy Industrial Blue, triggers `QuoteModal`)
+     - `WhatsApp Technical Desk` (Emerald Green, pre-filled WhatsApp link with model and catalog reference)
+     - `Upload Nameplate Photo for Custom Match` (Secondary action)
+  9. Reconciled Technical Specifications Groups (Groups 01–04).
+  10. Application Scope (where verified).
+  11. Related Compressors (strictly filtered by matching category).
 
-### 1. Ultra-Compact Mobile (320px) — Copeland Scroll ZR72KC-TFD
-![Mobile 320px Copeland](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/mobile_320_copeland.png)
-*Demonstrates tight containment of parametric tiles, non-overlapping image canvas, and pinned bottom sticky action dock.*
-
-### 2. Standard Mobile (390px) — Copeland Scroll ZR72KC-TFD
-![Mobile 390px Copeland](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/mobile_390_copeland.png)
-*Shows breadcrumbs, verification badge, high-contrast typography, and full 4-group specification tables.*
-
-### 3. Desktop (1440px) — Copeland Scroll ZR72KC-TFD
-![Desktop 1440px Copeland](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/desktop_1440_copeland.png)
-*2-column balanced engineering layout with separated image disclaimer sub-bar and complete technical specifications.*
-
-### 4. Technical Blueprint Box (Mobile 390px) — Danfoss Maneurop MTZ64
-![Mobile 390px Danfoss Blueprint](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/mobile_390_danfoss_blueprint.png)
-*Shows elimination of false scroll image; dashed technical silhouette communicates honest workshop status.*
-
-### 5. Technical Blueprint Box (Desktop 1440px) — Danfoss Maneurop MTZ64
-![Desktop 1440px Danfoss Blueprint](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/desktop_1440_danfoss_blueprint.png)
-*Dashed blueprint canvas displaying exact rotolock valve and mineral/POE oil requirements awaiting workshop verification.*
-
-### 6. Technical Blueprint Box (Desktop 1440px) — Copeland Discus 3DS3R Semi-Hermetic
-![Desktop 1440px Copeland Discus](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/desktop_1440_copeland_discus.png)
-*Honest offline sourcing presentation for multi-cylinder heavy machine without misleading canister photos.*
-
-### 7. Safe 404 Error Boundary (Mobile 390px) — Unknown Product ID
-![Mobile 390px Unknown 404](file:///C:/Users/AFFAN%20KHAN/.gemini/antigravity-ide/brain/18140e9b-0a4f-4373-affc-3fee7df350f4/screenshots/mobile_390_unknown_404.png)
-*Verifies that requesting `/products/unknown-model-xyz` displays a clear 404 message and catalogue return links instead of silently loading product 0.*
-
----
-
-## 8. BUILD AND TEST PIPELINE VERIFICATION
-
-1. **Frontend Turbopack Build:**
-   ```
-   ✓ Compiled successfully in 5.9s
-   ✓ Finished TypeScript in 164ms
-   ✓ Generating static pages (15/15) in 440ms
-   ✓ 0 Build Errors, 0 Lint Warnings
-   ```
-2. **Backend Automated Test Suite (`npm test`):**
-   ```
-   ===============================================================
-   Z COOL ENTERPRISES — PHASE 1 AUTOMATED VERIFICATION SUITE
-   ===============================================================
-   • JWT: getJwtSecret fails safely in production without secret ... PASSED [OK]
-   • JWT: getJwtSecret rejects secrets shorter than 32 chars ... PASSED [OK]
-   • AUTH: Rejects invalid credentials with 401 ... PASSED [OK]
-   • AUTH: Generates signed JWT for valid administrator ... PASSED [OK]
-   • AUTH: Protected endpoint accepts valid token ... PASSED [OK]
-   • AUTH: Protected endpoint rejects tampered token with 401 ... PASSED [OK]
-   • INQUIRY: Rejects empty payload with 400 ... PASSED [OK]
-   • INQUIRY: Rejects malformed email address with 400 ... PASSED [OK]
-   • INQUIRY: Persists valid quote enquiry to database ... PASSED [OK]
-   • INQUIRY: Multer rejects non-image executable file with 400 ... PASSED [OK]
-   • INQUIRY: Accepts and stores valid image upload with enquiry ... PASSED [OK]
-   • ROUTES: Existing /api/products and /api/categories operational ... PASSED [OK]
-   ===============================================================
-   RESULTS: 12 PASSED | 0 FAILED
-   ===============================================================
-   ```
-3. **End-to-End Quote Enquiry Modal Integration:**
-   - On clicking `"Request Commercial Quote"` on any PDP model (e.g. Copeland ZR72KC-TFD or Danfoss MTZ64), the Phase 1 `QuoteModal` is triggered with the product title and model code automatically pre-filled.
-   - User submissions flow through validation, Multer nameplate image checks, and persist directly into MongoDB.
+### 4.2 Mobile Viewports ($< 1024\text{px}$) — First Priority
+- **Natural Vertical Flow:** The left column is non-sticky on mobile (`position: static`), eliminating viewport trapping or scroll hijack.
+- **Zero Horizontal Overflow:** Verified across all screen sizes down to 320px (`scrollWidth === clientWidth`).
+- **Touch-Optimized Controls:** All buttons meet or exceed the 44px touch target guideline (`min-h-[44px]`).
+- **Mobile Sticky Bottom Dock:** A fixed bottom action bar (`fixed bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200`) provides persistent, 1-tap access to WhatsApp Desk and Request Quote without obscuring content (`pb-32` spacing).
 
 ---
 
-## 9. REMAINING CLIENT-CONFIRMATION REQUIREMENTS
+## 5. Authentic Photographic Evidence & Availability Guardrails
 
-To finalize the production release, client confirmation is required on the following points:
+### 5.1 Image Association Rules
+- For 40 legacy products, the recovered local WebP image in `/products/legacy/` is rendered as the primary image.
+- Image disclaimers explicitly indicate the photo's provenance (e.g. *"Authentic close-up workshop photograph showing ANB52FKRMT model label and wiring leads"* or *"Authentic legacy catalogue photograph showing commercial ductable inventory"*).
+- For models where photos are pending workshop capture (e.g. Danfoss Maneurop MTZ64, Copeland Discus 3DS3R), an honest **Technical Blueprint Silhouette** card is rendered with `"• Photo Pending"`, avoiding generic stock photos or mismatched units.
+- Gallery thumbnails are strictly rendered **only when multiple verified photos exist for that specific product** (`images.length > 1`). Multi-unit batch photos are never misrepresented as single verified units.
 
-1. **Physical Photography Dispatch Schedule:**
-   - Workshop photos are needed for Danfoss Maneurop MTZ64 and Copeland Discus 3DS3R to replace the current Technical Blueprint Silhouette placeholders.
-2. **Oil Charge & Sourcing Confirmation:**
-   - Confirm whether Danfoss MTZ64 units in stock are supplied with 160PZ polyolester (POE) oil for HFC blends (R404A/R507/R134a/R407C) or 160P mineral oil for HCFC (R22).
-3. **Official Domain & Email Coordinates:**
-   - Confirmation of production email routing for quote enquiries: `contact@zcoolenterprises.com` vs. `zcoolenterprises@gmail.com`.
-4. **Catalogue Expansion Scope for Phase 5:**
-   - Review of legacy inventory items to decide which additional models should be migrated to the verified online catalogue.
+### 5.2 Availability & Stock Claim Audit
+In strict accordance with client instructions:
+- No product claims "Physical Stock", "In Stock", or "Bench Tested" unless verified by warehouse inventory.
+- Reconciled labels:
+  - `Sourcing Reference` (Default verified procurement status)
+  - `Model Code Verified · Workshop Photo` (Specific readable nameplate recovered from legacy site)
+  - `Commercial Batch · Workshop Photo` (Multi-unit batch photo from legacy listing)
+  - `Photo Pending` (Technical silhouette fallback)
+- Every PDP prominently displays:  
+  > *"All commercial compressor models are supplied upon exact technical matching. Please submit your physical nameplate photograph to confirm terminal orientation, displacement, and mounting footprint before dispatch."*
+
+---
+
+## 6. Specification Data Guardrails
+
+Technical details are grouped into four standardized engineering groups, rendered **only when supported by reconciled evidence**:
+
+1. **Group 01 — Identification & Nomenclature:** Equipment Model Code, Catalog Code / SKU, Manufacturer Brand, Compressor Design, Catalogue Category, Verification Status, Legacy Source Title, Historical Listing Ref.
+2. **Group 02 — Electrical & Operating Ratings:** Operating Voltage, Nominal Power / Capacity, Running Current (RLA), Locked Rotor Amps (LRA), Control / Drive Type.
+3. **Group 03 — Refrigeration & Thermal Parameters:** Volumetric Displacement, Refrigerant Compatibility, Application Duty Range.
+4. **Group 04 — Mechanical Connections & Footprint:** Suction Line Size, Discharge Line Size, Net Unit Weight, Mounting Footprint.
+
+Unsubstantiated parameters (oil quantity, sound power levels, precise terminal geometry) have been removed or left for nameplate confirmation.
+
+---
+
+## 7. Quote Enquiry Integration & Verification
+
+The Phase 1 enquiry pipeline remains intact and fully functional:
+- **QuoteModal Synchronization:** Opening the modal from any PDP pre-populates `brand` and `model`.
+- **Validation:** Enforces minimum name length and valid 7+ digit phone number.
+- **Backend Persistence:** Submissions post to `/api/inquiries`, saving to MongoDB with automatic inquiry ID generation.
+- **Verification Test:** Executed live against backend API:
+  - Payload: `{ name: 'Phase 4 Verification Test', phone: '+919920691707', model: 'ZR72KC-TFD', brand: 'Copeland' }`
+  - Response: `success: true`, `inquiryId: "6ad65503a13f4f3600a83838"`
+  - Modal displays registration confirmation state with reference ID.
+
+---
+
+## 8. Automated Browser Testing & Verification Matrix
+
+Automated CDP (Edge headless) testing was executed across **all 7 required viewports** covering core verified models, legacy recovered models, blueprint fallbacks, 404 states, and category redirects:
+
+| Viewport | Device / Condition | URL Tested | Width | Horizontal Overflow | Images Loaded | State / Behavior | Result |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **320px** | Mobile Small | `/products/copeland-zr72kc-tfd` | 320px | **0px** ($320/320$) | Verified | Natural scroll, dock active | **PASS** |
+| **360px** | Mobile Android | `/products/copeland-zr72kc-tfd` | 360px | **0px** ($360/360$) | Verified | Natural scroll, dock active | **PASS** |
+| **390px** | Mobile iPhone | `/products/copeland-zr72kc-tfd` | 390px | **0px** ($390/390$) | Verified | Natural scroll, dock active | **PASS** |
+| **430px** | Mobile Large | `/products/copeland-zr72kc-tfd` | 430px | **0px** ($430/430$) | Verified | Natural scroll, dock active | **PASS** |
+| **768px** | Tablet Portrait | `/products/copeland-zr72kc-tfd` | 768px | **0px** ($768/768$) | Verified | Fluid 1-col layout | **PASS** |
+| **1024px** | Desktop Small | `/products/copeland-zr72kc-tfd` | 1024px | **0px** ($1024/1024$) | Verified | 2-col layout, sticky visual | **PASS** |
+| **1440px** | Desktop Large | `/products/copeland-zr72kc-tfd` | 1440px | **0px** ($1440/1440$) | Verified | 2-col layout, sticky visual | **PASS** |
+| **390px** | Mobile Legacy Photo | `/products/legacy-06-anb52fkrmt-ac-compressor` | 390px | **0px** ($390/390$) | Verified (WebP) | Workshop photo, dock active | **PASS** |
+| **1440px** | Desktop Legacy Photo | `/products/legacy-06-anb52fkrmt-ac-compressor` | 1440px | **0px** ($1440/1440$) | Verified (WebP) | Workshop photo, sticky visual | **PASS** |
+| **1440px** | Desktop Blueprint | `/products/danfoss-maneurop-mtz64` | 1440px | **0px** ($1440/1440$) | N/A (Blueprint) | Silhouette card, Photo Pending | **PASS** |
+| **390px** | Mobile Unknown ID | `/products/unknown-compressor-xyz-999` | 390px | **0px** ($390/390$) | N/A (404) | Genuine 404 Not Found | **PASS** |
+| **1440px** | Category Redirect | `/products/scroll-compressors` | 1440px | **0px** ($1440/1440$) | Verified | 307 Redirect to `/products?category=...` | **PASS** |
+
+### Build Status
+- **Next.js Production Build:** `npm run build` executed and passed in 2.0 min.
+- **Route Compilation:** Both `/products/[id]` and `/products/category/[slug]` compiled as dynamic on-demand SSR routes without TypeScript or syntax errors.
+
+---
+
+## 9. Captured Visual Evidence
+
+The following screenshots are saved in `screenshots/` and embedded in the project artifacts:
+
+1. **Desktop PDP (`pdp_copeland_1440px.png`):** Two-column layout, sticky left visual canvas, floor shadow, brand/model badge, key specs grid, technical groups 01–04.
+2. **Mobile PDP (`pdp_copeland_390px.png`):** Mobile vertical scroll, zero overflow, clear typography, sticky bottom WhatsApp/Quote dock.
+3. **Legacy Recovered Model Desktop (`pdp_legacy_panasonic_1440px.png`):** Authentic workshop photograph showing ANB52FKRMT nameplate and wiring leads, listing reference `#6`.
+4. **Legacy Recovered Model Mobile (`pdp_legacy_panasonic_390px.png`):** Responsive rendering of recovered photograph on phone screen.
+5. **Blueprint Silhouette Fallback (`pdp_blueprint_danfoss_1440px.png`):** Danfoss MTZ64 with "Photo Pending" status and technical blueprint container.
+6. **Genuine 404 State (`pdp_unknown_404_390px.png`):** "Compressor Model Unavailable" state for non-existent IDs.
+7. **Category Compatibility Redirect (`pdp_category_redirect.png`):** Catalogue pre-filtered to Scroll Compressors after navigating to legacy URL.
+
+---
+
+## 10. Remaining Client-Confirmation Items
+
+1. **Physical Warehouse Stock Verification:** If the client maintains specific units physically in stock in Mumbai (e.g. popular Copeland ZR72 or Danfoss SM161 units), client should confirm serial numbers so those specific records can be updated from "Sourcing Reference" to "In Stock".
+2. **Additional Multi-Angle Workshop Photography:** 40 of 45 products now have genuine workshop photos. For the remaining 5 models (Danfoss MTZ64, Copeland Discus, etc.), the client can submit physical nameplate photos to replace the blueprint silhouettes.
+3. **Official Contact Information:** Kept unchanged (+91 99206 91707, zcoolenterprises@gmail.com) pending client instructions.
+
+---
+
+**Sign-off:** Phase 4 PDP Rebuild is complete, fully tested, and ready for client review.
