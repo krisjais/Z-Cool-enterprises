@@ -1,50 +1,60 @@
-// Central database of industrial products in Zcool Enterprises catalog
+// Central database of industrial products in Z Cool Enterprises catalog
+// Reconciled against PRODUCT_DATA_RECONCILIATION.md with honest image & status classifications
+
 export const PRODUCTS_CATALOG = [
   {
     id: 'copeland-zr72kc-tFD',
-    code: 'Z-COP-ZR72',
+    code: 'ZR72KC-TFD',
+    catalogCode: 'Z-COP-ZR72',
     name: 'Copeland Scroll Compressor ZR72KC-TFD',
     brand: 'Copeland',
-    tagline: 'Refurbished Commercial Air-Conditioning Scroll Compressor',
+    tagline: 'Commercial Air-Conditioning Orbital Scroll Compressor',
     category: 'Scroll Compressors',
     type: 'Hermetic Scroll',
-    condition: 'Refurbished & Pressure Tested',
-    availability: 'In Stock (Ready for Freight)',
-    voltage: '380V - 415V AC, 3-Phase, 50Hz',
-    displacement: '17.1 m³/h',
+    condition: 'Sourcing Reference',
+    availability: 'Sourcing Reference',
+    voltage: '380V–415V, 3-Phase, 50Hz',
+    displacement: '17.1 m³/h (50 Hz)',
+    coolingCapacity: '72,000 BTU/h (6 TR)',
     refrigerant: 'R22 / R407C Compatible',
-    application: 'Commercial Air Conditioning, Ductable Units, Package AC',
-    accentColor: '#1D6FA3',
-    statusBadge: 'Pressure Tested',
-    description: 'High-performance Copeland scroll compressor ideal for commercial package units, ductable systems, and chillers. Fully inspected, coil-tested, and pressure-tested by Zcool technicians.',
+    application: 'Commercial ducted AC & chillers',
+    accentColor: '#0E4B75',
+    statusBadge: 'Sourcing Reference',
+    verificationStatus: 'Sourcing Reference',
+    imageType: 'representative',
+    imageDisclaimer: 'Representative scroll image — confirm exact suffix by nameplate.',
+    shortDescription: 'Orbital scroll compressor sourced for commercial package units, ducted systems, and liquid chillers.',
+    description: 'High-performance orbital scroll compressor for commercial package units, ducted systems, and liquid chillers. Sourced for replacement and displacement matching.',
+    keySpecs: [
+      { label: 'Rated Capacity', value: '72,000 BTU/h (6 TR)' },
+      { label: 'Electrical', value: '380V–415V, 3-Phase, 50Hz' },
+      { label: 'Primary Use', value: 'Commercial ducted AC & chillers' }
+    ],
     compatibility: ['Daikin', 'Carrier', 'Blue Star', 'Voltas', 'Trane', 'Emerson'],
     compatDetails: {
-      'Daikin': 'Direct mounting drop-in replacement for Daikin package units.',
+      'Daikin': 'Drop-in displacement replacement for compatible Daikin package units.',
       'Carrier': 'Fits Carrier 6-Ton commercial ductable frames.',
-      'Blue Star': 'Standard replacement for Blue Star commercial chillers.',
+      'Blue Star': 'Direct match for Blue Star commercial chiller circuits.',
       'Voltas': 'Matches Voltas commercial HVAC unit mounting feet.',
-      'Trane': 'Compatible with Trane packaged rooftop units.'
+      'Trane': 'Compatible with Trane packaged rooftop systems.'
     },
     images: [
-      '/ac_compressor.png',
-      '/ac_compressor_2.png',
-      '/ac_compressor_3.png'
+      '/ac_compressor.png'
     ],
     specs: {
       electrical: {
         'Input Voltage': '380V - 415V, 3-Phase, 50Hz',
         'Nominal HP': '6.0 HP',
-        'RLA (Running Amps)': '11.5 A',
-        'LRA (Locked Rotor)': '74 A'
+        'RLA': '11.5 A'
       },
       thermal: {
         'Cooling Capacity': '72,000 BTU/h (6 TR)',
-        'Application': 'Medium / High Temp Air Conditioning',
-        'Oil Type': 'POE / Mineral Oil Compatible'
+        'Displacement': '17.1 m³/h (50 Hz)',
+        'Application': 'Medium / High Temp Air Conditioning'
       },
       mechanical: {
-        'Suction Line Size': '7/8 in (22.2 mm) ODF',
-        'Discharge Line Size': '1/2 in (12.7 mm) ODF',
+        'Suction Line Size': '7/8 in ODF',
+        'Discharge Line Size': '1/2 in ODF',
         'Mounting Footprint': '190.5 mm x 190.5 mm',
         'Net Weight': '38.5 kg'
       }
@@ -52,41 +62,50 @@ export const PRODUCTS_CATALOG = [
   },
   {
     id: 'daikin-jt160g-p8y1',
-    code: 'Z-DAI-JT160',
+    code: 'JT160G-P8Y1',
+    catalogCode: 'Z-DAI-JT160',
     name: 'Daikin Scroll Compressor JT160G-P8Y1',
     brand: 'Daikin',
-    tagline: 'Refurbished VRV & Package AC Scroll Compressor',
+    tagline: 'Commercial Scroll Compressor for Packaged AC & Chillers',
     category: 'Scroll Compressors',
     type: 'Hermetic Scroll',
-    condition: 'Refurbished & Tested',
-    availability: 'In Stock',
-    voltage: '380V - 415V AC, 3-Phase, 50Hz',
-    displacement: '15.8 m³/h',
+    condition: 'Sourcing Reference',
+    availability: 'Sourcing Reference',
+    voltage: '380V–415V, 3-Phase, 50Hz',
+    displacement: '15.2 m³/h (50 Hz)',
+    coolingCapacity: '60,000 BTU/h (5 TR)',
     refrigerant: 'R410A Compatible',
-    application: 'VRV / VRF Systems, Modular Chillers, Commercial Split',
-    accentColor: '#0EA6A6',
-    statusBadge: 'Tested',
-    description: 'Original Daikin hermetic scroll compressor rebuilt with precision tolerances for VRV and high-efficiency commercial cooling loops.',
+    application: 'Packaged AC & modular chillers',
+    accentColor: '#0E4B75',
+    statusBadge: 'Sourcing Reference',
+    verificationStatus: 'Sourcing Reference',
+    imageType: 'representative',
+    imageDisclaimer: 'Representative scroll image — confirm exact model by nameplate.',
+    shortDescription: 'Commercial scroll compressor for packaged air conditioners, condensing units, and modular chillers.',
+    description: 'Original Daikin hermetic scroll compressor rebuilt with precision tolerances for commercial packaged air conditioners and modular chillers.',
+    keySpecs: [
+      { label: 'Rated Capacity', value: '60,000 BTU/h (5 TR)' },
+      { label: 'Electrical', value: '380V–415V, 3-Phase, 50Hz' },
+      { label: 'Primary Use', value: 'Packaged AC & modular chillers' }
+    ],
     compatibility: ['Daikin', 'McQuay', 'York'],
     compatDetails: {
-      'Daikin': 'Original OEM specs for Daikin VRV II & VRV III outdoor units.',
+      'Daikin': 'Original OEM specification for Daikin commercial condensing units.',
       'McQuay': 'Matches McQuay air-cooled water chiller circuits.'
     },
     images: [
-      '/ac_compressor_2.png',
-      '/ac_compressor.png',
-      '/ac_compressor_3.png'
+      '/ac_compressor_2.png'
     ],
     specs: {
       electrical: {
         'Input Voltage': '380V - 415V, 3-Phase, 50Hz',
         'Nominal HP': '5.0 HP',
-        'RLA (Running Amps)': '9.8 A'
+        'RLA': '9.8 A'
       },
       thermal: {
         'Cooling Capacity': '60,000 BTU/h (5 TR)',
-        'Application': 'Commercial VRV / Air Conditioning',
-        'Oil Charge': '1.4 Liters POE'
+        'Displacement': '15.2 m³/h (50 Hz)',
+        'Application': 'Commercial AC & Chillers'
       },
       mechanical: {
         'Suction Line Size': '7/8 in ODF',
@@ -97,29 +116,39 @@ export const PRODUCTS_CATALOG = [
   },
   {
     id: 'lg-hq034p-rotary',
-    code: 'Z-LG-HQ034',
+    code: 'HQ034P',
+    catalogCode: 'Z-LG-HQ034',
     name: 'LG Commercial Rotary Compressor HQ034P',
     brand: 'LG',
-    tagline: 'High-Efficiency Rotary Compressor for Heavy Split & Cassette Units',
+    tagline: 'Commercial Rotary Compressor for Cassette & Split AC',
     category: 'Rotary Compressors',
-    type: 'Twin Rotary',
-    condition: 'Refurbished',
-    availability: 'In Stock',
-    voltage: '220V - 240V AC, 1-Phase, 50Hz',
-    displacement: '34.0 cm³/rev',
+    type: 'Commercial Rotary',
+    condition: 'Awaiting Nameplate Confirmation',
+    availability: 'Awaiting Confirmation',
+    voltage: '220V–240V, 1-Phase, 50Hz',
+    displacement: '34.0 cc/rev',
+    coolingCapacity: '36,000 BTU/h Class',
     refrigerant: 'R32 / R410A',
-    application: 'Commercial Cassette AC, Ductable Split, Tower AC',
-    accentColor: '#1D6FA3',
-    statusBadge: 'Tested',
-    description: 'Durable LG twin-rotary compressor designed for smooth acoustic operation and low vibration in commercial cassette and tower AC units.',
+    application: 'Commercial split & cassette AC',
+    accentColor: '#0E4B75',
+    statusBadge: 'Nameplate Check Needed',
+    verificationStatus: 'Nameplate Check Needed',
+    imageType: 'representative',
+    imageDisclaimer: 'Representative canister — verify model & accumulator by nameplate.',
+    shortDescription: 'Compact rotary compressor for commercial cassette air conditioning and light commercial split plants.',
+    description: 'Compact rotary compressor designed for commercial cassette air conditioning and light commercial split plants.',
+    keySpecs: [
+      { label: 'Displacement', value: '34.0 cc/rev' },
+      { label: 'Electrical', value: '220V–240V, 1-Phase, 50Hz' },
+      { label: 'Primary Use', value: 'Commercial split & cassette AC' }
+    ],
     compatibility: ['LG', 'Lloyd', 'Voltas', 'O General'],
     compatDetails: {
       'LG': 'Direct fit for LG Commercial Multi-Split & Cassette systems.',
       'Voltas': 'Standard mounting configuration for Voltas 3-Ton cassette units.'
     },
     images: [
-      '/ac_compressor_3.png',
-      '/ac_compressor.png'
+      '/ac_compressor_3.png'
     ],
     specs: {
       electrical: {
@@ -128,7 +157,7 @@ export const PRODUCTS_CATALOG = [
         'RLA': '13.2 A'
       },
       thermal: {
-        'Cooling Capacity': '36,000 BTU/h (3 TR)',
+        'Displacement': '34.0 cc/rev',
         'Application': 'Cassette & Ductable Air Conditioning'
       },
       mechanical: {
@@ -140,30 +169,38 @@ export const PRODUCTS_CATALOG = [
   },
   {
     id: 'danfoss-maneurop-mtz64',
-    code: 'Z-DAN-MTZ64',
+    code: 'MTZ64',
+    catalogCode: 'Z-DAN-MTZ64',
     name: 'Danfoss Maneurop Reciprocating Compressor MTZ64',
     brand: 'Danfoss',
-    tagline: 'Refurbished Reciprocating Compressor for Cold Storage & HVAC',
+    tagline: 'Heavy-Duty Reciprocating Compressor for Cold Storage & Chillers',
     category: 'Reciprocating Compressors',
     type: 'Hermetic Reciprocating',
-    condition: 'Refurbished & Leak Tested',
-    availability: 'In Stock',
-    voltage: '380V - 400V AC, 3-Phase, 50Hz',
-    displacement: '107.7 cm³/rev',
+    condition: 'Photo Pending',
+    availability: 'Sourcing Reference',
+    voltage: '380V–400V, 3-Phase, 50Hz',
+    displacement: '107.7 cc/rev',
+    coolingCapacity: '5.5 HP Class',
     refrigerant: 'R404A / R134a / R407C',
-    application: 'Cold Storage, Commercial Refrigeration, Process Chillers',
-    accentColor: '#0EA6A6',
-    statusBadge: 'Leak Tested',
+    application: 'Cold storage & refrigeration',
+    accentColor: '#0E4B75',
+    statusBadge: 'Photo Pending',
+    verificationStatus: 'Photo Pending',
+    imageType: 'placeholder',
+    imageDisclaimer: 'Technical silhouette — physical Maneurop photo awaiting verification.',
+    shortDescription: 'Heavy-duty reciprocating compressor with rotolock fittings for walk-in cold rooms and refrigeration plants.',
     description: 'Heavy-duty Danfoss Maneurop MTZ series reciprocating compressor designed for demanding cold storage rooms and commercial refrigeration.',
+    keySpecs: [
+      { label: 'Displacement', value: '107.7 cc/rev' },
+      { label: 'Electrical', value: '380V–400V, 3-Phase, 50Hz' },
+      { label: 'Primary Use', value: 'Cold storage & refrigeration' }
+    ],
     compatibility: ['Danfoss', 'Bitzer', 'Copeland', 'Carrier'],
     compatDetails: {
-      'Danfoss': 'Exact OEM replacement for Maneurop MTZ64-4VI.',
+      'Danfoss': 'OEM replacement for Maneurop MTZ64 / MT72 series.',
       'Carrier': 'Used in Carrier cold room condensing units.'
     },
-    images: [
-      '/ac_compressor.png',
-      '/ac_compressor_3.png'
-    ],
+    images: [],
     specs: {
       electrical: {
         'Input Voltage': '380V - 400V, 3-Phase, 50Hz',
@@ -171,8 +208,9 @@ export const PRODUCTS_CATALOG = [
         'RLA': '10.5 A'
       },
       thermal: {
+        'Displacement': '107.7 cc/rev',
         'Application': 'Medium & Low Temp Refrigeration',
-        'Oil Charge': '1.8 Liters POE 160PZ'
+        'Oil Charge': 'POE 160PZ'
       },
       mechanical: {
         'Suction Rotolock': '1-3/4 in',
@@ -183,30 +221,38 @@ export const PRODUCTS_CATALOG = [
   },
   {
     id: 'copeland-discus-semihermetic',
-    code: 'Z-COP-DISCUS',
+    code: '3DS3R17ME',
+    catalogCode: 'Z-COP-DISCUS',
     name: 'Copeland Semi-Hermetic Compressor 3DS3R17ME',
     brand: 'Copeland',
-    tagline: 'Industrial Heavy Refrigeration Semi-Hermetic Compressor',
-    category: 'Refrigeration Compressors',
+    tagline: 'Industrial Heavy Refrigeration Semi-Hermetic Machine',
+    category: 'Reciprocating Compressors',
     type: 'Semi-Hermetic Reciprocating',
-    condition: 'Refurbished & Overhauled',
-    availability: 'Available on Order / Sourcing',
-    voltage: '380V - 415V AC, 3-Phase, 50Hz',
+    condition: 'Sourcing Confirmation Needed',
+    availability: 'Offline Sourcing Only',
+    voltage: '380V–415V, 3-Phase, 50Hz',
     displacement: '50.0 m³/h',
+    coolingCapacity: '15.0 HP Class',
     refrigerant: 'R404A / R507 / R22',
-    application: 'Industrial Cold Storage, Blast Freezers, Supermarket Rack Systems',
-    accentColor: '#1D6FA3',
-    statusBadge: 'Industrial Grade',
+    application: 'Industrial cold storage & rack systems',
+    accentColor: '#0E4B75',
+    statusBadge: 'Sourcing Confirmation Needed',
+    verificationStatus: 'Sourcing Confirmation Needed',
+    imageType: 'placeholder',
+    imageDisclaimer: 'Technical silhouette — semi-hermetic photo awaiting confirmation.',
+    shortDescription: 'Multi-cylinder cast-iron semi-hermetic compressor built for extreme industrial refrigeration duty and rack systems.',
     description: 'Heavy industrial Copeland Discus semi-hermetic compressor built for extreme refrigeration duty, cold storage plants, and multi-compressor rack systems.',
+    keySpecs: [
+      { label: 'Displacement', value: '50.0 m³/h' },
+      { label: 'Electrical', value: '380V–415V, 3-Phase, 50Hz' },
+      { label: 'Primary Use', value: 'Industrial cold storage & rack systems' }
+    ],
     compatibility: ['Copeland', 'Emerson', 'Bitzer', 'Dorin'],
     compatDetails: {
       'Copeland': 'Original Copeland Discus valve design.',
       'Bitzer': 'Mounting adaptation available for supermarket racks.'
     },
-    images: [
-      '/ac_compressor_3.png',
-      '/ac_compressor_2.png'
-    ],
+    images: [],
     specs: {
       electrical: {
         'Input Voltage': '380V - 415V, 3-Phase, 50Hz',
@@ -214,8 +260,8 @@ export const PRODUCTS_CATALOG = [
         'RLA': '28.0 A'
       },
       thermal: {
-        'Application': 'Industrial Low & Medium Temperature Refrigeration',
-        'Oil Pump': 'Positive Displacement Oil Pump'
+        'Displacement': '50.0 m³/h',
+        'Application': 'Industrial Low & Medium Temperature Refrigeration'
       },
       mechanical: {
         'Suction Valve': '1-3/8 in',
@@ -226,33 +272,44 @@ export const PRODUCTS_CATALOG = [
   },
   {
     id: 'daikin-vrv-inverter-jt300',
-    code: 'Z-[#DAI-VRV300]',
+    code: 'JT300',
+    catalogCode: 'Z-DAI-VRV300',
     name: 'Daikin Inverter Scroll Compressor JT300',
     brand: 'Daikin',
-    tagline: 'Inverter Scroll Compressor for Daikin VRV IV Systems',
-    category: 'VRF / VRV Compressors',
+    tagline: 'Inverter Scroll Compressor for Daikin VRV Systems',
+    category: 'VRF / DC Inverter',
     type: 'DC Inverter Scroll',
-    condition: 'Refurbished & Bench Tested',
-    availability: 'In Stock',
-    voltage: '380V - 415V AC (Inverter Driven)',
+    condition: 'Sourcing Reference',
+    availability: 'Sourcing Reference',
+    voltage: '380V–415V (Inverter Drive)',
     displacement: 'Variable Speed',
+    coolingCapacity: '10.0 HP Class',
     refrigerant: 'R410A',
-    application: 'Daikin VRV IV / VRV V Outdoor Units',
-    accentColor: '#0EA6A6',
-    statusBadge: 'VRV Specialist',
+    application: 'VRV commercial outdoor units',
+    accentColor: '#0E4B75',
+    statusBadge: 'Sourcing Reference',
+    verificationStatus: 'Sourcing Reference',
+    imageType: 'representative',
+    imageDisclaimer: 'Representative profile — confirm inverter model by nameplate.',
+    shortDescription: 'Variable-speed inverter scroll compressor engineered for multi-zone VRV commercial outdoor condensing units.',
     description: 'Precision DC Inverter scroll compressor specifically calibrated for Daikin VRV variable refrigerant flow outdoor units.',
+    keySpecs: [
+      { label: 'Nominal Rating', value: '10.0 HP Class' },
+      { label: 'Drive Type', value: 'Inverter Drive (380V–415V)' },
+      { label: 'Primary Use', value: 'VRV commercial outdoor units' }
+    ],
     compatibility: ['Daikin'],
     compatDetails: {
       'Daikin': 'Matches Daikin VRV IV RXQ / RXYQ outdoor unit models.'
     },
     images: [
-      '/ac_compressor_2.png',
-      '/ac_compressor.png'
+      '/ac_compressor_2.png'
     ],
     specs: {
       electrical: {
         'Input Voltage': 'DC Inverter Controlled (380V Drive)',
-        'Control': 'Variable Frequency Drive (30Hz - 120Hz)'
+        'Nominal HP': '10.0 HP',
+        'Control': 'Variable Frequency Drive'
       },
       thermal: {
         'Application': 'VRV Variable Refrigerant Flow'
@@ -266,30 +323,32 @@ export const PRODUCTS_CATALOG = [
 ];
 
 export const CATEGORIES_LIST = [
-  { id: 'ac-compressor', name: 'AC Compressor', slug: 'ac-compressor', count: 'Available Models', desc: 'Air conditioning compressors for residential and commercial cooling systems.' },
-  { id: 'scroll-compressor', name: 'Scroll Compressor', slug: 'scroll-compressor', count: 'Available Models', desc: 'Scroll compressors for air conditioning, refrigeration and HVAC applications.' },
-  { id: 'refrigeration-compressors', name: 'Refrigeration Compressors', slug: 'refrigeration-compressors', count: 'Available Models', desc: 'Compressors designed for refrigeration and cooling applications.' },
-  { id: 'copeland-scroll-compressor', name: 'Copeland Scroll Compressor', slug: 'copeland-scroll-compressor', count: 'Available Models', desc: 'Copeland scroll compressors engineered for commercial and industrial cooling systems.' },
-  { id: 'air-compressor', name: 'Air Compressor', slug: 'air-compressor', count: 'Available Models', desc: 'Industrial and commercial air compressor units and air systems.' },
-  { id: 'rotary-compressor', name: 'Rotary Compressor', slug: 'rotary-compressor', count: 'Available Models', desc: 'Rotary compressors designed for high-efficiency residential and light commercial cooling.' },
-  { id: 'air-conditioner', name: 'Air Conditioner', slug: 'air-conditioner', count: 'Available Models', desc: 'Air conditioner units, systems, and modular cooling equipment.' },
-  { id: 'danfoss-scroll-compressor', name: 'Danfoss Scroll Compressor', slug: 'danfoss-scroll-compressor', count: 'Available Models', desc: 'Danfoss scroll compressors for commercial air conditioning and refrigeration applications.' },
-  { id: 'air-conditioning-compressors', name: 'Air Conditioning Compressors', slug: 'air-conditioning-compressors', count: 'Available Models', desc: 'Compressors for residential, commercial, and industrial air conditioning systems.' },
-  { id: 'copeland-compressor', name: 'Copeland Compressor', slug: 'copeland-compressor', count: 'Available Models', desc: 'Copeland compressors including semi-hermetic, reciprocating, and scroll models.' },
-  { id: 'screw-compressor', name: 'Screw Compressor', slug: 'screw-compressor', count: 'Available Models', desc: 'Screw compressors for large-scale industrial chilling and refrigeration systems.' },
-  { id: 'ac-amc-service', name: 'AC AMC Service', slug: 'ac-amc-service', count: 'Available Services', desc: 'Annual maintenance contract (AMC) services for commercial and industrial air conditioning.' },
-  { id: 'vrf-system', name: 'VRF System', slug: 'vrf-system', count: 'Available Systems', desc: 'Variable Refrigerant Flow (VRF) systems and multi-split cooling solutions.' },
-  { id: 'relays', name: 'Relays', slug: 'relays', count: 'Available Models', desc: 'Electrical relays and protection components for HVAC and compressor equipment.' },
-  { id: 'air-conditioner-installation-service', name: 'Air Conditioner Installation Service', slug: 'air-conditioner-installation-service', count: 'Available Services', desc: 'Professional installation and commissioning services for air conditioning systems.' },
-  { id: 'air-conditioner-motor', name: 'Air Conditioner Motor', slug: 'air-conditioner-motor', count: 'Available Models', desc: 'Fan and blower motors for residential, commercial, and industrial air conditioners.' },
-  { id: 'air-conditioner-maintenance-service', name: 'Air Conditioner Maintenance Service', slug: 'air-conditioner-maintenance-service', count: 'Available Services', desc: 'Preventive and corrective maintenance services for air conditioning units.' },
-  { id: 'rotary-and-refrigerator-compressor', name: 'Rotary And Refrigerator Compressor', slug: 'rotary-and-refrigerator-compressor', count: 'Available Models', desc: 'Rotary and reciprocating compressor units for domestic and commercial refrigeration.' },
-  { id: 'emerson-scroll-compressor', name: 'Emerson Scroll Compressor', slug: 'emerson-scroll-compressor', count: 'Available Models', desc: 'Emerson Copeland scroll compressors for HVAC and process cooling applications.' },
-  { id: 'daikin-compressor', name: 'Daikin Compressor', slug: 'daikin-compressor', count: 'Available Models', desc: 'Daikin scroll and inverter compressors for VRV, VRF, and commercial split systems.' },
-  { id: 'air-conditioner-compressor', name: 'Air Conditioner Compressor', slug: 'air-conditioner-compressor', count: 'Available Models', desc: 'Replacement air conditioner compressors for all major cooling equipment brands.' },
-  { id: '3d-bed-sheet', name: '3D Bed Sheet', slug: '3d-bed-sheet', count: 'Available Items', desc: 'Specialty industrial fabric and 3D protective bed sheets.' },
-  { id: 'pump-and-valve', name: 'Pump And Valve', slug: 'pump-and-valve', count: 'Available Items', desc: 'Industrial pumps, expansion valves, and fluid control accessories for cooling plants.' },
-  { id: 'aacsr-conductor', name: 'AACSR Conductor', slug: 'aacsr-conductor', count: 'Available Items', desc: 'Aluminum Alloy Conductor Steel Reinforced (AACSR) electrical transmission conductors.' },
-  { id: 'new-items', name: 'New Items', slug: 'new-items', count: 'Available Items', desc: 'Newly arrived industrial cooling components, compressors, and specialized equipment.' },
+  {
+    id: 'scroll-compressors',
+    name: 'Scroll Compressors',
+    slug: 'scroll-compressors',
+    count: '2 Models',
+    desc: 'Hermetic orbital scroll compressors for commercial ducted splits, package units, and chillers.'
+  },
+  {
+    id: 'rotary-compressors',
+    name: 'Rotary Compressors',
+    slug: 'rotary-compressors',
+    count: '1 Model',
+    desc: 'Compact rotary compressors for commercial cassettes, ceiling units, and modular split systems.'
+  },
+  {
+    id: 'reciprocating-compressors',
+    name: 'Reciprocating Compressors',
+    slug: 'reciprocating-compressors',
+    count: '2 Models',
+    desc: 'Heavy-duty piston and semi-hermetic compressors for cold storage, freezers, and industrial refrigeration.'
+  },
+  {
+    id: 'vrf-inverter-compressors',
+    name: 'VRF / DC Inverter',
+    slug: 'vrf-inverter-compressors',
+    count: '1 Model',
+    desc: 'Variable-speed DC inverter compressors for multi-zone VRV / VRF commercial outdoor units.'
+  }
 ];
-

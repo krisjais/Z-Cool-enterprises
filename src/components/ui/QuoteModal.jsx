@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Send, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PhotoUpload from './PhotoUpload';
+import { submitInquiry } from '@/lib/api';
 
 export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
   const [photo, setPhoto] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [inquiryRef, setInquiryRef] = useState(null);
 
   // Close on Escape key press
   useEffect(() => {
@@ -34,25 +36,48 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim()) {
       toast.error('Please fill in your Name and Contact Phone number.');
       return;
     }
 
+    if (formData.phone.trim().length < 7) {
+      toast.error('Please enter a valid phone number with at least 7 digits.');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate fast local dispatch state
-    setTimeout(() => {
+    try {
+      const res = await submitInquiry(
+        {
+          name: formData.name.trim(),
+          phone: formData.phone.trim(),
+          email: formData.email.trim(),
+          company: formData.company.trim(),
+          brand: formData.brand.trim(),
+          model: formData.model.trim(),
+          quantity: formData.quantity,
+          requirement: formData.requirement.trim(),
+          type: 'quote',
+        },
+        photo
+      );
+
+      if (res && res.success) {
+        setInquiryRef(res.inquiryId || res.data?.id);
+        setSubmitted(true);
+        toast.success('Quote request registered successfully!');
+      } else {
+        throw new Error(res?.message || 'Submission failed');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Unable to submit quote request. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-      toast.success('Inquiry submitted! Our technical sourcing desk will contact you.');
-      setTimeout(() => {
-        setSubmitted(false);
-        onClose();
-      }, 2000);
-    }, 600);
+    }
   };
 
   return (
@@ -94,14 +119,37 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto flex-grow">
           {submitted ? (
-            <div className="py-10 flex flex-col items-center justify-center text-center space-y-3">
+            <div className="py-8 flex flex-col items-center justify-center text-center space-y-3">
               <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
                 <CheckCircle2 size={32} />
               </div>
-              <h4 className="font-display font-bold text-xl text-slate-900">Quote Request Submitted</h4>
+              <h4 className="font-display font-bold text-xl text-slate-900">Quote Request Registered</h4>
               <p className="text-slate-600 text-xs max-w-md font-sans leading-relaxed">
-                Thank you, <strong className="text-slate-900">{formData.name}</strong>. Our Mumbai technical desk will review your inquiry and contact you shortly.
+                Thank you, <strong className="text-slate-900">{formData.name}</strong>. Your inquiry has been registered directly in our Mumbai technical dispatch system.
               </p>
+              {inquiryRef && (
+                <div className="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg font-mono text-xs text-slate-700">
+                  <span className="text-slate-500 mr-2">REFERENCE ID:</span>
+                  <span className="font-bold text-[#1D6FA3] tracking-wider">{String(inquiryRef)}</span>
+                </div>
+              )}
+              <p className="text-slate-500 text-[11px] font-sans">
+                Our sourcing engineers will review your model requirements and contact you at <strong className="text-slate-800">{formData.phone}</strong>.
+              </p>
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setInquiryRef(null);
+                    setPhoto(null);
+                    onClose();
+                  }}
+                  className="px-6 py-2.5 bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs uppercase tracking-wider rounded font-bold cursor-pointer transition-colors shadow-xs"
+                >
+                  Close Window
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">

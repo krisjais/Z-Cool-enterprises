@@ -12,8 +12,11 @@ import {
   RotateCcw,
   Building2,
   FileCheck,
+  Loader2,
+  Database,
 } from 'lucide-react';
 import PhotoUpload from '@/components/ui/PhotoUpload';
+import { submitInquiry } from '@/lib/api';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -31,6 +34,10 @@ export default function ContactForm() {
   const [photo, setPhoto] = useState(null);
   const [errors, setErrors] = useState({});
   const [isCompiled, setIsCompiled] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [inquiryRef, setInquiryRef] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
 
   const validate = () => {
     const errs = {};
@@ -40,6 +47,12 @@ export default function ContactForm() {
     } else if (formData.phone.trim().length < 8) {
       errs.phone = 'Please provide a valid phone number.';
     }
+    if (formData.email && formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email.trim())) {
+        errs.email = 'Please provide a valid email address.';
+      }
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -48,6 +61,57 @@ export default function ContactForm() {
     e.preventDefault();
     if (!validate()) return;
     setIsCompiled(true);
+    setSubmitError(null);
+  };
+
+  const handleSaveToDatabase = async () => {
+    if (!validate()) return;
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        email: formData.email.trim() || undefined,
+        company: formData.company.trim() || undefined,
+        type: 'general',
+        source: 'contact_form',
+        brand: formData.brand.trim() || undefined,
+        model: formData.model.trim() || undefined,
+        quantity: formData.quantity,
+        application: formData.application,
+        message: formData.requirement.trim() || 'General compressor inquiry from contact page',
+      };
+
+      const result = await submitInquiry(payload, photo);
+      setInquiryRef(result.inquiryId || result.data?.inquiryId || 'CONFIRMED');
+      setSubmitSuccess(true);
+    } catch (err) {
+      setSubmitError(err.message || 'Failed to submit inquiry to server. Please try again or reach us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResetForm = () => {
+    setFormData({
+      name: '',
+      company: '',
+      phone: '',
+      email: '',
+      brand: '',
+      model: '',
+      quantity: '1 Unit',
+      application: 'Commercial Air Conditioning',
+      requirement: '',
+    });
+    setPhoto(null);
+    setErrors({});
+    setIsCompiled(false);
+    setSubmitSuccess(false);
+    setInquiryRef(null);
+    setSubmitError(null);
   };
 
   // Construct structured text for WhatsApp and Email transmission
@@ -69,15 +133,88 @@ export default function ContactForm() {
 ${formData.requirement.trim() || 'None provided'}
 ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
 
-  const whatsappUrl = `https://wa.me/919920691707?text=${encodeURIComponent(compiledSummary)}`;
+  const whatsappUrl = `https://wa.me/919920691707?text=${encodeURIComponent(
+    inquiryRef ? `*REF: ${inquiryRef}*\n\n${compiledSummary}` : compiledSummary
+  )}`;
   const mailtoUrl = `mailto:zcooltech4@gmail.com?subject=${encodeURIComponent(
-    `Compressor Inquiry: ${formData.model.trim() || 'Model Match'} - ${formData.name.trim()}`
+    `Compressor Inquiry${inquiryRef ? ` [Ref: ${inquiryRef}]` : ''}: ${formData.model.trim() || 'Model Match'} - ${formData.name.trim()}`
   )}&body=${encodeURIComponent(compiledSummary)}`;
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 lg:p-10 shadow-xs">
-      {isCompiled ? (
-        /* Truthful, Integration-Ready Transmission Review State */
+      {submitSuccess ? (
+        /* Verified Database Success Confirmation Screen */
+        <div className="space-y-6">
+          <div className="border-b border-slate-200 pb-4">
+            <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded mb-2">
+              <CheckCircle2 size={14} />
+              <span>DATABASE PERSISTENCE CONFIRMED</span>
+            </div>
+            <h2 className="font-display font-extrabold text-2xl text-[#0A192F]">
+              Enquiry Successfully Recorded
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm font-sans mt-1">
+              Your inquiry has been stored in our backend procurement system. Our Mumbai technical desk
+              will review your specifications and verify compressor availability.
+            </p>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3 font-mono text-xs">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <span className="text-slate-500 font-semibold">REFERENCE ID:</span>
+              <span className="font-bold text-[#1D6FA3] text-sm bg-white px-2.5 py-1 rounded border border-slate-300">
+                {inquiryRef}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <span className="text-slate-400 block">BUYER NAME:</span>
+                <strong className="text-slate-900">{formData.name}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">PHONE:</span>
+                <strong className="text-slate-900">{formData.phone}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">MODEL / CODE:</span>
+                <strong className="text-[#1D6FA3]">{formData.model || 'To be identified'}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">QUANTITY:</span>
+                <span className="text-slate-800">{formData.quantity}</span>
+              </div>
+            </div>
+            {photo && (
+              <div className="text-[11px] text-emerald-700 flex items-center gap-1.5 pt-1 border-t border-slate-200">
+                <Camera size={13} />
+                <span>Nameplate photo uploaded &amp; attached</span>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 px-6 bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2.5 shadow-sm transition-colors"
+            >
+              <MessageSquare size={16} />
+              <span>FOLLOW UP ON WHATSAPP WITH REF #{inquiryRef}</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={handleResetForm}
+              className="w-full py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            >
+              <RotateCcw size={14} />
+              <span>SUBMIT ANOTHER ENQUIRY</span>
+            </button>
+          </div>
+        </div>
+      ) : isCompiled ? (
+        /* Review State with Direct Database Submission & Clear External Links */
         <div className="space-y-6">
           <div className="border-b border-slate-200 pb-4">
             <div className="inline-flex items-center gap-2 font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded mb-2">
@@ -85,14 +222,21 @@ ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
               <span>SPECIFICATIONS VALIDATED &amp; COMPILED</span>
             </div>
             <h2 className="font-display font-extrabold text-2xl text-[#0A192F]">
-              Review &amp; Transmit Your Inquiry
+              Review &amp; Submit Your Inquiry
             </h2>
             <p className="text-slate-600 text-xs sm:text-sm font-sans mt-1">
-              Your inquiry details have been formatted. Our direct online API dispatch is currently
-              integration-ready. To send these exact specifications directly to our Mumbai technical
-              desk right now, choose your preferred channel:
+              Confirm your specifications below. You can save directly to our procurement database or contact our Mumbai desk via external channels:
             </p>
           </div>
+
+          {submitError && (
+            <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-mono flex items-start gap-2">
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              <div>
+                <strong>Submission Failed:</strong> {submitError}
+              </div>
+            </div>
+          )}
 
           {/* Compiled Summary Box */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3 font-mono text-xs text-slate-700">
@@ -155,31 +299,61 @@ ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
             )}
           </div>
 
-          {/* Direct Transmit Buttons */}
+          {/* Submission and External Contact Buttons */}
           <div className="space-y-3 pt-2">
+            {/* Primary: Direct Database Submission */}
+            <button
+              type="button"
+              onClick={handleSaveToDatabase}
+              disabled={isSubmitting}
+              className="w-full py-4 px-6 bg-[#1D6FA3] hover:bg-[#165680] text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2.5 shadow-md transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  <span>SAVING ENQUIRY TO DATABASE...</span>
+                </>
+              ) : (
+                <>
+                  <Database size={18} />
+                  <span>SAVE &amp; SUBMIT ENQUIRY DIRECTLY</span>
+                </>
+              )}
+            </button>
+
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-slate-200"></div>
+              <span className="flex-shrink mx-3 text-slate-400 font-mono text-[10px] uppercase">
+                OR REACH US EXTERNALLY
+              </span>
+              <div className="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            {/* External Options (Explicitly labeled) */}
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-4 px-6 bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2.5 shadow-md transition-colors"
+              className="w-full py-3.5 px-6 bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2.5 shadow-xs transition-colors"
             >
-              <MessageSquare size={18} />
-              <span>TRANSMIT VIA WHATSAPP SOURCING DESK</span>
+              <MessageSquare size={16} />
+              <span>OPEN DIRECT WHATSAPP CHAT (EXTERNAL APP)</span>
             </a>
 
             <a
               href={mailtoUrl}
-              className="w-full py-3.5 px-6 bg-[#0A192F] hover:bg-[#122847] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2.5 transition-colors"
+              className="w-full py-3 px-6 bg-[#0A192F] hover:bg-[#122847] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2.5 transition-colors"
             >
-              <Mail size={16} />
-              <span>SEND VIA EMAIL SPECIFICATION DESK</span>
+              <Mail size={15} />
+              <span>OPEN IN EMAIL CLIENT (EXTERNAL APP)</span>
             </a>
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 font-mono text-xs">
               <button
                 type="button"
                 onClick={() => setIsCompiled(false)}
-                className="text-slate-600 hover:text-slate-900 inline-flex items-center gap-1.5 cursor-pointer underline underline-offset-4"
+                disabled={isSubmitting}
+                className="text-slate-600 hover:text-slate-900 inline-flex items-center gap-1.5 cursor-pointer underline underline-offset-4 disabled:opacity-50"
               >
                 <RotateCcw size={13} />
                 <span>Edit Form Details</span>

@@ -7,34 +7,16 @@ import Container from '@/components/ui/Container';
 
 export const dynamic = 'force-dynamic';
 
+// Only the 4 approved active engineering categories from CATEGORIES_LIST
 const KNOWN_CATEGORY_SLUGS = {
-  'ac-compressor': 'AC Compressor',
-  'scroll-compressor': 'Scroll Compressor',
-  'scroll-compressors': 'Scroll Compressor',
-  'refrigeration-compressors': 'Refrigeration Compressors',
-  'copeland-scroll-compressor': 'Copeland Scroll Compressor',
-  'air-compressor': 'Air Compressor',
-  'rotary-compressor': 'Rotary Compressor',
-  'rotary-compressors': 'Rotary Compressor',
-  'air-conditioner': 'Air Conditioner',
-  'danfoss-scroll-compressor': 'Danfoss Scroll Compressor',
-  'air-conditioning-compressors': 'Air Conditioning Compressors',
-  'copeland-compressor': 'Copeland Compressor',
-  'screw-compressor': 'Screw Compressor',
-  'ac-amc-service': 'AC AMC Service',
-  'vrf-system': 'VRF System',
-  'relays': 'Relays',
-  'air-conditioner-installation-service': 'Air Conditioner Installation Service',
-  'air-conditioner-motor': 'Air Conditioner Motor',
-  'air-conditioner-maintenance-service': 'Air Conditioner Maintenance Service',
-  'rotary-and-refrigerator-compressor': 'Rotary And Refrigerator Compressor',
-  'emerson-scroll-compressor': 'Emerson Scroll Compressor',
-  'daikin-compressor': 'Daikin Compressor',
-  'air-conditioner-compressor': 'Air Conditioner Compressor',
-  '3d-bed-sheet': '3D Bed Sheet',
-  'pump-and-valve': 'Pump And Valve',
-  'aacsr-conductor': 'AACSR Conductor',
-  'new-items': 'New Items',
+  'scroll-compressor': 'Scroll Compressors',
+  'scroll-compressors': 'Scroll Compressors',
+  'rotary-compressor': 'Rotary Compressors',
+  'rotary-compressors': 'Rotary Compressors',
+  'reciprocating-compressor': 'Reciprocating Compressors',
+  'reciprocating-compressors': 'Reciprocating Compressors',
+  'vrf-inverter-compressors': 'VRF / DC Inverter',
+  'vrf-system': 'VRF / DC Inverter',
 };
 
 async function matchCategory(identifier) {

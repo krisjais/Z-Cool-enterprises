@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, ChevronRight, Send, Eye } from 'lucide-react';
+import { 
+  ChevronRight, 
+  Send, 
+  Cpu
+} from 'lucide-react';
 import QuoteModal from './QuoteModal';
 import { resolveImageUrl } from '@/lib/api';
 
 export default function ProductCard({
   product,
-  onQuickView,
   onQuoteClick,
   className = '',
 }) {
@@ -26,162 +29,143 @@ export default function ProductCard({
     }
   };
 
-  const handleQuickView = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onQuickView) {
-      onQuickView(product);
-    }
-  };
+  const hasRealImage = Array.isArray(product.images) && product.images.length > 0 && product.imageType !== 'placeholder';
+  const imageSrc = hasRealImage ? resolveImageUrl(product.images[0]) : null;
 
-  const imageSrc = resolveImageUrl(product.images?.[0]);
-
-  // Clean condition label from verified data
-  const conditionLabel = product.condition || product.statusBadge || 'Refurbished';
-
-  // Key technical snapshot fields - ONLY display fields that contain actual data
-  const techFields = [
-    { label: 'TYPE', value: product.type || product.category },
-    { label: 'APPLICATION', value: product.application },
-    { label: 'REFRIGERANT', value: product.refrigerant },
-    { label: 'VOLTAGE', value: product.voltage },
-  ].filter((f) => Boolean(f.value && typeof f.value === 'string' && f.value.trim() !== ''));
+  // Use the exact 3 verified essential specification rows
+  const specRows = product.keySpecs || [
+    { label: 'Capacity', value: product.coolingCapacity || product.displacement },
+    { label: 'Electrical', value: product.voltage },
+    { label: 'Primary Use', value: product.application },
+  ];
 
   return (
     <>
       <article
-        className={`group flex flex-col h-full bg-white border border-slate-200/90 rounded-lg hover:border-slate-300 hover:shadow-md transition-all duration-200 text-[#0F172A] overflow-hidden ${className}`}
+        className={`group flex flex-col h-full bg-white border border-stone-200 rounded-xl hover:border-slate-400 hover:shadow-sm transition-all duration-200 text-slate-900 overflow-hidden ${className}`}
       >
-        {/* ── 1. BRAND & CONDITION HEADER BAR ── */}
-        <div className="px-4 py-2.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between gap-2 text-xs">
-          <span className="font-mono font-bold text-xs uppercase tracking-wider text-slate-800">
+        {/* ── 1. HEADER BAR: BRAND & CONCISE STATUS BADGE ── */}
+        <div className="px-3.5 sm:px-4 py-2.5 bg-[#FAF9F6] border-b border-stone-200 flex items-center justify-between gap-2 text-xs">
+          <span className="font-bold text-slate-900 tracking-tight text-xs shrink-0">
             {product.brand || 'INDUSTRIAL'}
           </span>
 
-          {conditionLabel && (
-            <span className="inline-flex items-center gap-1 font-mono text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 rounded tracking-wide uppercase truncate max-w-[190px]">
-              <ShieldCheck size={11} className="flex-shrink-0 text-emerald-600" />
-              <span className="truncate">{conditionLabel}</span>
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 bg-white border border-stone-200 px-2 py-0.5 rounded shadow-2xs whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0E4B75] shrink-0" />
+            <span>{product.verificationStatus || 'Sourcing Reference'}</span>
+          </span>
         </div>
 
-        {/* ── 2. LARGE PRODUCT IMAGE AREA (240–280px tall) ── */}
-        <div className="relative h-60 sm:h-64 md:h-68 bg-[#FAFAFA] flex flex-col items-center justify-center p-5 overflow-hidden border-b border-slate-200/80">
-          <Link
-            href={`/products/${product.id}`}
-            className="w-full h-full flex flex-col items-center justify-center relative z-10"
-            aria-label={`View details for ${product.name}`}
-          >
-            <img
-              src={imageSrc}
-              alt={`${product.brand || ''} ${product.code || product.name}`}
-              className="max-h-[195px] w-auto max-w-[90%] object-contain group-hover:scale-[1.03] transition-transform duration-300 ease-out select-none"
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = '/ac_compressor.png';
-              }}
-            />
-            {/* Subtle floor contact shadow */}
-            <div className="w-32 sm:w-40 h-2 bg-slate-900/10 rounded-full blur-[3px] mt-1 pointer-events-none" />
-          </Link>
-
-          {/* Quick View Button (hover on desktop or interactive) */}
-          {onQuickView && (
-            <button
-              onClick={handleQuickView}
-              className="absolute bottom-2.5 right-2.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-150 font-mono text-[11px] font-semibold bg-white/95 hover:bg-white text-slate-700 hover:text-slate-900 px-2.5 py-1 rounded border border-slate-200 shadow-xs flex items-center gap-1.5 cursor-pointer backdrop-blur-xs"
-              aria-label={`Quick view specifications for ${product.name}`}
+        {/* ── 2A. DEDICATED PRODUCT IMAGE / TECHNICAL SILHOUETTE AREA (NO OVERLAY) ── */}
+        <div className="relative h-48 sm:h-52 bg-[#FBFBFA] flex flex-col items-center justify-center p-3 overflow-hidden">
+          {hasRealImage ? (
+            <Link
+              href={`/products/${product.id}`}
+              className="w-full h-full flex flex-col items-center justify-center relative"
+              aria-label={`View details for ${product.name}`}
             >
-              <Eye size={12} className="text-[#1D6FA3]" />
-              <span>Quick Spec</span>
-            </button>
+              <img
+                src={imageSrc}
+                alt={`${product.brand || ''} ${product.code || product.name}`}
+                className="max-h-[145px] w-auto max-w-[85%] object-contain group-hover:scale-[1.02] transition-transform duration-200 select-none"
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/ac_compressor.png';
+                }}
+              />
+              <div className="w-28 sm:w-36 h-1.5 bg-slate-900/10 rounded-full blur-[2px] mt-1 pointer-events-none" />
+            </Link>
+          ) : (
+            /* Honest Technical Silhouette Blueprint Box */
+            <div className="w-full h-full flex flex-col items-center justify-center text-center p-3 bg-stone-50/90 rounded-lg border border-dashed border-stone-300">
+              <div className="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-slate-500 mb-1.5">
+                <Cpu size={20} className="text-[#0E4B75]" />
+              </div>
+              <span className="text-xs font-bold text-slate-800">
+                Technical Silhouette
+              </span>
+              <p className="text-[11px] text-slate-500 max-w-[210px] mt-0.5 leading-tight font-medium">
+                Physical photograph awaiting workshop verification.
+              </p>
+            </div>
           )}
         </div>
 
-        {/* ── 3. PRODUCT IDENTIFICATION ── */}
+        {/* ── 2B. SEPARATE DISCLAIMER CAPTION SUB-BAR (CLEARLY SEPARATED) ── */}
+        <div className="px-3 py-1.5 bg-stone-50 border-t border-b border-stone-200 text-center">
+          <p className="text-[11px] text-slate-600 leading-snug font-medium">
+            {product.imageDisclaimer || 'Representative model — confirm by nameplate'}
+          </p>
+        </div>
+
+        {/* ── 3. PRODUCT IDENTIFICATION & SPECIFICATIONS ── */}
         <div className="p-4 sm:p-5 flex flex-col flex-grow justify-between space-y-4">
           <div className="space-y-1.5">
             {/* Model Code */}
             {product.code && (
-              <div className="font-mono text-xs font-bold text-[#1D6FA3] tracking-wide uppercase">
+              <div className="text-xs font-bold font-mono text-[#0E4B75] tracking-wide">
                 MODEL: {product.code}
               </div>
             )}
 
-            {/* Product Name */}
-            <h3 className="font-display font-bold text-slate-900 text-sm sm:text-base leading-snug">
+            {/* Product Title */}
+            <h3 className="font-bold text-slate-900 text-base leading-snug">
               <Link
                 href={`/products/${product.id}`}
-                className="hover:text-[#1D6FA3] transition-colors line-clamp-2"
+                className="hover:text-[#0E4B75] transition-colors line-clamp-2"
               >
                 {product.name}
               </Link>
             </h3>
 
-            {/* Short Description / Tagline */}
-            {(product.tagline || product.description) && (
-              <p className="text-slate-600 text-xs line-clamp-2 leading-relaxed font-sans">
-                {product.tagline || product.description}
-              </p>
-            )}
+            {/* 1 Short Descriptive Sentence */}
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+              {product.shortDescription || product.tagline || product.description}
+            </p>
           </div>
 
-          {/* ── 4. TECHNICAL SNAPSHOT (Clean Aligned Table, NOT mini-cards) ── */}
-          {techFields.length > 0 && (
-            <div className="pt-3 border-t border-slate-200/80">
-              <div className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center justify-between">
-                <span>TECHNICAL SNAPSHOT</span>
-                <span className="text-[9px] text-slate-400">BENCH VERIFIED</span>
-              </div>
-
-              <div className="divide-y divide-slate-100 font-mono text-xs">
-                {techFields.map((field) => (
-                  <div
-                    key={field.label}
-                    className="py-1.5 flex items-baseline justify-between gap-3"
-                  >
-                    <span className="text-slate-500 text-[10px] font-medium tracking-wider uppercase flex-shrink-0">
-                      {field.label}
-                    </span>
-                    <span className="text-slate-800 text-[11px] font-semibold text-right truncate max-w-[65%]">
-                      {field.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+          {/* ── 4. EXACTLY 3 ESSENTIAL SPECIFICATION ROWS ── */}
+          {specRows.length > 0 && (
+            <div className="pt-3 border-t border-stone-100 space-y-2 text-xs">
+              {specRows.slice(0, 3).map((item) => (
+                <div key={item.label} className="flex items-start justify-between gap-2.5">
+                  <span className="text-slate-500 shrink-0 text-[11px] font-medium">
+                    {item.label}:
+                  </span>
+                  <span className="text-slate-900 font-semibold text-right text-[11px] leading-tight">
+                    {item.value}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
 
-          {/* ── 5. PRODUCT CARD ACTIONS (VIEW PRODUCT & REQUEST QUOTE) ── */}
-          <div className="pt-3 border-t border-slate-200/80 grid grid-cols-2 gap-2.5">
-            {/* Primary Action: VIEW PRODUCT */}
+          {/* ── 5. CARD ACTIONS (CONSISTENTLY ALIGNED AT BOTTOM) ── */}
+          <div className="pt-3 border-t border-stone-200 grid grid-cols-2 gap-2 mt-auto">
+            {/* Secondary Action: View Details */}
             <Link
               href={`/products/${product.id}`}
-              className="group/cta min-h-[40px] px-3 py-2 bg-[#0A192F] hover:bg-slate-800 text-white rounded font-mono text-[11px] font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5 transition-all duration-150 cursor-pointer shadow-xs active:scale-[0.99]"
+              className="min-h-[42px] px-3 py-2 bg-stone-100 hover:bg-stone-200 text-slate-800 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-colors text-center"
             >
-              <span>View Product</span>
-              <ChevronRight
-                size={13}
-                className="group-hover/cta:translate-x-0.5 transition-transform duration-150"
-              />
+              <span>View Details</span>
+              <ChevronRight size={14} className="shrink-0 text-slate-500" />
             </Link>
 
-            {/* Secondary Action: REQUEST QUOTE */}
+            {/* Primary Action: Enquire Availability */}
             <button
               type="button"
               onClick={handleQuote}
-              className="min-h-[40px] px-3 py-2 bg-white hover:bg-slate-50 text-[#1D6FA3] border border-[#1D6FA3]/40 hover:border-[#1D6FA3] rounded font-mono text-[11px] font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5 transition-all duration-150 cursor-pointer active:scale-[0.99]"
+              className="min-h-[42px] px-3 py-2 bg-[#0E4B75] hover:bg-[#093757] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center shadow-2xs"
             >
-              <Send size={12} className="rotate-45" />
-              <span>Request Quote</span>
+              <Send size={13} className="shrink-0" />
+              <span>Enquire</span>
             </button>
           </div>
         </div>
       </article>
 
-      {/* Internal Quote Modal fallback if card is used standalone on another page */}
+      {/* Internal Quote Modal fallback if card is clicked standalone */}
       {!onQuoteClick && (
         <QuoteModal
           isOpen={internalQuoteOpen}

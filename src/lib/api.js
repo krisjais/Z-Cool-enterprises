@@ -338,3 +338,44 @@ export async function adminDeleteCategory(id, token, force = false) {
   return res.json();
 }
 
+/**
+ * Submits a customer inquiry or compressor quote request to the backend.
+ * Handles both plain JSON payloads and multipart/form-data with nameplate photo.
+ */
+export async function submitInquiry(data, photoFile = null) {
+  try {
+    let body;
+    const headers = {};
+
+    if (photoFile && typeof File !== 'undefined' && photoFile instanceof File) {
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        if (data[key] !== undefined && data[key] !== null) {
+          formData.append(key, data[key]);
+        }
+      });
+      formData.append('photo', photoFile);
+      body = formData;
+    } else {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(data);
+    }
+
+    const res = await fetch(`${API_BASE}/api/inquiries`, {
+      method: 'POST',
+      headers,
+      body,
+    });
+
+    const json = await res.json();
+    if (!res.ok || !json.success) {
+      throw new Error(json.message || `Server returned HTTP ${res.status}`);
+    }
+
+    return json;
+  } catch (err) {
+    console.error('[API submitInquiry Error]', err);
+    throw err;
+  }
+}
+

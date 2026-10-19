@@ -11,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-[#F8F9FA] text-[#0F172A] selection:bg-[#1D6FA3] selection:text-white">
+      <body className="bg-[#FBFBFA] text-[#18181B] selection:bg-[#0E4B75] selection:text-white antialiased">
         <RootProvider>
           <AppShell>{children}</AppShell>
         </RootProvider>

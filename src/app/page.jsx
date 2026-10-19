@@ -1,52 +1,36 @@
 import React from 'react';
-import HomeScrollProgress from '@/components/home/HomeScrollProgress';
-import HeroIndustrial from '@/components/home/HeroIndustrial';
-import ProductDiscoveryRange from '@/components/home/ProductDiscoveryRange';
-import FeaturedInventoryShowcase from '@/components/home/FeaturedInventoryShowcase';
-import RefurbishmentProcessSticky from '@/components/home/RefurbishmentProcessSticky';
-import WhyRefurbishedEditorial from '@/components/home/WhyRefurbishedEditorial';
-import RealInventoryGallery from '@/components/home/RealInventoryGallery';
-import CaseStudiesEditorial from '@/components/home/CaseStudiesEditorial';
-import ModelIdentificationCTA from '@/components/home/ModelIdentificationCTA';
-import FinalIndustrialCTA from '@/components/home/FinalIndustrialCTA';
+import HeroSection from '@/components/home/HeroSection';
+import NameplateMatchingSection from '@/components/home/NameplateMatchingSection';
+import CompressorCategoriesSection from '@/components/home/CompressorCategoriesSection';
+import VerifiedSpotlightSection from '@/components/home/VerifiedSpotlightSection';
+import ApplicationsSection from '@/components/home/ApplicationsSection';
+import HomeQuoteSection from '@/components/home/HomeQuoteSection';
 
 export const metadata = {
-  title: 'Zcool Enterprises | Refurbished AC Compressors & HVAC Sourcing',
-  description: 'Specialized B2B supplier of refurbished and replacement scroll, rotary, and reciprocating AC compressors in Mumbai, India.',
+  title: 'Z Cool Enterprises | Refurbished AC Compressors & Industrial HVAC Sourcing Mumbai',
+  description: 'Specialized B2B supplier of replacement and refurbished scroll, rotary, and reciprocating AC compressors in Mumbai, India.',
 };
 
 export default function HomePage() {
   return (
-    <div className="bg-[#F8F9FA] text-[#0F172A] min-h-screen relative overflow-x-clip">
-      {/* ── Fixed Desktop Scroll Progress Rail ── */}
-      <HomeScrollProgress />
+    <div className="bg-[#FBFBFA] text-[#18181B] min-h-screen">
+      {/* 1. HERO: B2B Compressor Sourcing & Replacement Focus */}
+      <HeroSection />
 
-      {/* ── 1. DISCOVER: Hero Physical Product Showcase ── */}
-      <HeroIndustrial />
+      {/* 2. MATCHING: Practical Nameplate & Model Identification Guide */}
+      <NameplateMatchingSection />
 
-      {/* ── 2. EXPLORE: Interactive Product Range Discovery ── */}
-      <ProductDiscoveryRange />
+      {/* 3. TAXONOMY: Core Compressor Engineering Categories */}
+      <CompressorCategoriesSection />
 
-      {/* ── 3. INVENTORY: Featured Large Equipment Showcase ── */}
-      <FeaturedInventoryShowcase />
+      {/* 4. SPOTLIGHT: Verified Representative Sourcing References */}
+      <VerifiedSpotlightSection />
 
-      {/* ── 4. UNDERSTAND: 6-Stage Refurbishment Process Sticky Story ── */}
-      <RefurbishmentProcessSticky />
+      {/* 5. APPLICATIONS: Commercial & Industrial HVAC Facilities Served */}
+      <ApplicationsSection />
 
-      {/* ── 5. ADVANTAGE: Why Buy Refurbished Editorial Interaction ── */}
-      <WhyRefurbishedEditorial />
-
-      {/* ── 6. REAL ASSETS: Authentic Warehouse Inventory Gallery ── */}
-      <RealInventoryGallery />
-
-      {/* ── 7. VERIFY: Verified Compressor Supply Scenarios ── */}
-      <CaseStudiesEditorial />
-
-      {/* ── 8. IDENTIFY: Nameplate Photo Matching Desk ── */}
-      <ModelIdentificationCTA />
-
-      {/* ── 9. REQUEST: Final Dark Industrial Quote CTA ── */}
-      <FinalIndustrialCTA />
+      {/* 6. QUOTE: Direct On-Page Quote Submission & Mumbai Desk Connect */}
+      <HomeQuoteSection />
     </div>
   );
 }
