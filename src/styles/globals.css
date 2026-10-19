@@ -84,6 +84,15 @@
   ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 }
 
+/* Suppress horizontal scrollbars on carousels while keeping touch/keyboard scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Subtle Architectural Grid Pattern (Warm & Restrained) */
 .architectural-grid {
   background-size: 32px 32px;

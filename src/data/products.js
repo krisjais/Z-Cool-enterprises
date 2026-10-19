@@ -124,8 +124,7 @@ export const PRODUCTS_CATALOG = [
       "McQuay": "Matches McQuay air-cooled water chiller circuits."
     },
     "images": [
-      "/products/legacy/compressor10-b2cafdd3.webp",
-      "/ac_compressor_2.png"
+      "/products/legacy/compressor10-b2cafdd3.webp"
     ],
     "specs": {
       "electrical": {

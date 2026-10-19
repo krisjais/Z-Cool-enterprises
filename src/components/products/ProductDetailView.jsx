@@ -321,12 +321,13 @@ export default function ProductDetailView({
                       key={idx}
                       type="button"
                       onClick={() => setSelectedImgIdx(idx)}
-                      className={`h-16 w-20 rounded-lg bg-white border p-1 flex flex-col items-center justify-between cursor-pointer transition-all shrink-0 ${
+                      className={`h-16 w-20 rounded-lg bg-white border p-1 flex flex-col items-center justify-between cursor-pointer transition-all shrink-0 min-h-[44px] min-w-[64px] ${
                         selectedImgIdx === idx
-                          ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/20 shadow-xs bg-stone-50'
+                          ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/30 shadow-xs bg-blue-50/50'
                           : 'border-stone-200 hover:border-slate-300 opacity-80 hover:opacity-100'
                       }`}
                       aria-label={`Select photo ${idx + 1}`}
+                      aria-current={selectedImgIdx === idx ? 'true' : undefined}
                     >
                       <span className="font-mono text-[9px] font-bold text-slate-400 self-start">
                         #{idx + 1}
@@ -620,9 +621,9 @@ export default function ProductDetailView({
             </span>
           </div>
 
-          {/* 2. Manufacturer and Short Readable Verification Status */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+          {/* 2. Manufacturer and Readable Verification Status */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
               <span className="font-mono text-xs font-bold text-[#0E4B75] uppercase tracking-wider">
                 {product.brand}
               </span>
@@ -633,10 +634,12 @@ export default function ProductDetailView({
               )}
             </div>
 
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white border border-stone-200 px-2.5 py-1 rounded-full shadow-2xs shrink-0 whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0E4B75] shrink-0" />
-              <span>{statusBadgeText}</span>
-            </span>
+            <div className="w-fit max-w-full">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white border border-stone-200 px-2.5 py-1 rounded-full shadow-2xs leading-snug break-words">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0E4B75] shrink-0" />
+                <span>{statusBadgeText}</span>
+              </span>
+            </div>
           </div>
 
           {/* 3. Product Image in Clean Visual Area */}
@@ -703,12 +706,13 @@ export default function ProductDetailView({
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImgIdx(idx)}
-                    className={`h-14 w-16 rounded-lg bg-white border p-1 flex items-center justify-center cursor-pointer transition-all shrink-0 ${
+                    className={`h-14 w-16 rounded-lg bg-white border p-1 flex items-center justify-center cursor-pointer transition-all shrink-0 min-h-[44px] min-w-[56px] ${
                       selectedImgIdx === idx
-                        ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/20 bg-stone-50'
-                        : 'border-stone-200 opacity-80'
+                        ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/30 bg-blue-50/50 shadow-xs'
+                        : 'border-stone-200 opacity-80 hover:opacity-100 hover:border-slate-300'
                     }`}
                     aria-label={`Select photo ${idx + 1}`}
+                    aria-current={selectedImgIdx === idx ? 'true' : undefined}
                   >
                     <img src={img} alt="" className="max-h-[30px] w-auto max-w-full object-contain" />
                   </button>
@@ -959,36 +963,48 @@ export default function ProductDetailView({
                 </Link>
               </div>
 
-              {/* Horizontal Swipe Carousel with Snap Alignment */}
-              <div className="flex gap-3 overflow-x-auto pb-2 pt-1 no-scrollbar snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
-                {related.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/products/${item.id}`}
-                    className="w-[200px] sm:w-[220px] shrink-0 snap-start bg-white border border-stone-200 rounded-xl p-3 flex flex-col justify-between hover:border-slate-400 hover:shadow-2xs transition-all group"
-                  >
-                    <div className="h-24 bg-stone-50 rounded-lg flex items-center justify-center p-2 mb-2 overflow-hidden">
-                      {item.images && item.images[0] ? (
-                        <img
-                          src={resolveImageUrl(item.images[0])}
-                          alt=""
-                          className="max-h-20 w-auto object-contain group-hover:scale-105 transition-transform"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <Cpu size={22} className="text-slate-400" />
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-[11px] font-mono font-bold text-[#0E4B75] uppercase block truncate">
-                        {item.brand}
-                      </span>
-                      <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate group-hover:text-[#0E4B75] transition-colors">
-                        {item.code || item.name}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
+              {/* Contained Horizontal Swipe Carousel with Snap Alignment */}
+              <div className="w-full max-w-full overflow-hidden">
+                <div
+                  className="flex gap-3 overflow-x-auto pb-3 pt-1 no-scrollbar snap-x snap-mandatory scroll-smooth touch-pan-x"
+                  role="region"
+                  aria-label={`Related ${product.category} Carousel`}
+                  tabIndex={0}
+                >
+                  {related.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/products/${item.id}`}
+                      className="w-[210px] sm:w-[230px] shrink-0 snap-start bg-white border border-stone-200 rounded-xl p-3 flex flex-col justify-between hover:border-slate-400 hover:shadow-2xs transition-all group focus-visible:ring-2 focus-visible:ring-[#0E4B75]"
+                    >
+                      <div className="h-24 bg-stone-50 rounded-lg flex items-center justify-center p-2 mb-2 overflow-hidden">
+                        {item.images && item.images[0] ? (
+                          <img
+                            src={resolveImageUrl(item.images[0])}
+                            alt={item.name}
+                            className="max-h-20 w-auto object-contain group-hover:scale-105 transition-transform"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <Cpu size={22} className="text-slate-400" />
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-mono font-bold text-[#0E4B75] uppercase block truncate">
+                          {item.brand}
+                        </span>
+                        <span className="text-xs sm:text-sm font-bold text-slate-900 block truncate group-hover:text-[#0E4B75] transition-colors">
+                          {item.code || item.name}
+                        </span>
+                        {item.coolingCapacity && (
+                          <span className="text-[11px] font-mono text-slate-500 block truncate">
+                            {item.coolingCapacity}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           )}
