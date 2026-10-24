@@ -41,12 +41,12 @@ export default function Header() {
   }, [pathname]);
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Compressors', path: '/products' },
+    { name: 'Home', path: '/', prefetch: true },
+    { name: 'Compressors', path: '/products', prefetch: true },
     { name: 'Categories', path: '/#categories' },
     { name: 'Model Matching', path: '/#nameplate-matching' },
     { name: 'Applications', path: '/#applications' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Contact', path: '/contact', prefetch: true },
   ];
 
   const desktopNavLinks = navLinks.filter((link) => link.name !== 'Home');
@@ -60,7 +60,7 @@ export default function Header() {
       <style dangerouslySetInnerHTML={{ __html: "@media (max-width: 359.98px) { .hide-below-360 { display: none !important; } }" }} />
       <header className="fixed top-0 left-0 w-full z-[995] bg-white/95 backdrop-blur-md border-b border-stone-200/90 shadow-xs transition-colors duration-150">
         <div className="max-w-7xl mx-auto px-3 min-[360px]:px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 min-[360px]:gap-3">
-          
+
           {/* Brand Identity */}
           <Link
             href="/"
@@ -98,11 +98,10 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.path}
-                  className={`text-sm font-medium transition-colors px-3 py-2 rounded-md ${
-                    isActive
+                  className={`text-sm font-medium transition-colors px-3 py-2 rounded-md ${isActive
                       ? 'text-[#0E4B75] bg-slate-50 font-semibold'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-stone-50'
-                  }`}
+                    }`}
                 >
                   {link.name}
                 </Link>

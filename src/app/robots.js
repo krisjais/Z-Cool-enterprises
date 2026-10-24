@@ -1,10 +1,14 @@
+import { getSiteUrl } from '@/utils/seo';
+
 export default function robots() {
+  const siteUrl = getSiteUrl();
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/'],
+      disallow: ['/admin/', '/admin'],
     },
-    sitemap: 'https://zcoolenterprises.com/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

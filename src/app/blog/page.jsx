@@ -12,15 +12,19 @@ import {
 } from '@/components/blog/BlogActions';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
-export const metadata = {
-  title: 'Compressor Knowledge Center | HVAC Guides & Identification | Zcool Enterprises',
+import { generateSEO, getSiteUrl } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Compressor Knowledge Center & Technical Guides',
   description:
     'Practical technical guides for HVAC contractors, service technicians, and facility engineers on reading compressor nameplates, scroll vs rotary selection, voltage/phase in India, and replacement matching.',
-};
+  path: '/blog',
+});
 
 export default function BlogPage() {
   const featuredArticle = ARTICLES.find((a) => a.featured) || ARTICLES[0];
   const regularArticles = ARTICLES;
+  const siteUrl = getSiteUrl();
 
   // Schema.org structured data for Technical Knowledge Base
   const jsonLd = {
@@ -31,8 +35,8 @@ export default function BlogPage() {
       'Practical guides for identifying, selecting and sourcing AC and refrigeration compressors.',
     publisher: {
       '@type': 'Organization',
-      name: 'Z.Cool Enterprises',
-      url: 'https://zcoolenterprises.com',
+      name: 'Z Cool Enterprises',
+      url: siteUrl,
     },
     hasPart: ARTICLES.map((art) => ({
       '@type': 'TechArticle',

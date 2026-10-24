@@ -5,11 +5,14 @@ import { BRANDS_LIST } from '@/data/brands';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import { COMPANY_DETAILS } from '@/constants/company';
 
-export const metadata = {
-  title: 'Supported Compressor Brands | Z.Cool Enterprises',
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Supported Compressor Brands',
   description:
-    'Browse commercial AC and refrigeration compressor brands supported and stocked by Z.Cool Enterprises — Copeland, Daikin, LG, Danfoss Maneurop, Carrier, and Hitachi.',
-};
+    'Browse commercial AC and refrigeration compressor brands supported and stocked by Z Cool Enterprises — Copeland, Daikin, LG, Danfoss Maneurop, Carrier, and Hitachi.',
+  path: '/brands',
+});
 
 export default function BrandsPage() {
   return (
@@ -84,6 +87,13 @@ export default function BrandsPage() {
                 </div>
               </ScrollReveal>
             ))}
+          </div>
+
+          {/* Nominative Fair Use Trademark Notice */}
+          <div className="bg-slate-100 border border-slate-200 rounded-lg p-4 text-xs text-slate-600 leading-relaxed font-sans">
+            <p>
+              <strong className="text-slate-800 font-semibold">Nominative Fair Use Disclaimer:</strong> All manufacturer brand names, logos, registered trademarks, and model codes displayed on this page (including Copeland, Emerson, Daikin, Danfoss, Maneurop, LG, Carrier, Bitzer, Highly, GMCC, and Hitachi) are the exclusive property of their respective Original Equipment Manufacturers. Their reference here is solely for product identification, replacement equivalence, and technical compatibility matching under Indian Trade Marks Act Section 30(2)(d). Z Cool Enterprises is an independent compressor trader, stockist, and refurbishment desk and is not an authorized distributor, franchisee, or affiliate of these manufacturers unless expressly documented.
+            </p>
           </div>
 
           {/* Sourcing Assistance Bar */}

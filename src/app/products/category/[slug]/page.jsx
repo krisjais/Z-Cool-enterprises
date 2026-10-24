@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { CATEGORIES_LIST } from '@/data/products';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // 24-hour cache for category redirects
 
 const KNOWN_SLUG_MAP = {
   'scroll-compressor': 'Scroll Compressors',
@@ -13,6 +13,14 @@ const KNOWN_SLUG_MAP = {
   'vrf-inverter-compressors': 'VRF / DC Inverter',
   'vrf-system': 'VRF / DC Inverter',
 };
+
+export function generateStaticParams() {
+  const slugs = new Set([
+    ...Object.keys(KNOWN_SLUG_MAP),
+    ...CATEGORIES_LIST.map((c) => c.slug || c.id).filter(Boolean),
+  ]);
+  return Array.from(slugs).map((slug) => ({ slug }));
+}
 
 export default async function CategoryRedirectPage({ params }) {
   const resolvedParams = await params;

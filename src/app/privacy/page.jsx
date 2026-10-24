@@ -4,10 +4,13 @@ import { ShieldCheck, Mail, Phone, MapPin, AlertCircle, FileText, Lock, Clock, D
 import Container from '@/components/ui/Container';
 import { COMPANY_DETAILS } from '@/constants/company';
 
-export const metadata = {
-  title: 'Privacy Policy | Z.Cool Enterprises Mumbai',
-  description: 'Privacy transparency document detailing what information Z.Cool Enterprises collects, how it is used for compressor sourcing enquiries, and contact details for privacy inquiries.',
-};
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Privacy Policy',
+  description: 'Privacy transparency document detailing what information Z Cool Enterprises collects, how it is used for compressor sourcing enquiries, and contact details for privacy inquiries.',
+  path: '/privacy',
+});
 
 export default function PrivacyPolicyPage() {
   const lastUpdated = 'October 24, 2026';
@@ -42,7 +45,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="text-slate-600 text-sm sm:text-base mt-3 leading-relaxed">
-            This Privacy Policy explains how <strong>{COMPANY_DETAILS.name}</strong> collects, uses, stores, and handles personal and commercial information submitted through our website (<span className="font-mono text-xs">zcoolenterprises.com</span>) and related quotation channels.
+            This Privacy Policy explains how <strong>{COMPANY_DETAILS.name}</strong> collects, uses, stores, and handles personal and commercial information submitted through our website and related quotation channels.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500">
             <span>Last Updated: {lastUpdated}</span>

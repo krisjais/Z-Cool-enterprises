@@ -23,11 +23,14 @@ import { ContactHeroCTA } from '@/components/contact/ContactHeroCTA';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import { COMPANY_DETAILS } from '@/constants/company';
 
-export const metadata = {
-  title: 'Contact Zcool Enterprises | Compressor Quote & Sourcing Desk',
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Compressor Quote & Sourcing Desk',
   description:
-    'Contact Zcool Enterprises in Mumbai for commercial AC, VRV, and refrigeration compressor inquiries, refurbished unit availability, quote requests, and nameplate matching.',
-};
+    'Contact Z Cool Enterprises in Mumbai for commercial AC, VRV, and refrigeration compressor inquiries, refurbished unit availability, quote requests, and nameplate matching.',
+  path: '/contact',
+});
 
 export default function ContactPage() {
   const whatToSendItems = [

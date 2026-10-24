@@ -4,8 +4,12 @@ import { ArrowLeft, Search, MessageSquare, Phone, FileCheck } from 'lucide-react
 import { COMPANY_DETAILS } from '@/constants/company';
 
 export const metadata = {
-  title: 'Page Not Found | Z.Cool Enterprises',
+  title: 'Page Not Found | Z Cool Enterprises',
   description: 'The requested page or compressor could not be found.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function NotFound() {

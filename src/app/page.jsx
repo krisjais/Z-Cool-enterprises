@@ -7,10 +7,13 @@ import ApplicationsSection from '@/components/home/ApplicationsSection';
 import AboutSection from '@/components/home/AboutSection';
 import HomeQuoteSection from '@/components/home/HomeQuoteSection';
 
-export const metadata = {
-  title: 'Z Cool Enterprises | Refurbished AC Compressors & Industrial HVAC Sourcing Mumbai',
-  description: 'Specialized B2B supplier of replacement and refurbished scroll, rotary, and reciprocating AC compressors in Mumbai, India.',
-};
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Refurbished AC Compressors & Industrial HVAC Sourcing Mumbai',
+  description: 'Specialized B2B supplier of replacement and refurbished scroll, rotary, and reciprocating AC compressors in Mumbai, India. Fast freight dispatch and displacement matching.',
+  path: '/',
+});
 
 export default function HomePage() {
   return (

@@ -4,10 +4,13 @@ import { FileText, ShieldCheck, CheckCircle2, AlertTriangle, ChevronRight, Store
 import Container from '@/components/ui/Container';
 import { COMPANY_DETAILS } from '@/constants/company';
 
-export const metadata = {
-  title: 'Terms and Conditions | Z.Cool Enterprises Mumbai',
-  description: 'Terms and conditions governing quotation requests, technical compatibility verification, product availability, and commercial compressor sourcing with Z.Cool Enterprises.',
-};
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Terms and Conditions',
+  description: 'Terms and conditions governing quotation requests, technical compatibility verification, product availability, and commercial compressor sourcing with Z Cool Enterprises.',
+  path: '/terms',
+});
 
 export default function TermsPage() {
   const lastUpdated = 'October 24, 2026';
@@ -42,7 +45,7 @@ export default function TermsPage() {
             Terms &amp; Conditions
           </h1>
           <p className="text-slate-600 text-sm sm:text-base mt-3 leading-relaxed">
-            These Terms &amp; Conditions govern your use of the <strong>{COMPANY_DETAILS.name}</strong> website (<span className="font-mono text-xs">zcoolenterprises.com</span>), quotation submissions, and technical sourcing interactions.
+            These Terms &amp; Conditions govern your use of the <strong>{COMPANY_DETAILS.name}</strong> website, quotation submissions, and technical sourcing interactions.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500">
             <span>Last Updated: {lastUpdated}</span>

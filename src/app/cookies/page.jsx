@@ -4,10 +4,13 @@ import { Cookie, ShieldCheck, CheckCircle2, ChevronRight, Info, Lock, Globe } fr
 import Container from '@/components/ui/Container';
 import { COMPANY_DETAILS } from '@/constants/company';
 
-export const metadata = {
-  title: 'Cookie & Tracking Policy | Z.Cool Enterprises Mumbai',
-  description: 'Verified disclosure of cookies, local storage technologies, and external assets used on the Z.Cool Enterprises website.',
-};
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Cookie & Tracking Policy',
+  description: 'Verified disclosure of cookies, local storage technologies, and external assets used on the Z Cool Enterprises website.',
+  path: '/cookies',
+});
 
 export default function CookiePolicyPage() {
   const lastUpdated = 'October 24, 2026';
@@ -42,7 +45,7 @@ export default function CookiePolicyPage() {
             Cookie &amp; Tracking Policy
           </h1>
           <p className="text-slate-600 text-sm sm:text-base mt-3 leading-relaxed">
-            This Cookie Policy describes the verified technologies and storage mechanisms used by <strong>{COMPANY_DETAILS.name}</strong> on <span className="font-mono text-xs">zcoolenterprises.com</span>.
+            This Cookie Policy describes the verified technologies and storage mechanisms used by <strong>{COMPANY_DETAILS.name}</strong> on this website.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500">
             <span>Last Updated: {lastUpdated}</span>

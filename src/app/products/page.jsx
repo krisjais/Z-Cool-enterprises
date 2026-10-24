@@ -1,32 +1,28 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { getProducts } from '@/lib/api';
 import ProductCatalogView from '@/components/catalog/ProductCatalogView';
+import CatalogLoading from './loading';
 import Container from '@/components/ui/Container';
 
-export const metadata = {
-  title: 'HVAC Compressor Catalogue | Z Cool Enterprises Mumbai',
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Commercial HVAC Compressor Catalogue',
   description: 'Browse commercial replacement scroll, rotary, reciprocating, and VRF compressors. Sourced and displacement-matched by Mumbai technical desk.',
-};
+  path: '/products',
+});
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // 1-hour ISR cache for catalogue index
 
-export default async function ProductsPage({ searchParams }) {
-  const resolvedParams = await searchParams;
-  const initialCategory = resolvedParams?.category || resolvedParams?.type || 'All';
-  const initialPage    = parseInt(resolvedParams?.page, 10) || 1;
-  const initialSort    = resolvedParams?.sort || 'default';
-
+export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
     <div className="bg-[#FBFBFA] min-h-screen text-slate-900 pt-6 pb-14 sm:pt-8 sm:pb-16">
       <Container>
-        <ProductCatalogView
-          products={products}
-          initialCategory={initialCategory}
-          initialPage={initialPage}
-          initialSort={initialSort}
-        />
+        <Suspense fallback={<CatalogLoading />}>
+          <ProductCatalogView products={products} />
+        </Suspense>
       </Container>
     </div>
   );

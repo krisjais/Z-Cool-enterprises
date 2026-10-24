@@ -104,9 +104,16 @@ function SidebarContent({ activeTab, setIsMobileOpen }) {
 
 function DashboardLayoutContent({ children }) {
   const { admin, loading } = useAuth();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'overview';
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !admin) {
+      router.replace('/admin/login');
+    }
+  }, [admin, loading, router]);
 
   if (loading || !admin) {
     return (

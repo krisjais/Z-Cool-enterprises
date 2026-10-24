@@ -15,13 +15,54 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400,
   },
-  async rewrites() {
+  async headers() {
     return [
       {
-        source: '/uploads/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/uploads/:path*`,
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(self), microphone=(), geolocation=()',
+          },
+        ],
       },
     ];
+  },
+  async rewrites() {
+    const rawApi = (process.env.NEXT_PUBLIC_API_URL || '').trim();
+    const isDev = process.env.NODE_ENV === 'development';
+
+    if (rawApi && !rawApi.includes('localhost') && !rawApi.includes('127.0.0.1')) {
+      return [
+        {
+          source: '/uploads/:path*',
+          destination: `${rawApi.replace(/\/+$/, '')}/uploads/:path*`,
+        },
+      ];
+    }
+
+    if (isDev) {
+      return [
+        {
+          source: '/uploads/:path*',
+          destination: 'http://localhost:5000/uploads/:path*',
+        },
+      ];
+    }
+
+    return [];
   },
 };
 

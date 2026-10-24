@@ -55,24 +55,48 @@ export default function ProductCatalogView({
   const pathname    = usePathname();
   const searchParams = useSearchParams();
 
-  const [searchTerm,       setSearchTerm]       = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'All');
-  const [selectedBrand,    setSelectedBrand]    = useState('All');
-  const [sortId,           setSortId]           = useState(initialSort || 'default');
-  const [currentPage,      setCurrentPage]      = useState(Math.max(1, initialPage));
+  const urlCategory = searchParams?.get('category') || searchParams?.get('type');
+  const urlBrand    = searchParams?.get('brand');
+  const urlSearch   = searchParams?.get('search') || searchParams?.get('q') || '';
+  const urlPage     = parseInt(searchParams?.get('page') || '1', 10);
+  const urlSort     = searchParams?.get('sort') || 'default';
+
+  const [searchTerm,       setSearchTerm]       = useState(urlSearch);
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory || initialCategory || 'All');
+  const [selectedBrand,    setSelectedBrand]    = useState(urlBrand || 'All');
+  const [sortId,           setSortId]           = useState(urlSort || initialSort || 'default');
+  const [currentPage,      setCurrentPage]      = useState(Math.max(1, isNaN(urlPage) ? (initialPage || 1) : urlPage));
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [quoteProduct,     setQuoteProduct]     = useState(null);
+
+  // Sync state if searchParams change externally (e.g. Back/Forward button or external links)
+  useEffect(() => {
+    if (searchParams) {
+      const cat = searchParams.get('category') || searchParams.get('type') || 'All';
+      const brand = searchParams.get('brand') || 'All';
+      const search = searchParams.get('search') || searchParams.get('q') || '';
+      const page = parseInt(searchParams.get('page') || '1', 10);
+      const sort = searchParams.get('sort') || 'default';
+      setSelectedCategory((prev) => (prev !== cat ? cat : prev));
+      setSelectedBrand((prev) => (prev !== brand ? brand : prev));
+      setSearchTerm((prev) => (prev !== search ? search : prev));
+      setCurrentPage((prev) => (prev !== page && page > 0 ? page : prev));
+      setSortId((prev) => (prev !== sort ? sort : prev));
+    }
+  }, [searchParams]);
 
   // Track whether filters caused a reset (to avoid infinite loops)
   const didFilterChange = useRef(false);
 
   // ----- helpers to push URL without full navigation -----
   const updateUrl = useCallback((overrides = {}) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
     const map = {
       page:     String(overrides.page     ?? currentPage),
       sort:     overrides.sort            ?? sortId,
       category: overrides.category        ?? (selectedCategory !== 'All' ? selectedCategory : ''),
+      brand:    overrides.brand           ?? (selectedBrand !== 'All' ? selectedBrand : ''),
+      search:   overrides.search          ?? (searchTerm ? searchTerm : ''),
     };
 
     Object.entries(map).forEach(([k, v]) => {
@@ -92,7 +116,7 @@ export default function ProductCatalogView({
 
     const qs = params.toString();
     router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false });
-  }, [router, pathname, searchParams, currentPage, sortId, selectedCategory]);
+  }, [router, pathname, searchParams, currentPage, sortId, selectedCategory, selectedBrand, searchTerm]);
 
   // ----- Approved Primary Categories -----
   const categories = [
@@ -163,7 +187,13 @@ export default function ProductCatalogView({
     if (changed) {
       prevFilters.current = { searchTerm, selectedCategory, selectedBrand, sortId };
       setCurrentPage(1);
-      updateUrl({ page: 1, sort: sortId, category: selectedCategory !== 'All' ? selectedCategory : '' });
+      updateUrl({
+        page: 1,
+        sort: sortId,
+        category: selectedCategory !== 'All' ? selectedCategory : '',
+        brand: selectedBrand !== 'All' ? selectedBrand : '',
+        search: searchTerm,
+      });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, selectedCategory, selectedBrand, sortId]);

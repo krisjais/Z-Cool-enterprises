@@ -1,6 +1,207 @@
 import { PRODUCTS_CATALOG, CATEGORIES_LIST } from '@/data/products';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+/**
+ * Resolves the backend API base URL safely across Server and Client contexts.
+ *
+ * Rules:
+ * 1. If NEXT_PUBLIC_API_URL is configured with a valid remote URL, use it (trimmed, no trailing slash).
+ * 2. In local development (NODE_ENV === 'development' or on localhost), default to http://localhost:5000
+ *    to support local pair programming with Z-Cool-enterprises-backend.
+ * 3. In production, NEVER send requests to localhost or 127.0.0.1. If unconfigured or pointing to localhost,
+ *    return null so catalog and category fetchers immediately use local static datasets with 0ms delay.
+ */
+export function getApiBase() {
+  const raw = (process.env.NEXT_PUBLIC_API_URL || '').trim();
+  const isDev = process.env.NODE_ENV === 'development';
+  const isClient = typeof window !== 'undefined';
+  const isClientLocal = isClient && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  if (!raw) {
+    // Only allow localhost fallback in local developer environments
+    if (isDev || isClientLocal) {
+      return 'http://localhost:5000';
+    }
+    return null;
+  }
+
+  // If a URL is configured, inspect hostname to prevent accidental localhost requests in production
+  try {
+    const parsed = new URL(raw);
+    const isLocalHost = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+    if (isLocalHost && !isDev && !isClientLocal) {
+      return null;
+    }
+    return raw.replace(/\/+$/, '');
+  } catch {
+    return null;
+  }
+}
+
+const DEFAULT_READ_TIMEOUT_MS = 1200; // 1.2 seconds timeout for read operations
+const DEFAULT_MUTATION_TIMEOUT_MS = 10000; // 10 seconds timeout for writes / uploads
+
+// Circuit Breaker state to prevent repeated timeout delays when remote/local backend is unavailable
+const CIRCUIT_BREAKER = {
+  lastFailureTime: 0,
+  cooldownMs: 30000, // 30 seconds cooldown after a failed or timed-out request
+  isTripped() {
+    return Date.now() - this.lastFailureTime < this.cooldownMs;
+  },
+  trip() {
+    this.lastFailureTime = Date.now();
+  },
+  reset() {
+    this.lastFailureTime = 0;
+  },
+};
+
+/**
+ * Resilient fetch wrapper with explicit timeout and AbortSignal support.
+ * Prevents hanging sockets and serverless freeze when remote backends are unreachable or sleeping.
+ */
+async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_READ_TIMEOUT_MS) {
+  let signal;
+  let timeoutId;
+
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    signal = AbortSignal.timeout(timeoutMs);
+  } else {
+    const controller = new AbortController();
+    timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    signal = controller.signal;
+  }
+
+  try {
+    const res = await fetch(url, { ...options, signal });
+    return res;
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+/**
+ * Filters the verified static catalogue according to query parameters.
+ * Preserves full filtering compatibility even in static fallback mode.
+ */
+function filterStaticProducts(query = {}) {
+  let result = [...PRODUCTS_CATALOG];
+
+  if (query.category && query.category !== 'all') {
+    const cleanCat = query.category.toLowerCase().trim();
+    result = result.filter((p) => {
+      const pCat = (p.category || '').toLowerCase();
+      const pType = (p.type || '').toLowerCase();
+      return pCat === cleanCat || pCat.includes(cleanCat) || pType.includes(cleanCat);
+    });
+  }
+
+  if (query.brand && query.brand !== 'all') {
+    const cleanBrand = query.brand.toLowerCase().trim();
+    result = result.filter((p) => (p.brand || '').toLowerCase().trim() === cleanBrand);
+  }
+
+  if (query.availability && query.availability !== 'all') {
+    const cleanAvail = query.availability.toLowerCase().trim();
+    result = result.filter((p) => (p.availability || '').toLowerCase().trim() === cleanAvail);
+  }
+
+  if (query.status && query.status !== 'all') {
+    const cleanStatus = query.status.toLowerCase().trim();
+    result = result.filter((p) =>
+      (p.statusBadge || p.condition || '').toLowerCase().trim() === cleanStatus
+    );
+  }
+
+  if (query.search) {
+    const q = query.search.trim().toLowerCase();
+    result = result.filter((p) =>
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.code || '').toLowerCase().includes(q) ||
+      (p.catalogCode || '').toLowerCase().includes(q) ||
+      (p.brand || '').toLowerCase().includes(q) ||
+      (p.modelNumber || '').toLowerCase().includes(q) ||
+      (p.application || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (query.limit) {
+    const limit = parseInt(query.limit, 10);
+    if (!isNaN(limit) && limit > 0) {
+      result = result.slice(0, limit);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Static categories fallback generator matching backend shape.
+ */
+function getStaticCategories() {
+  return {
+    categories: CATEGORIES_LIST.map((c) => ({
+      _id: c.id,
+      name: c.name,
+      slug: c.id,
+      description: c.desc,
+      productCount: 0,
+    })),
+    totalProducts: PRODUCTS_CATALOG.length,
+  };
+}
+
+/**
+ * Static product detail lookup matching backend shape.
+ */
+function getStaticProductById(id) {
+  if (!id) return null;
+  const cleanId = String(id).toLowerCase().trim();
+
+  const staticProduct = PRODUCTS_CATALOG.find(
+    (p) =>
+      p.id?.toLowerCase() === cleanId ||
+      p.code?.toLowerCase() === cleanId ||
+      p.modelNumber?.toLowerCase() === cleanId ||
+      p.catalogCode?.toLowerCase() === cleanId
+  );
+
+  if (!staticProduct) return null;
+
+  let staticRelated = PRODUCTS_CATALOG.filter(
+    (p) => p.id !== staticProduct.id && p.category === staticProduct.category
+  ).slice(0, 4);
+
+  if (staticRelated.length === 0) {
+    staticRelated = PRODUCTS_CATALOG.filter(
+      (p) => p.id !== staticProduct.id && p.brand === staticProduct.brand
+    ).slice(0, 4);
+  }
+
+  return { product: staticProduct, related: staticRelated };
+}
+
+/**
+ * Static category products lookup matching backend shape.
+ */
+function getStaticProductsByCategory(slug) {
+  if (!slug) return { category: { name: 'All', slug: 'all' }, products: PRODUCTS_CATALOG };
+  const cleanSlug = String(slug).replace(/-/g, ' ').toLowerCase().trim();
+
+  const matched = PRODUCTS_CATALOG.filter((p) => {
+    return (
+      p.category?.toLowerCase() === cleanSlug ||
+      p.category?.toLowerCase().includes(cleanSlug) ||
+      p.type?.toLowerCase().includes(cleanSlug)
+    );
+  });
+
+  return {
+    category: { name: slug.replace(/-/g, ' '), slug },
+    products: matched,
+  };
+}
 
 /**
  * Resolves relative /uploads paths to full backend URL, supports Cloudinary URLs and object format
@@ -24,7 +225,11 @@ export function resolveImageUrl(src) {
 
   // Local backend uploaded file paths
   if (cleanSrc.startsWith('/uploads/')) {
-    return `${API_BASE}${cleanSrc}`;
+    const apiBase = getApiBase();
+    if (apiBase) {
+      return `${apiBase}${cleanSrc}`;
+    }
+    return cleanSrc;
   }
 
   return cleanSrc;
@@ -34,6 +239,13 @@ export function resolveImageUrl(src) {
  * Public catalog fetcher with seamless fallback to static catalog
  */
 export async function getProducts(query = {}) {
+  const apiBase = getApiBase();
+
+  // If no remote API is configured in production or circuit breaker is tripped, immediately return static catalog (0ms)
+  if (!apiBase || CIRCUIT_BREAKER.isTripped()) {
+    return filterStaticProducts(query);
+  }
+
   try {
     const params = new URLSearchParams();
     if (query.category && query.category !== 'all') params.append('category', query.category);
@@ -44,123 +256,133 @@ export async function getProducts(query = {}) {
     if (query.limit) params.append('limit', query.limit);
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    const res = await fetch(`${API_BASE}/api/products${queryString}`, {
-      cache: 'no-store', // Always get latest products from MongoDB
-    });
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/products${queryString}`,
+      { next: { revalidate: 3600 } },
+      DEFAULT_READ_TIMEOUT_MS
+    );
 
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const json = await res.json();
     if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      CIRCUIT_BREAKER.reset();
       return json.data;
     }
   } catch (err) {
+    CIRCUIT_BREAKER.trip();
     console.warn('API getProducts fallback to static catalog:', err.message);
   }
-  return PRODUCTS_CATALOG;
+
+  return filterStaticProducts(query);
 }
 
 /**
  * Public categories fetcher with product counts
  */
 export async function getCategories() {
+  const apiBase = getApiBase();
+
+  // If no remote API is configured in production or circuit breaker is tripped, immediately return static categories (0ms)
+  if (!apiBase || CIRCUIT_BREAKER.isTripped()) {
+    return getStaticCategories();
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/api/categories`, {
-      cache: 'no-store',
-    });
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/categories`,
+      { next: { revalidate: 3600 } },
+      DEFAULT_READ_TIMEOUT_MS
+    );
     if (res.ok) {
       const json = await res.json();
       if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        CIRCUIT_BREAKER.reset();
         return {
           categories: json.data,
           totalProducts: json.totalProducts || 0,
         };
       }
     }
+    throw new Error(`HTTP ${res.status}`);
   } catch (err) {
+    CIRCUIT_BREAKER.trip();
     console.warn('API getCategories fallback:', err.message);
   }
 
-  // Fallback to static categories list if backend unavailable
-  return {
-    categories: CATEGORIES_LIST.map((c) => ({
-      _id: c.id,
-      name: c.name,
-      slug: c.id,
-      description: c.desc,
-      productCount: 0,
-    })),
-    totalProducts: PRODUCTS_CATALOG.length,
-  };
+  return getStaticCategories();
 }
 
 /**
  * Public single product fetcher
  */
 export async function getProductById(id) {
+  const apiBase = getApiBase();
+
+  // If no remote API is configured in production or circuit breaker is tripped, immediately return static product (0ms)
+  if (!apiBase || CIRCUIT_BREAKER.isTripped()) {
+    return getStaticProductById(id);
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/api/products/${encodeURIComponent(id)}`, {
-      cache: 'no-store',
-    });
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/products/${encodeURIComponent(id)}`,
+      { next: { revalidate: 3600 } },
+      DEFAULT_READ_TIMEOUT_MS
+    );
     if (res.ok) {
       const json = await res.json();
       if (json.success && json.data) {
+        CIRCUIT_BREAKER.reset();
         return {
           product: json.data,
           related: json.related || [],
         };
       }
     }
+    if (res.status === 404) return null;
+    throw new Error(`HTTP ${res.status}`);
   } catch (err) {
+    CIRCUIT_BREAKER.trip();
     console.warn('API getProductById fallback to static catalog:', err.message);
   }
 
-  const staticProduct = PRODUCTS_CATALOG.find(
-    (p) => p.id?.toLowerCase() === id?.toLowerCase() || p.code?.toLowerCase() === id?.toLowerCase()
-  );
-
-  if (!staticProduct) return null;
-
-  const staticRelated = PRODUCTS_CATALOG.filter(
-    (p) => p.id !== staticProduct.id && (p.brand === staticProduct.brand || p.category === staticProduct.category)
-  ).slice(0, 4);
-
-  return { product: staticProduct, related: staticRelated };
+  return getStaticProductById(id);
 }
 
 /**
  * Public category products fetcher
  */
 export async function getProductsByCategory(slug) {
+  const apiBase = getApiBase();
+
+  // If no remote API is configured in production or circuit breaker is tripped, immediately return static category products (0ms)
+  if (!apiBase || CIRCUIT_BREAKER.isTripped()) {
+    return getStaticProductsByCategory(slug);
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/api/products/category/${encodeURIComponent(slug)}`, {
-      cache: 'no-store',
-    });
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/products/category/${encodeURIComponent(slug)}`,
+      { next: { revalidate: 3600 } },
+      DEFAULT_READ_TIMEOUT_MS
+    );
     if (res.ok) {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
+        CIRCUIT_BREAKER.reset();
         return {
           category: json.category,
           products: json.data,
         };
       }
     }
+    throw new Error(`HTTP ${res.status}`);
   } catch (err) {
+    CIRCUIT_BREAKER.trip();
     console.warn('API getProductsByCategory fallback:', err.message);
   }
 
-  const matched = PRODUCTS_CATALOG.filter((p) => {
-    const cleanSlug = slug.replace(/-/g, ' ').toLowerCase();
-    return (
-      p.category?.toLowerCase() === cleanSlug ||
-      p.category?.toLowerCase().includes(cleanSlug) ||
-      p.type?.toLowerCase().includes(cleanSlug)
-    );
-  });
-
-  return {
-    category: { name: slug.replace(/-/g, ' '), slug },
-    products: matched,
-  };
+  return getStaticProductsByCategory(slug);
 }
 
 /**
@@ -177,121 +399,212 @@ function authHeaders(token, isJson = true) {
 }
 
 export async function adminCreateProduct(data, token) {
-  const res = await fetch(`${API_BASE}/api/products`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/products`,
+    {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminUpdateProduct(id, data, token) {
-  const res = await fetch(`${API_BASE}/api/products/${encodeURIComponent(id)}`, {
-    method: 'PUT',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/products/${encodeURIComponent(id)}`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminDeleteProduct(id, token) {
-  const res = await fetch(`${API_BASE}/api/products/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    headers: authHeaders(token),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/products/${encodeURIComponent(id)}`,
+    {
+      method: 'DELETE',
+      headers: authHeaders(token),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminUploadImages(files, token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
   const formData = new FormData();
   for (const file of files) {
     formData.append('images', file);
   }
 
-  const res = await fetch(`${API_BASE}/api/upload`, {
-    method: 'POST',
-    headers: authHeaders(token, false), // Browser automatically sets multipart boundary
-    body: formData,
-  });
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/upload`,
+    {
+      method: 'POST',
+      headers: authHeaders(token, false), // Browser automatically sets multipart boundary
+      body: formData,
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminDeleteCloudinaryImage(publicId, token) {
-  const res = await fetch(`${API_BASE}/api/upload/delete`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify({ publicId }),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/upload/delete`,
+    {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify({ publicId }),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminGetOrders(token, query = {}) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, data: [] };
+
   const params = new URLSearchParams(query).toString();
-  const res = await fetch(`${API_BASE}/api/orders${params ? `?${params}` : ''}`, {
-    headers: authHeaders(token),
-    cache: 'no-store',
-  });
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/orders${params ? `?${params}` : ''}`,
+    {
+      headers: authHeaders(token),
+      cache: 'no-store',
+    },
+    DEFAULT_READ_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminCreateOrder(data, token) {
-  const res = await fetch(`${API_BASE}/api/orders`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/orders`,
+    {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminUpdateOrder(id, data, token) {
-  const res = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(id)}`, {
-    method: 'PUT',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/orders/${encodeURIComponent(id)}`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminDeleteOrder(id, token) {
-  const res = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    headers: authHeaders(token),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/orders/${encodeURIComponent(id)}`,
+    {
+      method: 'DELETE',
+      headers: authHeaders(token),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminGetShipments(token, query = {}) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, data: [] };
+
   const params = new URLSearchParams(query).toString();
-  const res = await fetch(`${API_BASE}/api/shipments${params ? `?${params}` : ''}`, {
-    headers: authHeaders(token),
-    cache: 'no-store',
-  });
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/shipments${params ? `?${params}` : ''}`,
+    {
+      headers: authHeaders(token),
+      cache: 'no-store',
+    },
+    DEFAULT_READ_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminCreateShipment(data, token) {
-  const res = await fetch(`${API_BASE}/api/shipments`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/shipments`,
+    {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminUpdateShipment(id, data, token) {
-  const res = await fetch(`${API_BASE}/api/shipments/${encodeURIComponent(id)}`, {
-    method: 'PUT',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/shipments/${encodeURIComponent(id)}`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminDeleteShipment(id, token) {
-  const res = await fetch(`${API_BASE}/api/shipments/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    headers: authHeaders(token),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/shipments/${encodeURIComponent(id)}`,
+    {
+      method: 'DELETE',
+      headers: authHeaders(token),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
@@ -299,10 +612,22 @@ export async function adminDeleteShipment(id, token) {
  * Category Management API methods
  */
 export async function getCategoryBySlug(slugOrId) {
+  const apiBase = getApiBase();
+  if (!apiBase) {
+    const clean = (slugOrId || '').toLowerCase().trim();
+    const cat = CATEGORIES_LIST.find((c) => c.id?.toLowerCase() === clean || c.name?.toLowerCase() === clean);
+    if (cat) {
+      return { success: true, data: { _id: cat.id, name: cat.name, slug: cat.id, description: cat.desc } };
+    }
+    return { success: false, message: 'Failed to fetch category' };
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/api/categories/${encodeURIComponent(slugOrId)}`, {
-      cache: 'no-store',
-    });
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/categories/${encodeURIComponent(slugOrId)}`,
+      { next: { revalidate: 3600 } },
+      DEFAULT_READ_TIMEOUT_MS
+    );
     if (res.ok) {
       return await res.json();
     }
@@ -313,28 +638,49 @@ export async function getCategoryBySlug(slugOrId) {
 }
 
 export async function adminCreateCategory(data, token) {
-  const res = await fetch(`${API_BASE}/api/categories`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/categories`,
+    {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminUpdateCategory(id, data, token) {
-  const res = await fetch(`${API_BASE}/api/categories/${encodeURIComponent(id)}`, {
-    method: 'PUT',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/categories/${encodeURIComponent(id)}`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
 export async function adminDeleteCategory(id, token, force = false) {
-  const res = await fetch(`${API_BASE}/api/categories/${encodeURIComponent(id)}${force ? '?force=true' : ''}`, {
-    method: 'DELETE',
-    headers: authHeaders(token),
-  });
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/categories/${encodeURIComponent(id)}${force ? '?force=true' : ''}`,
+    {
+      method: 'DELETE',
+      headers: authHeaders(token),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
   return res.json();
 }
 
@@ -343,6 +689,13 @@ export async function adminDeleteCategory(id, token, force = false) {
  * Handles both plain JSON payloads and multipart/form-data with nameplate photo.
  */
 export async function submitInquiry(data, photoFile = null) {
+  const apiBase = getApiBase();
+  if (!apiBase) {
+    throw new Error(
+      'Online inquiry registration is temporarily unavailable. Please contact our Mumbai technical desk directly via phone (+91 99209 06508) or WhatsApp.'
+    );
+  }
+
   try {
     let body;
     const headers = {};
@@ -361,11 +714,15 @@ export async function submitInquiry(data, photoFile = null) {
       body = JSON.stringify(data);
     }
 
-    const res = await fetch(`${API_BASE}/api/inquiries`, {
-      method: 'POST',
-      headers,
-      body,
-    });
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/inquiries`,
+      {
+        method: 'POST',
+        headers,
+        body,
+      },
+      DEFAULT_MUTATION_TIMEOUT_MS
+    );
 
     const json = await res.json();
     if (!res.ok || !json.success) {

@@ -28,11 +28,14 @@ import ScrollReveal from '@/components/ui/ScrollReveal';
 import InteractiveCompanyProfile from '@/components/about/InteractiveCompanyProfile';
 import { COMPANY_DETAILS } from '@/constants/company';
 
-export const metadata = {
-  title: 'About Zcool Enterprises | Compressor & HVAC Equipment Supplier',
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'About Our Compressor Sourcing & Supply Desk',
   description:
-    'Zcool Enterprises is a Mumbai-based B2B supplier of refurbished and replacement AC compressors — scroll, rotary, reciprocating, and VRF/VRV types — for commercial HVAC, refrigeration, and industrial cooling applications.',
-};
+    'Z Cool Enterprises is a Mumbai-based B2B supplier of refurbished and replacement AC compressors — scroll, rotary, reciprocating, and VRF/VRV types — for commercial HVAC, refrigeration, and industrial cooling applications.',
+  path: '/about',
+});
 
 /* ─── Verified categories from CATEGORIES_LIST ─── */
 const SUPPLY_CATEGORIES = [

@@ -1,14 +1,37 @@
 /**
  * SEO & Metadata Utility Engine
- * Provides baseline OpenGraph, Twitter Cards, and JSON-LD schema builders.
+ * Centralized site URL resolution, OpenGraph, Twitter Cards, and Schema.org JSON-LD builders.
  */
 
 import { COMPANY_DETAILS } from '../constants/company';
 
+export const DEFAULT_PRODUCTION_URL = 'https://z-cool-enterprises.vercel.app';
+
+/**
+ * Centralized site URL resolver.
+ * Priority:
+ * 1. process.env.NEXT_PUBLIC_SITE_URL (trimmed)
+ * 2. DEFAULT_PRODUCTION_URL ('https://z-cool-enterprises.vercel.app')
+ * Ensures localhost / 127.0.0.1 never leaks into production metadata.
+ */
+export function getSiteUrl() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured) {
+    const isProd = process.env.NODE_ENV === 'production';
+    if (isProd && (configured.includes('localhost') || configured.includes('127.0.0.1'))) {
+      return DEFAULT_PRODUCTION_URL;
+    }
+    return configured.replace(/\/+$/, '');
+  }
+  return DEFAULT_PRODUCTION_URL;
+}
+
 export const siteConfig = {
-  title: 'Z.Cool Enterprises | Refurbished AC Compressors & Industrial HVAC Sourcing',
-  description: 'Explore all types of refurbished AC compressors for commercial and industrial cooling applications. Specialized B2B sourcing and replacement in Mumbai.',
-  url: 'https://zcoolenterprises.com',
+  title: 'Z Cool Enterprises | Refurbished AC Compressors & Industrial HVAC Sourcing Mumbai',
+  description: 'Specialized B2B supplier of replacement and refurbished scroll, rotary, and reciprocating AC compressors in Mumbai, India.',
+  get url() {
+    return getSiteUrl();
+  },
   ogImage: '/ac_compressor.png',
   twitterHandle: '@zcoolenterprises',
   organization: {
@@ -36,22 +59,38 @@ export const siteConfig = {
 };
 
 // Generates dynamic Metadata objects for Next.js App Router
-export function generateSEO({ title, description, path, ogImage, noIndex = false } = {}) {
-  const metaTitle = title ? `${title} | ${COMPANY_DETAILS.name}` : siteConfig.title;
+export function generateSEO({ title, description, path, ogImage, noIndex = false, type = 'website' } = {}) {
+  const siteUrl = getSiteUrl();
+  const pageTitle = title || 'Refurbished AC Compressors & HVAC Equipment Mumbai';
+  const cleanTitle = pageTitle
+    .replace(/\s*\|\s*Z[\s.]*Cool\s*Enterprises.*$/i, '')
+    .trim();
+
+  const metaTitle = `${cleanTitle} | Z Cool Enterprises`;
   const metaDesc = description || siteConfig.description;
-  const metaUrl = `${siteConfig.url}${path || ''}`;
-  const metaImg = ogImage || siteConfig.ogImage;
+  const cleanPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
+  const metaUrl = `${siteUrl}${cleanPath}`;
+
+  const rawImg = ogImage || siteConfig.ogImage;
+  const metaImg = rawImg.startsWith('http') ? rawImg : `${siteUrl}${rawImg.startsWith('/') ? rawImg : `/${rawImg}`}`;
 
   return {
-    title: metaTitle,
+    metadataBase: new URL(siteUrl),
+    title: cleanTitle,
     description: metaDesc,
-    metadataBase: new URL(siteConfig.url),
     alternates: {
       canonical: metaUrl,
     },
     robots: {
       index: !noIndex,
       follow: !noIndex,
+      googleBot: {
+        index: !noIndex,
+        follow: !noIndex,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
     openGraph: {
       title: metaTitle,
@@ -66,7 +105,8 @@ export function generateSEO({ title, description, path, ogImage, noIndex = false
           alt: metaTitle,
         },
       ],
-      type: 'website',
+      type,
+      locale: 'en_IN',
     },
     twitter: {
       card: 'summary_large_image',
@@ -93,16 +133,18 @@ export function generateSEO({ title, description, path, ogImage, noIndex = false
 
 // Generates JSON-LD LocalBusiness / Organization Schema
 export function getOrganizationSchema() {
+  const siteUrl = getSiteUrl();
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: COMPANY_DETAILS.name,
     legalName: COMPANY_DETAILS.name,
-    url: siteConfig.url,
-    logo: `${siteConfig.url}/logo1.png`,
-    image: `${siteConfig.url}/ac_compressor.png`,
+    url: siteUrl,
+    logo: `${siteUrl}/logo1.png`,
+    image: `${siteUrl}/ac_compressor.png`,
     email: COMPANY_DETAILS.email,
     telephone: `+91 ${COMPANY_DETAILS.primaryPhone}`,
+    priceRange: '₹₹₹',
     address: {
       '@type': 'PostalAddress',
       streetAddress: `${COMPANY_DETAILS.address.line1}, ${COMPANY_DETAILS.address.line2}`,
@@ -136,19 +178,63 @@ export function getOrganizationSchema() {
   };
 }
 
-// Generates JSON-LD Product Schema
+// Generates JSON-LD Product Schema using only verified product data
 export function getProductSchema(product) {
   if (!product) return null;
-  return {
+  const siteUrl = getSiteUrl();
+  const productUrl = `${siteUrl}/products/${product.id}`;
+
+  const imageArray = Array.isArray(product.images) && product.images.length > 0
+    ? product.images.map((img) => {
+        const raw = typeof img === 'object' ? img.url : img;
+        return raw?.startsWith('http') ? raw : `${siteUrl}${raw?.startsWith('/') ? raw : `/${raw}`}`;
+      })
+    : [`${siteUrl}/ac_compressor.png`];
+
+  const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images || [],
-    description: product.description,
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'INR',
-      availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    description: product.description || product.shortDescription || `${product.brand} commercial compressor model ${product.code || product.id}.`,
+    url: productUrl,
+    image: imageArray,
+    brand: {
+      '@type': 'Brand',
+      name: product.brand || COMPANY_DETAILS.name,
     },
+  };
+
+  if (product.code || product.modelNumber) {
+    schema.model = product.code || product.modelNumber;
+    schema.mpn = product.code || product.modelNumber;
+  }
+
+  // Real condition mapping without inventing values
+  if (product.condition) {
+    const cond = product.condition.toLowerCase();
+    if (cond.includes('refurbish')) {
+      schema.itemCondition = 'https://schema.org/RefurbishedCondition';
+    } else if (cond.includes('used')) {
+      schema.itemCondition = 'https://schema.org/UsedCondition';
+    } else if (cond.includes('new')) {
+      schema.itemCondition = 'https://schema.org/NewCondition';
+    }
+  }
+
+  return schema;
+}
+
+// Generates JSON-LD BreadcrumbList Schema
+export function getBreadcrumbSchema(items = []) {
+  const siteUrl = getSiteUrl();
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url.startsWith('http') ? item.url : `${siteUrl}${item.url.startsWith('/') ? item.url : `/${item.url}`}`,
+    })),
   };
 }

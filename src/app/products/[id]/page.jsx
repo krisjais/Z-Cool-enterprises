@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { cache } from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { getProductById, getProducts, getCategories } from '@/lib/api';
 import ProductDetailView from '@/components/products/ProductDetailView';
+import { getSiteUrl, getProductSchema, getBreadcrumbSchema } from '@/utils/seo';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // 1-hour ISR cache for verified catalogue products
 
 // Approved active engineering categories from CATEGORIES_LIST
 const KNOWN_CATEGORY_SLUGS = {
@@ -48,43 +49,109 @@ async function matchCategory(identifier) {
   return null;
 }
 
+// Per-request memoization ensures generateMetadata and ProductDetailPage share the single lookup
+const getCachedProduct = cache(async (id) => {
+  return getProductById(id);
+});
+
+const getCachedCategory = cache(async (identifier) => {
+  return matchCategory(identifier);
+});
+
+/**
+ * Statically pre-render verified catalogue records at build time for instant CDN delivery.
+ * Uncached or newly added models fall back smoothly to ISR on-demand rendering.
+ */
+export async function generateStaticParams() {
+  const products = await getProducts();
+  if (!Array.isArray(products) || products.length === 0) {
+    return [];
+  }
+  return products
+    .filter((p) => Boolean(p.id))
+    .map((p) => ({
+      id: p.id,
+    }));
+}
+
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const identifier = resolvedParams?.id;
+  const siteUrl = getSiteUrl();
 
   // 1. Check if it's a product
-  const data = await getProductById(identifier);
+  const data = await getCachedProduct(identifier);
   const product = data?.product;
 
   if (product) {
-    const codeStr = (product.modelNumber || product.code) ? ` (${product.modelNumber || product.code})` : '';
+    const rawName = (product.name || '').trim();
+    const rawBrand = (product.brand || '').trim();
+    const displayName = rawName.toLowerCase().startsWith(rawBrand.toLowerCase())
+      ? rawName
+      : `${rawBrand} ${rawName}`;
+
+    const model = product.modelNumber || product.code;
+    const codeStr = model && !displayName.includes(model) ? ` (${model})` : '';
     const condStr = product.condition ? ` · ${product.condition}` : '';
 
+    const cleanTitle = `${displayName}${codeStr}`;
+    const fullTitle = `${cleanTitle} | Z Cool Enterprises`;
+    const description = `${displayName}${codeStr}${condStr}. ${product.shortDescription || product.tagline || product.description || 'Commercial AC compressor sourcing and displacement matching.'} Verified B2B dispatch in Mumbai and pan-India.`;
+    const canonicalUrl = `${siteUrl}/products/${encodeURIComponent(product.id)}`;
+
+    const rawImg = product.images?.[0]
+      ? (typeof product.images[0] === 'object' ? product.images[0].url : product.images[0])
+      : '/ac_compressor.png';
+    const ogImage = rawImg.startsWith('http') ? rawImg : `${siteUrl}${rawImg.startsWith('/') ? rawImg : `/${rawImg}`}`;
+
     return {
-      title: `${product.brand} ${product.name}${codeStr} | Z Cool Enterprises Mumbai`,
-      description: `${product.brand} ${product.name}${codeStr}${condStr}. ${product.shortDescription || product.tagline || product.description || 'Commercial AC compressor sourcing and displacement matching.'} Pan-India industrial dispatch.`,
+      title: cleanTitle,
+      description,
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
-        title: `${product.brand} ${product.name}${codeStr}`,
-        description: `${product.brand} ${product.name}. Verified commercial AC compressor.`,
-        images: product.images?.[0]
-          ? [{ url: typeof product.images[0] === 'object' ? product.images[0].url : product.images[0] }]
-          : [],
+        title: fullTitle,
+        description,
+        url: canonicalUrl,
+        type: 'website',
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: fullTitle,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: fullTitle,
+        description,
+        images: [ogImage],
       },
     };
   }
 
   // 2. Check if it's a category
-  const category = await matchCategory(identifier);
+  const category = await getCachedCategory(identifier);
   if (category) {
     return {
       title: `${category.name} Inventory & Models | Z Cool Enterprises`,
       description: `Browse available replacement and tested ${category.name} models. Express freight delivery across India.`,
+      alternates: {
+        canonical: `${siteUrl}/products?category=${encodeURIComponent(category.name)}`,
+      },
     };
   }
 
   return {
     title: 'Model Not Found | Z Cool Enterprises',
     description: 'The requested compressor model could not be found.',
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
@@ -92,24 +159,42 @@ export default async function ProductDetailPage({ params }) {
   const resolvedParams = await params;
   const identifier = resolvedParams?.id;
 
-  // 1. Attempt to fetch as product
-  const [data, allProducts] = await Promise.all([
-    getProductById(identifier),
-    getProducts(),
-  ]);
+  // 1. Fetch single product data using memoized lookup (avoids loading and serializing full 181-product catalog)
+  const data = await getCachedProduct(identifier);
 
   if (data && data.product) {
+    const product = data.product;
+    const productSchema = getProductSchema(product);
+    const breadcrumbSchema = getBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Compressor Catalogue', url: '/products' },
+      { name: product.name, url: `/products/${product.id}` },
+    ]);
+
     return (
-      <ProductDetailView
-        product={data.product}
-        allProducts={allProducts || []}
-        backendRelated={data.related || []}
-      />
+      <>
+        {productSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+          />
+        )}
+        {breadcrumbSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          />
+        )}
+        <ProductDetailView
+          product={product}
+          backendRelated={data.related || []}
+        />
+      </>
     );
   }
 
   // 2. Backward compatibility: If identifier matches a category, redirect cleanly to pre-filtered catalogue
-  const category = await matchCategory(identifier);
+  const category = await getCachedCategory(identifier);
   if (category) {
     redirect(`/products?category=${encodeURIComponent(category.name)}`);
   }

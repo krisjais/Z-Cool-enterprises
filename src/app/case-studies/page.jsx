@@ -9,11 +9,14 @@ import {
 } from '@/components/case-studies/CaseStudiesActions';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
-export const metadata = {
-  title: 'Compressor Supply Case Studies | Zcool Enterprises',
+import { generateSEO } from '@/utils/seo';
+
+export const metadata = generateSEO({
+  title: 'Compressor Supply Case Studies',
   description:
-    'Real-world compressor sourcing and replacement examples for commercial AC, VRV systems, and cold storage units supplied by Zcool Enterprises in Mumbai and Maharashtra.',
-};
+    'Real-world compressor sourcing and replacement examples for commercial AC, VRV systems, and cold storage units supplied by Z Cool Enterprises in Mumbai and Maharashtra.',
+  path: '/case-studies',
+});
 
 export default function CaseStudiesPage() {
   return (

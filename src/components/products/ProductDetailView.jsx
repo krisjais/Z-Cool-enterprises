@@ -283,12 +283,14 @@ export default function ProductDetailView({
 
   // ── DYNAMIC RELATED PRODUCTS (STRICTLY SAME CATEGORY) ──
   const related = useMemo(() => {
-    const pool = allProducts && allProducts.length > 0 ? allProducts : backendRelated;
-    if (!pool || pool.length === 0 || !product?.category) return [];
+    const pool = (backendRelated && backendRelated.length > 0) ? backendRelated : (allProducts || []);
+    if (!pool || pool.length === 0) return [];
 
-    return pool
-      .filter((p) => p.id !== product.id && p.category === product.category)
-      .slice(0, 3);
+    const sameCategory = pool.filter((p) => p.id !== product?.id && p.category === product?.category);
+    if (sameCategory.length > 0) {
+      return sameCategory.slice(0, 3);
+    }
+    return pool.filter((p) => p.id !== product?.id).slice(0, 3);
   }, [allProducts, backendRelated, product]);
 
   if (!product) return null;

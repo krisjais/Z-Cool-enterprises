@@ -2,19 +2,16 @@ import React from 'react';
 import { getProducts } from '@/lib/api';
 import RefurbishmentProcessView from '@/components/refurbishment/RefurbishmentProcessView';
 
-export const metadata = {
-  title: 'Compressor Refurbishment Process | Zcool Enterprises',
-  description:
-    'Explore the 6-stage compressor evaluation and refurbishment workflow at Zcool Enterprises Mumbai. From core sourcing and inspection to testing, condition grading, and B2B freight dispatch.',
-  openGraph: {
-    title: 'Compressor Refurbishment Process | Zcool Enterprises',
-    description:
-      'From used compressor to ready-to-supply equipment. 6-stage industrial evaluation and preparation workflow.',
-    images: [{ url: '/ac_compressor.png' }],
-  },
-};
+import { generateSEO } from '@/utils/seo';
 
-export const dynamic = 'force-dynamic';
+export const metadata = generateSEO({
+  title: 'Compressor Refurbishment Process',
+  description:
+    'Explore the 6-stage compressor evaluation and refurbishment workflow at Z Cool Enterprises Mumbai. From core sourcing and inspection to testing, condition grading, and B2B freight dispatch.',
+  path: '/refurbishment',
+});
+
+export const revalidate = 86400; // 24-hour ISR for static refurbishment workflow overview
 
 export default async function RefurbishmentPage() {
   const products = await getProducts();
