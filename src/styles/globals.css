@@ -165,3 +165,23 @@ nextjs-portal,
   }
 }
 
+/* GSAP Mobile Pinned Stage & Accessible Fallback */
+.gsap-mobile-stage {
+  height: calc(100vh - 64px - 76px);
+  max-height: calc(100dvh - 64px - 76px);
+}
+
+.gsap-mobile-region {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gsap-mobile-stage {
+    height: auto !important;
+    max-height: none !important;
+  }
+  .gsap-mobile-region {
+    overflow: visible !important;
+  }
+}
+

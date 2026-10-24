@@ -4,6 +4,7 @@ import NameplateMatchingSection from '@/components/home/NameplateMatchingSection
 import CompressorCategoriesSection from '@/components/home/CompressorCategoriesSection';
 import VerifiedSpotlightSection from '@/components/home/VerifiedSpotlightSection';
 import ApplicationsSection from '@/components/home/ApplicationsSection';
+import AboutSection from '@/components/home/AboutSection';
 import HomeQuoteSection from '@/components/home/HomeQuoteSection';
 
 export const metadata = {
@@ -29,7 +30,10 @@ export default function HomePage() {
       {/* 5. APPLICATIONS: Commercial & Industrial HVAC Facilities Served */}
       <ApplicationsSection />
 
-      {/* 6. QUOTE: Direct On-Page Quote Submission & Mumbai Desk Connect */}
+      {/* 6. ABOUT: Business Details, Legal Status & Sourcing Overview */}
+      <AboutSection />
+
+      {/* 7. QUOTE: Direct On-Page Quote Submission & Mumbai Desk Connect */}
       <HomeQuoteSection />
     </div>
   );

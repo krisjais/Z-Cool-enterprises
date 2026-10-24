@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
 import { resolveImageUrl } from '@/lib/api';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function ProductDetailView({
   product,
@@ -29,6 +31,16 @@ export default function ProductDetailView({
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [fullscreenImgIdx, setFullscreenImgIdx] = useState(0);
   const [openAccordions, setOpenAccordions] = useState({});
+
+  // GSAP DOM Element Refs
+  const desktopSectionRef = useRef(null);
+  const desktopVisualRef = useRef(null);
+  const desktopDetailsRef = useRef(null);
+  const mobileStageWrapperRef = useRef(null);
+  const mobilePinnedStageRef = useRef(null);
+  const mobileVisualRef = useRef(null);
+  const mobileDetailsRegionRef = useRef(null);
+  const mobileDetailsContentRef = useRef(null);
 
   // Toggle mobile accordion section
   const toggleAccordion = (number) => {
@@ -84,6 +96,111 @@ export default function ProductDetailView({
       document.body.style.overflow = '';
     };
   }, [isFullscreenOpen]);
+
+  // ── GSAP SCROLLTRIGGER STICKY EXPERIENCES (DESKTOP & MOBILE) ──
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      // ── DESKTOP PINNING (>= 1024px) ──
+      // Pins left-column visual canvas during technical details section
+      // Releases smoothly at the end of technical details so related products scrolls naturally
+      mm.add('(min-width: 1024px)', () => {
+        if (!desktopVisualRef.current || !desktopDetailsRef.current) return;
+
+        const visual = desktopVisualRef.current;
+        const details = desktopDetailsRef.current;
+
+        const stDesktop = ScrollTrigger.create({
+          trigger: visual,
+          start: 'top 80px',
+          endTrigger: details,
+          end: () => `bottom ${80 + visual.offsetHeight}px`,
+          pin: visual,
+          pinSpacing: false,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        });
+
+        return () => {
+          stDesktop.kill();
+        };
+      });
+
+      // ── MOBILE PINNING (< 1024px) ──
+      // Pins compact visual stage beneath mobile header (64px)
+      // Dedicated details region translates upward smoothly via scrub
+      // Specifications never slide behind the visual stage
+      // Releases before related products carousel and footer
+      mm.add('(max-width: 1023px)', () => {
+        if (
+          !mobileStageWrapperRef.current ||
+          !mobilePinnedStageRef.current ||
+          !mobileDetailsRegionRef.current ||
+          !mobileDetailsContentRef.current
+        ) {
+          return;
+        }
+
+        const stageWrapper = mobileStageWrapperRef.current;
+        const pinnedStage = mobilePinnedStageRef.current;
+        const region = mobileDetailsRegionRef.current;
+        const content = mobileDetailsContentRef.current;
+
+        const getMaxScroll = () => {
+          if (!content || !region) return 0;
+          return Math.max(0, content.scrollHeight - region.clientHeight);
+        };
+
+        const tween = gsap.to(content, {
+          y: () => -getMaxScroll(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: stageWrapper,
+            start: 'top 64px',
+            end: () => `+=${Math.max(150, getMaxScroll())}`,
+            pin: pinnedStage,
+            pinSpacing: true,
+            scrub: 0.35,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        return () => {
+          if (tween.scrollTrigger) tween.scrollTrigger.kill();
+          tween.kill();
+          gsap.set(content, { clearProps: 'transform' });
+        };
+      });
+    });
+
+    return () => {
+      ctx.revert();
+    };
+  }, [product?.id]);
+
+  // Recalculate ScrollTrigger measurements when accordions toggle
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 80);
+    return () => clearTimeout(timer);
+  }, [openAccordions]);
+
+  // Refresh measurements on image load / change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [selectedImgIdx, currentImage]);
 
   // ── STRUCTURED SPECIFICATION GROUPS (ONLY SUPPORTED DATA) ──
   const technicalGroups = useMemo(() => {
@@ -221,11 +338,12 @@ export default function ProductDetailView({
           </div>
 
           {/* Desktop Two-Column Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div ref={desktopSectionRef} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-            {/* Left Column: Sticky Product Visual Canvas */}
-            <div className="lg:col-span-6 lg:sticky lg:top-24 space-y-4">
-              <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
+            {/* Left Column: Outer Grid Column Container (preserves 6 columns in CSS Grid) */}
+            <div className="lg:col-span-6">
+              <div ref={desktopVisualRef} className="space-y-4 w-full">
+                <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
                 
                 {/* Visual Header */}
                 <div className="px-4 py-2.5 bg-[#FAF9F6] border-b border-stone-200 flex items-center justify-between gap-2 text-xs">
@@ -351,9 +469,10 @@ export default function ProductDetailView({
                 </div>
               </div>
             </div>
+          </div>
 
             {/* Right Column: Detailed Specifications & Content Hierarchy */}
-            <div className="lg:col-span-6 space-y-6">
+            <div ref={desktopDetailsRef} className="lg:col-span-6 space-y-6">
               
               {/* Manufacturer & Title */}
               <div className="space-y-2">
@@ -475,7 +594,7 @@ export default function ProductDetailView({
                   </button>
 
                   <a
-                    href={`https://wa.me/919920691707?text=${whatsappMessage}`}
+                    href={`${COMPANY_DETAILS.whatsappUrl}?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full min-h-[46px] px-5 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
@@ -546,58 +665,63 @@ export default function ProductDetailView({
                 </div>
               )}
 
-              {/* Related Products Grid (Desktop) */}
-              {related.length > 0 && (
-                <div className="space-y-3 pt-4 border-t border-stone-200">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      Related {product.category}
-                    </h4>
-                    <Link
-                      href={`/products?category=${encodeURIComponent(product.category)}`}
-                      className="text-xs font-semibold text-[#0E4B75] hover:text-[#093757] flex items-center gap-1"
-                    >
-                      <span>View All</span>
-                      <ChevronRight size={13} />
-                    </Link>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-3">
-                    {related.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={`/products/${item.id}`}
-                        className="bg-white border border-stone-200 rounded-lg p-2.5 flex flex-col justify-between hover:border-slate-400 hover:shadow-2xs transition-all group"
-                      >
-                        <div className="h-20 bg-stone-50 rounded flex items-center justify-center p-1 mb-2 overflow-hidden">
-                          {item.images && item.images[0] ? (
-                            <img
-                              src={resolveImageUrl(item.images[0])}
-                              alt=""
-                              className="max-h-16 w-auto object-contain group-hover:scale-105 transition-transform"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <Cpu size={18} className="text-slate-400" />
-                          )}
-                        </div>
-                        <div className="space-y-0.5">
-                          <span className="text-[10px] font-mono font-bold text-[#0E4B75] uppercase block truncate">
-                            {item.brand}
-                          </span>
-                          <span className="text-xs font-bold text-slate-900 block truncate group-hover:text-[#0E4B75] transition-colors">
-                            {item.code || item.name}
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
             </div>
 
           </div>
+
+          {/* Desktop Related Products Grid (Full-width below main product section) */}
+          {related.length > 0 && (
+            <div className="hidden lg:block mt-12 pt-8 border-t border-stone-200 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                    Related {product.category}
+                  </h4>
+                  <p className="text-xs text-slate-500 font-medium pt-0.5">
+                    Alternative displacement-matched commercial compressors.
+                  </p>
+                </div>
+                <Link
+                  href={`/products?category=${encodeURIComponent(product.category)}`}
+                  className="text-xs font-semibold text-[#0E4B75] hover:text-[#093757] flex items-center gap-1 min-h-[36px]"
+                >
+                  <span>View All {product.category}</span>
+                  <ChevronRight size={14} />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                {related.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/products/${item.id}`}
+                    className="bg-white border border-stone-200 rounded-xl p-3 flex flex-col justify-between hover:border-slate-400 hover:shadow-2xs transition-all group"
+                  >
+                    <div className="h-24 bg-stone-50 rounded-lg flex items-center justify-center p-2 mb-2 overflow-hidden">
+                      {item.images && item.images[0] ? (
+                        <img
+                          src={resolveImageUrl(item.images[0])}
+                          alt={item.name}
+                          className="max-h-20 w-auto object-contain group-hover:scale-105 transition-transform"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <Cpu size={20} className="text-slate-400" />
+                      )}
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-mono font-bold text-[#0E4B75] uppercase block truncate">
+                        {item.brand}
+                      </span>
+                      <span className="text-xs font-bold text-slate-900 block truncate group-hover:text-[#0E4B75] transition-colors">
+                        {item.code || item.name}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
 
@@ -642,310 +766,357 @@ export default function ProductDetailView({
             </div>
           </div>
 
-          {/* 3. Product Image in Clean Visual Area */}
-          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
-            <div className="relative min-h-[260px] sm:min-h-[300px] bg-[#FBFBFA] flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden">
-              {hasRealImage ? (
-                <>
-                  <div
-                    onClick={() => {
-                      setFullscreenImgIdx(selectedImgIdx);
-                      setIsFullscreenOpen(true);
-                    }}
-                    className="w-full h-full flex flex-col items-center justify-center cursor-zoom-in relative z-0 py-2"
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Inspect full size image of ${product.name}`}
-                  >
-                    <img
-                      src={currentImage}
-                      alt={`${product.brand || ''} ${product.code || product.name}`}
-                      className="max-h-[230px] sm:max-h-[270px] w-auto max-w-[90%] object-contain select-none"
-                      loading="eager"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/ac_compressor.png';
-                      }}
-                    />
-                    <div className="w-36 sm:w-44 h-1.5 bg-slate-900/10 rounded-full blur-[2px] mt-2 pointer-events-none" />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFullscreenImgIdx(selectedImgIdx);
-                      setIsFullscreenOpen(true);
-                    }}
-                    className="absolute bottom-2.5 right-2.5 z-10 text-xs font-semibold bg-white/95 hover:bg-white text-slate-700 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-stone-200 shadow-xs flex items-center gap-1.5 min-h-[36px]"
-                    aria-label="Inspect fullscreen photo"
-                  >
-                    <Eye size={14} className="text-[#0E4B75]" />
-                    <span>Inspect</span>
-                  </button>
-                </>
-              ) : (
-                <div className="w-full py-8 px-4 flex flex-col items-center justify-center text-center bg-stone-50/90 rounded-lg border-2 border-dashed border-stone-300">
-                  <div className="w-12 h-12 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-slate-500 mb-2 shadow-2xs">
-                    <Cpu size={22} className="text-[#0E4B75]" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wide">
-                    Technical Blueprint Silhouette
-                  </span>
-                  <p className="text-xs text-slate-600 max-w-xs mt-1 leading-relaxed">
-                    Physical photograph awaiting workshop verification.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Thumbnails (Only when multiple verified photos exist) */}
-            {hasRealImage && images.length > 1 && (
-              <div className="flex items-center gap-2 p-2.5 bg-stone-50 border-t border-stone-200 overflow-x-auto no-scrollbar">
-                {images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setSelectedImgIdx(idx)}
-                    className={`h-14 w-16 rounded-lg bg-white border p-1 flex items-center justify-center cursor-pointer transition-all shrink-0 min-h-[44px] min-w-[56px] ${
-                      selectedImgIdx === idx
-                        ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/30 bg-blue-50/50 shadow-xs'
-                        : 'border-stone-200 opacity-80 hover:opacity-100 hover:border-slate-300'
-                    }`}
-                    aria-label={`Select photo ${idx + 1}`}
-                    aria-current={selectedImgIdx === idx ? 'true' : undefined}
-                  >
-                    <img src={img} alt="" className="max-h-[30px] w-auto max-w-full object-contain" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* 4. Separate, Compact Image Disclaimer */}
-          <div className="px-3.5 py-2.5 bg-stone-100/70 border border-stone-200/70 rounded-lg text-center">
-            <p className="text-xs text-slate-600 leading-snug font-medium">
-              {product.imageDisclaimer || 'Authentic legacy catalogue photograph — confirm exact specifications on physical nameplate.'}
-            </p>
-          </div>
-
-          {/* 5. Product Title with Full Model Reference */}
-          <div className="space-y-2">
-            <h1 className="font-extrabold text-xl sm:text-2xl text-slate-900 leading-snug tracking-tight break-words">
-              {product.name}
-            </h1>
-
-            {(product.code || product.modelNumber) && (
-              <div>
-                <span className="inline-block font-mono text-xs sm:text-sm font-bold text-[#0E4B75] bg-blue-50/80 border border-blue-200 px-3 py-1.5 rounded-lg">
-                  MODEL REF: {product.code || product.modelNumber}
-                </span>
-              </div>
-            )}
-
-            {product.legacyTitle && (
-              <p className="text-xs text-slate-500 font-mono">
-                Legacy Source Title: <span className="text-slate-700 font-semibold">&ldquo;{product.legacyTitle}&rdquo;</span>
-                {product.legacyOrder && <span> (#{product.legacyOrder})</span>}
-              </p>
-            )}
-
-            {/* 6. One Concise Product Description */}
-            <p className="text-[15px] text-slate-700 leading-relaxed font-normal pt-1">
-              {product.shortDescription || product.description}
-            </p>
-          </div>
-
-          {/* 7. Compact Key-Specification Summary */}
-          <div className="bg-white border border-stone-200 rounded-xl p-4 shadow-xs">
-            <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider mb-3">
-              Essential Technical Parameters
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-              {product.displacement && (
-                <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
-                  <span className="text-slate-500 block text-xs uppercase font-medium">
-                    DISPLACEMENT (SWEPT VOLUME)
-                  </span>
-                  <span className="font-bold text-slate-900 text-sm break-words">
-                    {product.displacement}
-                  </span>
-                </div>
-              )}
-
-              {product.coolingCapacity && (
-                <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
-                  <span className="text-slate-500 block text-xs uppercase font-medium">
-                    RATED CAPACITY
-                  </span>
-                  <span className="font-bold text-slate-900 text-sm break-words">
-                    {product.coolingCapacity}
-                  </span>
-                </div>
-              )}
-
-              {product.voltage && (
-                <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
-                  <span className="text-slate-500 block text-xs uppercase font-medium">
-                    ELECTRICAL RATING
-                  </span>
-                  <span className="font-bold text-slate-900 text-sm break-words">
-                    {product.voltage}
-                  </span>
-                </div>
-              )}
-
-              {product.refrigerant && (
-                <div className="space-y-0.5">
-                  <span className="text-slate-500 block text-xs uppercase font-medium">
-                    REFRIGERANT
-                  </span>
-                  <span className="font-bold text-slate-900 text-sm break-words">
-                    {product.refrigerant}
-                  </span>
-                </div>
-              )}
-
-              {(!product.displacement && !product.voltage && product.keySpecs) && (
-                product.keySpecs.map((spec) => (
-                  <div key={spec.label} className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
-                    <span className="text-slate-500 block text-xs uppercase font-medium">
-                      {spec.label}
-                    </span>
-                    <span className="font-bold text-slate-900 text-sm break-words">
-                      {spec.value}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* 8. Clearly Labelled Availability / Sourcing Status */}
-          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-slate-500 uppercase font-semibold">Availability State</span>
-              <span className="font-semibold text-slate-800 bg-white border border-stone-200 px-2.5 py-1 rounded-md">
-                {product.availability || 'Enquire for availability'}
-              </span>
-            </div>
-            <div className="flex items-start gap-2.5 text-xs text-slate-600 pt-1">
-              <ShieldAlert size={16} className="text-[#0E4B75] shrink-0 mt-0.5" />
-              <p className="leading-relaxed">
-                Commercial compressor models are supplied based on OEM displacement matching. Please confirm mounting footprint and terminal orientation on physical nameplate before order finalization.
-              </p>
-            </div>
-          </div>
-
-          {/* 9. In-Page Primary Quote and Contact Actions */}
-          <div className="space-y-2.5 pt-1">
-            <button
-              type="button"
-              onClick={() => setIsQuoteOpen(true)}
-              className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-[#0E4B75] hover:bg-[#093757] text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+          {/* 3. Bounded GSAP Product Detail Stage Container */}
+          <div ref={mobileStageWrapperRef} className="relative w-full">
+            
+            {/* Pinned Stage Container */}
+            <div
+              ref={mobilePinnedStageRef}
+              className="w-full flex flex-col bg-[#FBFBFA] rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden gsap-mobile-stage"
             >
-              <Send size={16} />
-              <span>Request Availability & Quote</span>
-            </button>
+              {/* 3A. Compact Visual Stage (Pinned at the top of the bounded stage) */}
+              <div
+                ref={mobileVisualRef}
+                className="shrink-0 bg-white border-b border-stone-200/90 flex flex-col justify-between p-2.5 sm:p-3 relative z-10 h-[clamp(140px,24vh,185px)] min-h-[140px]"
+              >
+                <div className="relative w-full h-full min-h-[110px] flex items-center justify-center overflow-hidden">
+                  {hasRealImage ? (
+                    <>
+                      <div
+                        onClick={() => {
+                          setFullscreenImgIdx(selectedImgIdx);
+                          setIsFullscreenOpen(true);
+                        }}
+                        className="w-full h-full flex flex-col items-center justify-center cursor-zoom-in relative z-0 py-1"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Inspect full size image of ${product.name}`}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            setFullscreenImgIdx(selectedImgIdx);
+                            setIsFullscreenOpen(true);
+                          }
+                        }}
+                      >
+                        <img
+                          src={currentImage}
+                          alt={`${product.brand || ''} ${product.code || product.name}`}
+                          className="max-h-[115px] sm:max-h-[140px] w-auto max-w-[85%] object-contain select-none transition-transform duration-200 hover:scale-105"
+                          loading="eager"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/ac_compressor.png';
+                          }}
+                        />
+                        <div className="w-32 sm:w-40 h-1 bg-slate-900/10 rounded-full blur-[2px] mt-1 pointer-events-none" />
+                      </div>
 
-            <a
-              href={`https://wa.me/919920691707?text=${whatsappMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
-            >
-              <MessageSquare size={16} />
-              <span>WhatsApp Technical Desk</span>
-            </a>
-
-            <button
-              type="button"
-              onClick={() => setIsQuoteOpen(true)}
-              className="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-slate-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <Camera size={15} className="text-[#0E4B75]" />
-              <span>Upload Nameplate Photo for Custom Match</span>
-            </button>
-          </div>
-
-          {/* 10. Expandable Technical Specification Sections (Accordions) */}
-          {technicalGroups.length > 0 && (
-            <div className="space-y-3 pt-3 border-t border-stone-200">
-              <div className="flex items-center justify-between">
-                <h3 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Detailed Technical Specifications
-                </h3>
-                <span className="text-[11px] font-mono text-slate-400">
-                  Tap to expand
-                </span>
-              </div>
-
-              <div className="space-y-2.5">
-                {technicalGroups.map((group) => {
-                  const isOpen = Boolean(openAccordions[group.number]);
-                  return (
-                    <div
-                      key={group.number}
-                      className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-2xs"
-                    >
                       <button
                         type="button"
-                        data-accordion-btn={group.number}
-                        onClick={() => toggleAccordion(group.number)}
-                        className="w-full px-4 py-3.5 bg-stone-50/70 hover:bg-stone-100 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer min-h-[48px]"
-                        aria-expanded={isOpen}
+                        onClick={() => {
+                          setFullscreenImgIdx(selectedImgIdx);
+                          setIsFullscreenOpen(true);
+                        }}
+                        className="absolute bottom-1 right-1 z-10 text-[11px] font-semibold bg-white/95 hover:bg-white text-slate-700 px-2.5 py-1 rounded-md border border-stone-200 shadow-2xs flex items-center gap-1 cursor-pointer min-h-[30px]"
+                        aria-label="Inspect fullscreen photo"
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="w-6 h-6 rounded bg-[#0E4B75]/10 text-[#0E4B75] font-mono text-xs font-bold flex items-center justify-center shrink-0">
-                            {group.number}
-                          </span>
-                          <span className="font-mono text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide truncate">
-                            {group.title}
-                          </span>
-                        </div>
-                        <ChevronDown
-                          size={18}
-                          className={`text-slate-500 transition-transform duration-200 shrink-0 ${
-                            isOpen ? 'rotate-180 text-[#0E4B75]' : ''
-                          }`}
-                        />
+                        <Eye size={12} className="text-[#0E4B75]" />
+                        <span>Inspect</span>
                       </button>
+                    </>
+                  ) : (
+                    <div className="w-full py-4 px-2 flex flex-col items-center justify-center text-center">
+                      <div className="w-10 h-10 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-[#0E4B75] mb-1.5 shadow-2xs">
+                        <Cpu size={20} />
+                      </div>
+                      <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                        Technical Blueprint Silhouette
+                      </span>
+                      <p className="text-[11px] text-slate-600 max-w-xs mt-0.5">
+                        Physical photograph awaiting workshop verification.
+                      </p>
+                    </div>
+                  )}
 
-                      {isOpen && (
-                        <div className="divide-y divide-stone-100 border-t border-stone-200 font-mono text-xs sm:text-sm bg-white">
-                          {group.rows.map((row) => (
-                            <div
-                              key={row.label}
-                              className="px-4 py-2.5 flex flex-col gap-1 hover:bg-stone-50/50"
-                            >
-                              <span className="text-slate-500 text-xs font-medium">
-                                {row.label}
-                              </span>
-                              <span className="text-slate-900 font-semibold text-xs sm:text-sm break-words">
-                                {row.value}
-                              </span>
-                            </div>
-                          ))}
+                  {/* Multi-photo switcher (compact) */}
+                  {hasRealImage && images.length > 1 && (
+                    <div className="absolute bottom-1 left-1 z-10 flex items-center gap-1 bg-white/95 backdrop-blur-xs p-0.5 rounded-md border border-stone-200 shadow-2xs">
+                      {images.map((img, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedImgIdx(idx)}
+                          className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                            selectedImgIdx === idx
+                              ? 'bg-[#0E4B75] text-white'
+                              : 'bg-stone-100 text-slate-600 hover:bg-stone-200'
+                          }`}
+                          aria-label={`Select photo ${idx + 1}`}
+                        >
+                          #{idx + 1}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Sub-bar: Model Reference & Authenticity Tag */}
+                <div className="pt-1.5 mt-1 border-t border-stone-100 flex items-center justify-between text-[11px] font-mono text-slate-600">
+                  <span className="font-semibold text-slate-800 truncate max-w-[65%]">
+                    {product.brand} · {product.code || product.name}
+                  </span>
+                  <span className="text-[#0E4B75] font-bold shrink-0">
+                    {hasRealImage ? 'OEM Verified Photo' : 'Blueprint'}
+                  </span>
+                </div>
+              </div>
+
+              {/* 3B. Dedicated Details Region (Scrolls upward inside bounded viewport via GSAP scrub) */}
+              <div
+                ref={mobileDetailsRegionRef}
+                className="flex-1 w-full relative bg-[#FBFBFA] gsap-mobile-region"
+              >
+                <div
+                  ref={mobileDetailsContentRef}
+                  className="p-4 space-y-4 will-change-transform pb-8"
+                >
+                  {/* Separate, Compact Image Disclaimer */}
+                  <div className="px-3.5 py-2 bg-stone-100/90 border border-stone-200/80 rounded-lg text-center">
+                    <p className="text-xs text-slate-600 leading-snug font-medium">
+                      {product.imageDisclaimer || 'Authentic legacy catalogue photograph — confirm exact specifications on physical nameplate.'}
+                    </p>
+                  </div>
+
+                  {/* Product Title with Full Model Reference */}
+                  <div className="space-y-2">
+                    <h1 className="font-extrabold text-xl sm:text-2xl text-slate-900 leading-snug tracking-tight break-words">
+                      {product.name}
+                    </h1>
+
+                    {(product.code || product.modelNumber) && (
+                      <div>
+                        <span className="inline-block font-mono text-xs sm:text-sm font-bold text-[#0E4B75] bg-blue-50/80 border border-blue-200 px-3 py-1.5 rounded-lg">
+                          MODEL REF: {product.code || product.modelNumber}
+                        </span>
+                      </div>
+                    )}
+
+                    {product.legacyTitle && (
+                      <p className="text-xs text-slate-500 font-mono">
+                        Legacy Source Title: <span className="text-slate-700 font-semibold">&ldquo;{product.legacyTitle}&rdquo;</span>
+                        {product.legacyOrder && <span> (#{product.legacyOrder})</span>}
+                      </p>
+                    )}
+
+                    <p className="text-[15px] text-slate-700 leading-relaxed font-normal pt-1">
+                      {product.shortDescription || product.description}
+                    </p>
+                  </div>
+
+                  {/* Essential Technical Parameters Card */}
+                  <div className="bg-white border border-stone-200 rounded-xl p-4 shadow-xs">
+                    <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider mb-3">
+                      Essential Technical Parameters
+                    </h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+                      {product.displacement && (
+                        <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
+                          <span className="text-slate-500 block text-xs uppercase font-medium">
+                            DISPLACEMENT (SWEPT VOLUME)
+                          </span>
+                          <span className="font-bold text-slate-900 text-sm break-words">
+                            {product.displacement}
+                          </span>
                         </div>
                       )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
-          {/* 11. Application Scope (Mobile) */}
-          {product.application && (
-            <div className="space-y-2 pt-2 border-t border-stone-200">
-              <h4 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
-                Typical Application Scope
-              </h4>
-              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                {product.application}
-              </p>
+                      {product.coolingCapacity && (
+                        <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
+                          <span className="text-slate-500 block text-xs uppercase font-medium">
+                            RATED CAPACITY
+                          </span>
+                          <span className="font-bold text-slate-900 text-sm break-words">
+                            {product.coolingCapacity}
+                          </span>
+                        </div>
+                      )}
+
+                      {product.voltage && (
+                        <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
+                          <span className="text-slate-500 block text-xs uppercase font-medium">
+                            ELECTRICAL RATING
+                          </span>
+                          <span className="font-bold text-slate-900 text-sm break-words">
+                            {product.voltage}
+                          </span>
+                        </div>
+                      )}
+
+                      {product.refrigerant && (
+                        <div className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
+                          <span className="text-slate-500 block text-xs uppercase font-medium">
+                            REFRIGERANT
+                          </span>
+                          <span className="font-bold text-slate-900 text-sm break-words">
+                            {product.refrigerant}
+                          </span>
+                        </div>
+                      )}
+
+                      {(!product.displacement && !product.voltage && product.keySpecs) && (
+                        product.keySpecs.map((spec) => (
+                          <div key={spec.label} className="space-y-0.5 border-b sm:border-b-0 pb-2 sm:pb-0 border-stone-100">
+                            <span className="text-slate-500 block text-xs uppercase font-medium">
+                              {spec.label}
+                            </span>
+                            <span className="font-bold text-slate-900 text-sm break-words">
+                              {spec.value}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Clearly Labelled Availability / Sourcing Status */}
+                  <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-mono text-slate-500 uppercase font-semibold">Availability State</span>
+                      <span className="font-semibold text-slate-800 bg-white border border-stone-200 px-2.5 py-1 rounded-md">
+                        {product.availability || 'Enquire for availability'}
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2.5 text-xs text-slate-600 pt-1">
+                      <ShieldAlert size={16} className="text-[#0E4B75] shrink-0 mt-0.5" />
+                      <p className="leading-relaxed">
+                        Commercial compressor models are supplied based on OEM displacement matching. Please confirm mounting footprint and terminal orientation on physical nameplate before order finalization.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Primary Quote and Contact Actions */}
+                  <div className="space-y-2.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsQuoteOpen(true)}
+                      className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-[#0E4B75] hover:bg-[#093757] text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                    >
+                      <Send size={16} />
+                      <span>Request Availability & Quote</span>
+                    </button>
+
+                    <a
+                      href={`${COMPANY_DETAILS.whatsappUrl}?text=${whatsappMessage}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                    >
+                      <MessageSquare size={16} />
+                      <span>WhatsApp Technical Desk</span>
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsQuoteOpen(true)}
+                      className="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-white hover:bg-stone-50 border border-stone-300 text-slate-700 text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <Camera size={15} className="text-[#0E4B75]" />
+                      <span>Upload Nameplate Photo for Custom Match</span>
+                    </button>
+                  </div>
+
+                  {/* Expandable Technical Specification Sections (Accordions) */}
+                  {technicalGroups.length > 0 && (
+                    <div className="space-y-3 pt-3 border-t border-stone-200">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                          Detailed Technical Specifications
+                        </h3>
+                        <span className="text-[11px] font-mono text-slate-400">
+                          Tap to expand
+                        </span>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {technicalGroups.map((group) => {
+                          const isOpen = Boolean(openAccordions[group.number]);
+                          return (
+                            <div
+                              key={group.number}
+                              className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-2xs"
+                            >
+                              <button
+                                type="button"
+                                data-accordion-btn={group.number}
+                                onClick={() => toggleAccordion(group.number)}
+                                className="w-full px-4 py-3.5 bg-stone-50/70 hover:bg-stone-100 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer min-h-[48px]"
+                                aria-expanded={isOpen}
+                              >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <span className="w-6 h-6 rounded bg-[#0E4B75]/10 text-[#0E4B75] font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    {group.number}
+                                  </span>
+                                  <span className="font-mono text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide truncate">
+                                    {group.title}
+                                  </span>
+                                </div>
+                                <ChevronDown
+                                  size={18}
+                                  className={`text-slate-500 transition-transform duration-200 shrink-0 ${
+                                    isOpen ? 'rotate-180 text-[#0E4B75]' : ''
+                                  }`}
+                                />
+                              </button>
+
+                              {isOpen && (
+                                <div className="divide-y divide-stone-100 border-t border-stone-200 font-mono text-xs sm:text-sm bg-white">
+                                  {group.rows.map((row) => (
+                                    <div
+                                      key={row.label}
+                                      className="px-4 py-2.5 flex flex-col gap-1 hover:bg-stone-50/50"
+                                    >
+                                      <span className="text-slate-500 text-xs font-medium">
+                                        {row.label}
+                                      </span>
+                                      <span className="text-slate-900 font-semibold text-xs sm:text-sm break-words">
+                                        {row.value}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Application Scope (Mobile) */}
+                  {product.application && (
+                    <div className="space-y-2 pt-2 border-t border-stone-200">
+                      <h4 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                        Typical Application Scope
+                      </h4>
+                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                        {product.application}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* End of Main Product Section Indicator */}
+                  <div className="pt-4 pb-2 text-center border-t border-dashed border-stone-200">
+                    <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+                      End of Model Specifications · Continue to Related Products ↓
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+
             </div>
-          )}
+          </div>
 
           {/* 12. Related Products Horizontal Carousel (Mobile) */}
           {related.length > 0 && (
@@ -1021,7 +1192,7 @@ export default function ProductDetailView({
         <div className="lg:hidden fixed bottom-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg">
           <div className="max-w-md mx-auto grid grid-cols-2 gap-3">
             <a
-              href={`https://wa.me/919920691707?text=${whatsappMessage}`}
+              href={`${COMPANY_DETAILS.whatsappUrl}?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="min-h-[46px] px-3.5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-colors shadow-xs"

@@ -1,9 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Search, MessageSquare, Phone, FileCheck } from 'lucide-react';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export const metadata = {
-  title: 'Page Not Found | Zcool Enterprises',
+  title: 'Page Not Found | Z.Cool Enterprises',
   description: 'The requested page or compressor could not be found.',
 };
 
@@ -53,12 +54,12 @@ export default function NotFound() {
 
         <div className="pt-6 border-t border-slate-200 text-xs font-mono text-slate-500">
           <span>Direct Inquiries: </span>
-          <a href="tel:+919920691707" className="font-bold text-[#0A192F] hover:underline">
-            +91 99206 91707
+          <a href={COMPANY_DETAILS.primaryTel} className="font-bold text-[#0A192F] hover:underline">
+            {COMPANY_DETAILS.formattedPrimaryPhone}
           </a>
           <span className="mx-2">•</span>
           <a
-            href="https://wa.me/919920691707"
+            href={COMPANY_DETAILS.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-emerald-700 hover:underline font-semibold"

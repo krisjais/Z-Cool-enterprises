@@ -65,8 +65,8 @@ export default function LoadingScreen({ onComplete, productName, productCode }) 
       
       <div className="relative z-10 flex flex-col items-center max-w-md px-6 text-center select-none">
         {/* Brand Icon */}
-        <div ref={logoRef} className="w-16 h-16 mb-6 relative flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 shadow-lg">
-          <img src="/logo1.png" alt="Z Cool Logo" className="w-10 h-10 object-contain filter brightness-110" />
+        <div ref={logoRef} className="w-16 h-16 mb-6 relative flex items-center justify-center bg-white rounded-2xl shadow-xl p-2.5">
+          <img src="/logo-icon.png" alt="Z Cool Enterprises Logo" className="w-full h-full object-contain" />
         </div>
 
         {/* Dynamic Titles */}

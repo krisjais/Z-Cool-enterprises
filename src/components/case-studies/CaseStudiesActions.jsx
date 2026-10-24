@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FileCheck, Camera, MessageSquare, ArrowRight, CheckCircle2 } from 'lucide-react';
 import QuoteModal from '@/components/ui/QuoteModal';
 import PhotoUpload from '@/components/ui/PhotoUpload';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 /* ── Inline button to request a similar compressor ── */
 export function RequestSimilarButton({
@@ -113,7 +114,7 @@ export function CaseStudiesBottomCTA() {
               </button>
 
               <a
-                href="https://wa.me/919920691707?text=Hello%2C%20I%20need%20a%20replacement%20compressor.%20Here%20are%20my%20equipment%20details."
+                href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20need%20a%20replacement%20compressor.%20Here%20are%20my%20equipment%20details.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-colors"
@@ -153,10 +154,10 @@ export function CaseStudiesBottomCTA() {
             <div className="border-t border-slate-100 pt-3 flex items-center justify-between font-mono text-[11px] text-slate-500">
               <span>Mumbai Warehouse &amp; Desk</span>
               <a
-                href="tel:+919920691707"
+                href={COMPANY_DETAILS.primaryTel}
                 className="font-bold text-[#0A192F] hover:text-[#1D6FA3] transition-colors"
               >
-                +91 99206 91707
+                {COMPANY_DETAILS.formattedPrimaryPhone}
               </a>
             </div>
           </div>

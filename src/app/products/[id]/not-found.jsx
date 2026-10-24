@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, AlertTriangle, Box, Phone } from 'lucide-react';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function ProductNotFound() {
   return (
@@ -43,7 +44,7 @@ export default function ProductNotFound() {
           </Link>
 
           <a
-            href="https://wa.me/919920691707?text=Hello%2C%20I%20am%20looking%20for%20a%20compressor%20model%20not%20found%20in%20the%20catalog"
+            href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20am%20looking%20for%20a%20compressor%20model%20not%20found%20in%20the%20catalog`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full py-2.5 px-4 rounded-lg border border-stone-300 hover:border-slate-800 text-slate-700 font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors bg-white hover:bg-stone-50"

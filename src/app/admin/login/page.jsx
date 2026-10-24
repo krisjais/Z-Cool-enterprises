@@ -49,8 +49,8 @@ export default function AdminLogin() {
   if (loading) {
     return (
       <div className="w-full h-screen bg-[#050608] flex flex-col items-center justify-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-[#1D6FA3] text-white flex items-center justify-center font-mono font-bold text-xl shadow-lg border border-cyan-400/30 animate-pulse">
-          Z
+        <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center p-2 shadow-lg border border-cyan-400/40 animate-pulse">
+          <img src="/logo-icon.png" alt="Z Cool Enterprises" className="w-full h-full object-contain" />
         </div>
         <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 animate-pulse">
           Validating Security Credentials...
@@ -68,8 +68,8 @@ export default function AdminLogin() {
       <div className="w-full max-w-md relative z-10">
         <Card variant="dark" className="p-8 border border-slate-800 shadow-2xl">
           <div className="flex flex-col items-center text-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#1D6FA3] to-[#0A192F] text-white flex items-center justify-center font-mono font-black text-2xl shadow-xl border border-cyan-400/30">
-              Z
+            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200/50 p-2.5 flex items-center justify-center shadow-xl">
+              <img src="/logo-icon.png" alt="Z Cool Enterprises Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-lg font-bold tracking-widest text-white uppercase mt-4">
               SECURE PORTAL

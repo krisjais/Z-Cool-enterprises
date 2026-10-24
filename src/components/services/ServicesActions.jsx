@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FileCheck, MessageSquare, Camera } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
 import PhotoUpload from '../ui/PhotoUpload';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 /* ─── Reusable quote button ─── */
 export function ServicesQuoteButton({ text = 'REQUEST A QUOTE', className = '' }) {
@@ -54,12 +56,12 @@ export function ServicesHeroCTA() {
   return (
     <>
       <div className="flex flex-col sm:flex-row gap-3">
-        <a
+        <Link
           href="/products"
           className="px-7 py-3.5 rounded-lg bg-white hover:bg-slate-100 text-[#0A192F] font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-colors"
         >
           VIEW COMPRESSORS
-        </a>
+        </Link>
         <button
           onClick={() => setIsOpen(true)}
           className="px-7 py-3.5 rounded-lg border border-white/30 bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
@@ -68,7 +70,7 @@ export function ServicesHeroCTA() {
           REQUEST A QUOTE
         </button>
         <a
-          href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20sourcing%20requirement"
+          href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20a%20compressor%20sourcing%20requirement`}
           target="_blank"
           rel="noopener noreferrer"
           className="px-7 py-3.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs"

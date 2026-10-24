@@ -20,15 +20,30 @@ export default function ScrollReveal({
   ...props
 }) {
   const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    // Check prefers-reduced-motion
+    // Respect prefers-reduced-motion
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setIsVisible(true);
+      return;
+    }
+
+    try {
+      const rect = el.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+      // If below viewport on mount, hide it initially for smooth entrance
+      if (rect.top > viewportHeight) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+        if (once) return;
+      }
+    } catch (_) {
+      // fallback stay visible
       return;
     }
 
@@ -45,7 +60,7 @@ export default function ScrollReveal({
       },
       {
         threshold,
-        rootMargin: '0px 0px -30px 0px',
+        rootMargin: '50px 0px 50px 0px',
       }
     );
 

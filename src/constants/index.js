@@ -1,6 +1,7 @@
 /**
  * Global Constants & Metadata Schemas
  */
+export * from './company';
 
 export const NAV_LINKS = [
   { name: 'Products', path: '/products' },

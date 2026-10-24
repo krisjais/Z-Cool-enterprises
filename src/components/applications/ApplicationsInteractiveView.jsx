@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import QuoteModal from '@/components/ui/QuoteModal';
 import PhotoUpload from '@/components/ui/PhotoUpload';
+import { COMPANY_DETAILS } from '@/constants/company';
 import { resolveImageUrl } from '@/lib/api';
 
 /* ─── Static Application Definitions with Verified Content ─── */
@@ -847,7 +848,7 @@ export default function ApplicationsInteractiveView({ products = [] }) {
                   <span>REQUEST A QUOTE</span>
                 </button>
                 <a
-                  href="https://wa.me/919920691707?text=Hello%2C%20I%20need%20help%20matching%20a%20compressor%20for%20an%20HVAC%20application"
+                  href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20need%20help%20matching%20a%20compressor%20for%20an%20HVAC%20application`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all active:scale-[0.98]"

@@ -7,6 +7,7 @@ import {
   ChevronRight, ArrowLeft, RotateCw, Pause, Play, Compass
 } from 'lucide-react';
 import BlueprintViewer from './BlueprintViewer';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, activeImageIndex, setActiveImageIndex }) {
   const [isBlueprint, setIsBlueprint] = useState(false);
@@ -123,13 +124,13 @@ export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, acti
               <span className="font-mono text-[8px] text-slate-400 uppercase tracking-widest block mb-4 font-bold">QUICK ACTION PROTOCOLS</span>
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <a
-                  href="tel:+919920691707"
+                  href={COMPANY_DETAILS.primaryTel}
                   className="flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 text-[#0F2B46] text-[10px] font-mono uppercase font-bold rounded-xl transition-all"
                 >
                   <Phone size={12} /> Call Us
                 </a>
                 <a
-                  href="https://wa.me/919920691707"
+                  href={COMPANY_DETAILS.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-mono uppercase font-bold rounded-xl transition-all"

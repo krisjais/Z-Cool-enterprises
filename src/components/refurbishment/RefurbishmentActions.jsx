@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Camera, MessageSquare, FileCheck } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
 import PhotoUpload from '../ui/PhotoUpload';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function RefurbishmentActions() {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
@@ -13,13 +15,13 @@ export default function RefurbishmentActions() {
     <>
       {/* Hero CTA Buttons */}
       <div className="flex flex-col sm:flex-row gap-3" id="refurbishment-hero-cta">
-        <a
+        <Link
           href="/products"
           className="px-7 py-3.5 rounded-lg bg-[#1D6FA3] hover:bg-[#165680] text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-colors"
         >
           <FileCheck size={16} />
           <span>VIEW AVAILABLE COMPRESSORS</span>
-        </a>
+        </Link>
         <button
           onClick={() => setIsQuoteOpen(true)}
           className="px-7 py-3.5 rounded-lg border border-white/30 bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
@@ -70,7 +72,7 @@ export default function RefurbishmentActions() {
           <span>REQUEST COMPRESSOR QUOTE</span>
         </button>
         <a
-          href="https://wa.me/919920691707?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20a%20refurbished%20compressor"
+          href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20a%20refurbished%20compressor`}
           target="_blank"
           rel="noopener noreferrer"
           className="px-6 py-3.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs"

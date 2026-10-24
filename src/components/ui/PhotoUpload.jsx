@@ -62,14 +62,15 @@ export default function PhotoUpload({ onPhotoSelect, label = 'Attach Nameplate P
           <button
             type="button"
             onClick={handleRemove}
-            className="p-1 text-slate-400 hover:text-red-600 transition-colors rounded"
+            className="p-1 text-slate-400 hover:text-red-600 transition-colors rounded focus:outline-hidden focus:ring-2 focus:ring-red-500"
             title="Remove attachment"
+            aria-label="Remove attached image"
           >
             <X size={18} />
           </button>
         </div>
       ) : (
-        <div className="border-2 border-dashed border-slate-300 rounded-lg p-3 text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative">
+        <div className="border-2 border-dashed border-slate-300 rounded-lg p-3 text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative focus-within:ring-2 focus-within:ring-[#1D6FA3]">
           <input
             type="file"
             accept="image/*"
@@ -85,7 +86,7 @@ export default function PhotoUpload({ onPhotoSelect, label = 'Attach Nameplate P
       )}
 
       {error && (
-        <span className="text-red-600 text-[11px] font-mono block">{error}</span>
+        <span role="alert" className="text-red-600 text-[11px] font-mono block">{error}</span>
       )}
     </div>
   );

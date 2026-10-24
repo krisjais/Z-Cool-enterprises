@@ -31,7 +31,7 @@ export default function BlogPage() {
       'Practical guides for identifying, selecting and sourcing AC and refrigeration compressors.',
     publisher: {
       '@type': 'Organization',
-      name: 'Zcool Enterprises',
+      name: 'Z.Cool Enterprises',
       url: 'https://zcoolenterprises.com',
     },
     hasPart: ARTICLES.map((art) => ({

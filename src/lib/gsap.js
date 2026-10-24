@@ -9,6 +9,9 @@ if (typeof window !== 'undefined') {
   gsap.config({
     nullTargetWarn: false,
   });
+
+  window.gsap = gsap;
+  window.ScrollTrigger = ScrollTrigger;
 }
 
 export { gsap, ScrollTrigger };

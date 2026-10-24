@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Camera, MessageSquare, Phone, ShieldCheck, Truck, Clock } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function FinalIndustrialCTA() {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
@@ -71,7 +72,7 @@ export default function FinalIndustrialCTA() {
 
               {/* SECONDARY: WhatsApp Us */}
               <a
-                href="https://wa.me/919920691707"
+                href={COMPANY_DETAILS.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-7 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98]"
@@ -82,11 +83,11 @@ export default function FinalIndustrialCTA() {
 
               {/* TERTIARY: Call */}
               <a
-                href="tel:+919920691707"
+                href={COMPANY_DETAILS.primaryTel}
                 className="px-6 py-4 rounded-lg border border-white/20 hover:border-white text-white font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider flex items-center gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/5 active:scale-[0.98]"
               >
                 <Phone size={16} />
-                <span>CALL +91 99206 91707</span>
+                <span>CALL {COMPANY_DETAILS.formattedPrimaryPhone}</span>
               </a>
             </div>
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Camera, MessageSquare, ShieldCheck } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function ModelIdentificationCTA() {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
@@ -24,7 +25,7 @@ export default function ModelIdentificationCTA() {
               </div>
 
               <h3 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-[46px] text-white tracking-tight leading-tight">
-                CAN'T FIND YOUR EXACT<br className="hidden sm:inline" /> COMPRESSOR MODEL?
+                CAN&apos;T FIND YOUR EXACT<br className="hidden sm:inline" /> COMPRESSOR MODEL?
               </h3>
 
               <p className="text-slate-300 text-base sm:text-lg font-sans max-w-2xl leading-relaxed font-normal">
@@ -61,7 +62,7 @@ export default function ModelIdentificationCTA() {
 
               {/* SECONDARY: WHATSAPP ENGINEER */}
               <a
-                href="https://wa.me/919920691707"
+                href={COMPANY_DETAILS.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full px-8 py-3.5 rounded-lg border border-white/30 hover:border-white text-white font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/5 text-center active:scale-[0.98]"

@@ -13,6 +13,8 @@ export const dynamic = 'force-dynamic';
 export default async function ProductsPage({ searchParams }) {
   const resolvedParams = await searchParams;
   const initialCategory = resolvedParams?.category || resolvedParams?.type || 'All';
+  const initialPage    = parseInt(resolvedParams?.page, 10) || 1;
+  const initialSort    = resolvedParams?.sort || 'default';
 
   const products = await getProducts();
 
@@ -22,6 +24,8 @@ export default async function ProductsPage({ searchParams }) {
         <ProductCatalogView
           products={products}
           initialCategory={initialCategory}
+          initialPage={initialPage}
+          initialSort={initialSort}
         />
       </Container>
     </div>

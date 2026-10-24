@@ -7,6 +7,7 @@ import {
   Truck, ArrowDownRight, CheckCircle2 
 } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function HeroIndustrial() {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
@@ -93,7 +94,7 @@ export default function HeroIndustrial() {
 
                 {/* 3. TERTIARY: Subtle */}
                 <a
-                  href="https://wa.me/919920691707"
+                  href={COMPANY_DETAILS.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-3.5 text-slate-300 hover:text-emerald-400 font-mono text-xs sm:text-[13px] font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors"

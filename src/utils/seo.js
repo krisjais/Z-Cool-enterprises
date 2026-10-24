@@ -3,22 +3,41 @@
  * Provides baseline OpenGraph, Twitter Cards, and JSON-LD schema builders.
  */
 
+import { COMPANY_DETAILS } from '../constants/company';
+
 export const siteConfig = {
-  title: 'Zcool Enterprises | Industrial AC Compressors & Cooling Solutions',
-  description: 'Supplying high-efficiency AC Compressors, air conditioning systems, and industrial cooling solutions in Mumbai.',
+  title: 'Z.Cool Enterprises | Refurbished AC Compressors & Industrial HVAC Sourcing',
+  description: 'Explore all types of refurbished AC compressors for commercial and industrial cooling applications. Specialized B2B sourcing and replacement in Mumbai.',
   url: 'https://zcoolenterprises.com',
   ogImage: '/ac_compressor.png',
   twitterHandle: '@zcoolenterprises',
   organization: {
-    name: 'Zcool Enterprises',
+    name: COMPANY_DETAILS.name,
+    legalName: COMPANY_DETAILS.name,
+    founder: COMPANY_DETAILS.owner,
     logo: '/logo1.png',
+    email: COMPANY_DETAILS.email,
+    telephones: [COMPANY_DETAILS.formattedPrimaryPhone, COMPANY_DETAILS.formattedSecondaryPhone],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: `${COMPANY_DETAILS.address.line1}, ${COMPANY_DETAILS.address.line2}`,
+      addressLocality: COMPANY_DETAILS.address.city,
+      postalCode: COMPANY_DETAILS.address.pincode,
+      addressRegion: COMPANY_DETAILS.address.state,
+      addressCountry: 'IN',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: COMPANY_DETAILS.geo?.latitude || '19.05128000',
+      longitude: COMPANY_DETAILS.geo?.longitude || '72.86084000',
+    },
     sameAs: [],
   },
 };
 
 // Generates dynamic Metadata objects for Next.js App Router
 export function generateSEO({ title, description, path, ogImage, noIndex = false } = {}) {
-  const metaTitle = title ? `${title} | Zcool Enterprises` : siteConfig.title;
+  const metaTitle = title ? `${title} | ${COMPANY_DETAILS.name}` : siteConfig.title;
   const metaDesc = description || siteConfig.description;
   const metaUrl = `${siteConfig.url}${path || ''}`;
   const metaImg = ogImage || siteConfig.ogImage;
@@ -38,7 +57,7 @@ export function generateSEO({ title, description, path, ogImage, noIndex = false
       title: metaTitle,
       description: metaDesc,
       url: metaUrl,
-      siteName: siteConfig.organization.name,
+      siteName: COMPANY_DETAILS.name,
       images: [
         {
           url: metaImg,
@@ -72,22 +91,48 @@ export function generateSEO({ title, description, path, ogImage, noIndex = false
   };
 }
 
-// Generates JSON-LD Organization Schema
+// Generates JSON-LD LocalBusiness / Organization Schema
 export function getOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: siteConfig.organization.name,
+    '@type': 'LocalBusiness',
+    name: COMPANY_DETAILS.name,
+    legalName: COMPANY_DETAILS.name,
     url: siteConfig.url,
-    logo: siteConfig.organization.logo,
-    sameAs: siteConfig.organization.sameAs,
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+91-99206-91707',
-      contactType: 'customer service',
-      areaServed: 'IN',
-      availableLanguage: ['en', 'hi'],
+    logo: `${siteConfig.url}/logo1.png`,
+    image: `${siteConfig.url}/ac_compressor.png`,
+    email: COMPANY_DETAILS.email,
+    telephone: `+91 ${COMPANY_DETAILS.primaryPhone}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: `${COMPANY_DETAILS.address.line1}, ${COMPANY_DETAILS.address.line2}`,
+      addressLocality: COMPANY_DETAILS.address.city,
+      postalCode: COMPANY_DETAILS.address.pincode,
+      addressRegion: COMPANY_DETAILS.address.state,
+      addressCountry: 'IN',
     },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: COMPANY_DETAILS.geo?.latitude || '19.05128000',
+      longitude: COMPANY_DETAILS.geo?.longitude || '72.86084000',
+    },
+    hasMap: COMPANY_DETAILS.googleMapsUrl,
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: `+91 ${COMPANY_DETAILS.primaryPhone}`,
+        contactType: 'customer service',
+        areaServed: 'IN',
+        availableLanguage: ['en', 'hi'],
+      },
+      {
+        '@type': 'ContactPoint',
+        telephone: `+91 ${COMPANY_DETAILS.secondaryPhone}`,
+        contactType: 'sales',
+        areaServed: 'IN',
+        availableLanguage: ['en', 'hi'],
+      },
+    ],
   };
 }
 

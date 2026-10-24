@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { 
   Phone, Mail, MessageSquare, MapPin, CheckCircle2, 
-  AlertCircle, Loader2, Camera, Send, RotateCcw 
+  AlertCircle, Loader2, Camera, Send, RotateCcw, ExternalLink
 } from 'lucide-react';
 import PhotoUpload from '@/components/ui/PhotoUpload';
 import { submitInquiry } from '@/lib/api';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function HomeQuoteSection() {
   const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ export default function HomeQuoteSection() {
     company: '',
     model: '',
     requirement: '',
+    consentGiven: false,
   });
 
   const [photo, setPhoto] = useState(null);
@@ -31,6 +34,9 @@ export default function HomeQuoteSection() {
       errs.phone = 'Phone number is required.';
     } else if (formData.phone.trim().length < 8) {
       errs.phone = 'Please provide a valid contact phone number.';
+    }
+    if (!formData.consentGiven) {
+      errs.consent = 'Please acknowledge the Privacy Policy before submitting.';
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -52,6 +58,7 @@ export default function HomeQuoteSection() {
         message: formData.requirement.trim() || 'Fast quote request from homepage',
         type: 'quote',
         source: 'homepage_quote_section',
+        consentGiven: true,
       };
 
       const result = await submitInquiry(payload, photo);
@@ -71,6 +78,7 @@ export default function HomeQuoteSection() {
       company: '',
       model: '',
       requirement: '',
+      consentGiven: false,
     });
     setPhoto(null);
     setErrors({});
@@ -103,7 +111,7 @@ export default function HomeQuoteSection() {
             {/* Direct Contact Cards */}
             <div className="space-y-3 pt-2 text-sm">
               <a
-                href="https://wa.me/919920691707"
+                href={COMPANY_DETAILS.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-stone-200 hover:border-emerald-300 transition-colors shadow-xs group"
@@ -114,50 +122,76 @@ export default function HomeQuoteSection() {
                 <div>
                   <span className="text-xs text-slate-500 block">Fastest Response</span>
                   <strong className="text-slate-900 font-semibold group-hover:text-emerald-700 transition-colors">
-                    WhatsApp: +91 99206 91707
+                    WhatsApp: {COMPANY_DETAILS.formattedPrimaryPhone}
                   </strong>
                 </div>
               </a>
 
               <a
-                href="tel:+919920691707"
+                href={COMPANY_DETAILS.primaryTel}
                 className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-stone-200 hover:border-[#0E4B75] transition-colors shadow-xs group"
               >
                 <div className="w-10 h-10 rounded-lg bg-stone-100 text-[#0E4B75] flex items-center justify-center shrink-0">
                   <Phone size={18} />
                 </div>
                 <div>
-                  <span className="text-xs text-slate-500 block">Direct Calling Line</span>
+                  <span className="text-xs text-slate-500 block">Primary Calling Line</span>
                   <strong className="text-slate-900 font-semibold group-hover:text-[#0E4B75] transition-colors">
-                    +91 99206 91707
+                    {COMPANY_DETAILS.formattedPrimaryPhone}
                   </strong>
                 </div>
               </a>
 
               <a
-                href="mailto:zcooltech4@gmail.com"
+                href={COMPANY_DETAILS.secondaryTel}
+                className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-stone-200 hover:border-slate-400 transition-colors shadow-xs group"
+              >
+                <div className="w-10 h-10 rounded-lg bg-stone-100 text-slate-600 flex items-center justify-center shrink-0">
+                  <Phone size={18} />
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 block">Secondary Calling Line</span>
+                  <strong className="text-slate-900 font-semibold group-hover:text-[#0E4B75] transition-colors">
+                    {COMPANY_DETAILS.formattedSecondaryPhone}
+                  </strong>
+                </div>
+              </a>
+
+              <a
+                href={COMPANY_DETAILS.mailto}
                 className="flex items-center gap-3.5 p-4 rounded-xl bg-white border border-stone-200 hover:border-slate-400 transition-colors shadow-xs"
               >
                 <div className="w-10 h-10 rounded-lg bg-stone-100 text-slate-700 flex items-center justify-center shrink-0">
                   <Mail size={18} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <span className="text-xs text-slate-500 block">Formal POs &amp; RFQs</span>
-                  <strong className="text-slate-900 font-semibold">
-                    zcooltech4@gmail.com
+                  <strong className="text-slate-900 font-semibold text-xs sm:text-sm break-all">
+                    {COMPANY_DETAILS.email}
                   </strong>
                 </div>
               </a>
             </div>
 
-            <div className="p-4 rounded-xl bg-white/70 border border-stone-200 text-xs text-slate-600 space-y-1">
+            <div className="p-4 rounded-xl bg-white/70 border border-stone-200 text-xs text-slate-600 space-y-2">
               <div className="flex items-center gap-1.5 font-semibold text-slate-800">
                 <MapPin size={14} className="text-[#0E4B75]" />
-                <span>Mumbai Operations &amp; Sourcing Desk</span>
+                <span>Official Business Premises</span>
               </div>
-              <p>
-                Sourcing and dispatch coordination for HVAC contractors across India. Contact our desk for availability, specifications, and freight quotations.
+              <p className="leading-relaxed">
+                {COMPANY_DETAILS.address.full}
               </p>
+              <div className="pt-1">
+                <a
+                  href={COMPANY_DETAILS.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[#0E4B75] hover:text-[#093757] font-semibold text-xs"
+                >
+                  <span>Get Directions on Google Maps</span>
+                  <ExternalLink size={12} />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -204,7 +238,7 @@ export default function HomeQuoteSection() {
 
                 <div className="space-y-3 pt-2">
                   <a
-                    href={`https://wa.me/919920691707?text=${encodeURIComponent(
+                    href={`${COMPANY_DETAILS.whatsappUrl}?text=${encodeURIComponent(
                       `*COMPRESSOR INQUIRY [Ref: ${inquiryRef}]*\nBuyer: ${formData.name}\nPhone: ${formData.phone}\nModel: ${formData.model || 'Open match'}`
                     )}`}
                     target="_blank"
@@ -291,7 +325,7 @@ export default function HomeQuoteSection() {
                       id="home-quote-phone"
                       type="tel"
                       required
-                      placeholder="+91 99206 91707"
+                      placeholder="+91 99209 06508"
                       value={formData.phone}
                       onChange={(e) => {
                         setFormData({ ...formData, phone: e.target.value });
@@ -374,6 +408,42 @@ export default function HomeQuoteSection() {
                     onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
                     className="w-full min-h-[80px] px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#0E4B75] focus:ring-2 focus:ring-[#0E4B75]/20 transition-all resize-y"
                   />
+                </div>
+
+                {/* Privacy Policy Acknowledgement Checkbox */}
+                <div className="pt-1">
+                  <div className="flex items-start gap-3">
+                    <input
+                      id="home-quote-consent"
+                      type="checkbox"
+                      checked={formData.consentGiven}
+                      onChange={(e) => {
+                        setFormData({ ...formData, consentGiven: e.target.checked });
+                        if (errors.consent) setErrors({ ...errors, consent: null });
+                      }}
+                      className="mt-1 h-4 w-4 rounded border-stone-300 text-[#0E4B75] focus:ring-2 focus:ring-[#0E4B75]/30 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="home-quote-consent"
+                      className="text-xs text-slate-600 leading-snug cursor-pointer select-none"
+                    >
+                      I have read the{' '}
+                      <Link
+                        href="/privacy"
+                        target="_blank"
+                        className="text-[#0E4B75] font-semibold underline underline-offset-2 hover:text-[#093757]"
+                      >
+                        Privacy Policy
+                      </Link>{' '}
+                      and understand that my information will be used to respond to this enquiry.
+                    </label>
+                  </div>
+                  {errors.consent && (
+                    <p className="text-rose-600 font-mono text-[11px] mt-1.5 flex items-center gap-1">
+                      <AlertCircle size={12} />
+                      <span>{errors.consent}</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Submit Action */}

@@ -13,6 +13,7 @@ import {
   Filter,
 } from 'lucide-react';
 import QuoteModal from '@/components/ui/QuoteModal';
+import { COMPANY_DETAILS } from '@/constants/company';
 import PhotoUpload from '@/components/ui/PhotoUpload';
 
 /* ── Hero action buttons ── */
@@ -320,7 +321,7 @@ export function BlogBottomCTA() {
             </button>
 
             <a
-              href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20question%20regarding%20a%20compressor%20model."
+              href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20a%20question%20regarding%20a%20compressor%20model.`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-7 py-3.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition-colors"

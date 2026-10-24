@@ -23,6 +23,7 @@ import {
   HelpCircle,
   Phone,
 } from 'lucide-react';
+import { COMPANY_DETAILS } from '@/constants/company';
 import ProductCard from '@/components/ui/ProductCard';
 import QuoteModal from '@/components/ui/QuoteModal';
 import PhotoUpload from '@/components/ui/PhotoUpload';
@@ -820,7 +821,7 @@ export default function RefurbishmentProcessView({ featuredProducts = [] }) {
                 </button>
 
                 <a
-                  href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20nameplate%20photo%20and%20need%20assistance%20verifying%20a%20replacement%20model."
+                  href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20a%20compressor%20nameplate%20photo%20and%20need%20assistance%20verifying%20a%20replacement%20model.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
@@ -832,10 +833,10 @@ export default function RefurbishmentProcessView({ featuredProducts = [] }) {
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 font-mono pt-1">
-              <span className="flex items-center gap-1.5">
+              <a href={COMPANY_DETAILS.primaryTel} className="flex items-center gap-1.5 hover:text-white transition-colors">
                 <Phone size={12} className="text-[#0EA6A6]" />
-                <span>Technical Helpline: +91 99206 91707</span>
-              </span>
+                <span>Technical Helpline: {COMPANY_DETAILS.formattedPrimaryPhone}</span>
+              </a>
               <span>•</span>
               <span>Pan-India Commercial Freight</span>
             </div>
@@ -905,7 +906,7 @@ export default function RefurbishmentProcessView({ featuredProducts = [] }) {
             </button>
 
             <a
-              href="https://wa.me/919920691707?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20a%20refurbished%20compressor%20requirement."
+              href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20a%20refurbished%20compressor%20requirement.`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-3.5 rounded bg-emerald-700 hover:bg-emerald-800 text-white font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-xs active:scale-[0.99]"

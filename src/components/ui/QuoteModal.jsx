@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { X, Send, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PhotoUpload from './PhotoUpload';
@@ -16,6 +17,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
     model: initialProduct?.code || initialProduct?.name || '',
     quantity: '1 Unit',
     requirement: '',
+    consentGiven: false,
   });
 
   const [photo, setPhoto] = useState(null);
@@ -26,6 +28,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
   // Sync formData with initialProduct when modal opens
   useEffect(() => {
     if (isOpen && initialProduct) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData((prev) => ({
         ...prev,
         brand: initialProduct.brand || prev.brand,
@@ -59,6 +62,11 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
       return;
     }
 
+    if (!formData.consentGiven) {
+      toast.error('Please acknowledge the Privacy Policy before submitting.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -73,6 +81,8 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
           quantity: formData.quantity,
           requirement: formData.requirement.trim(),
           type: 'quote',
+          source: 'quote_modal',
+          consentGiven: true,
         },
         photo
       );
@@ -290,6 +300,33 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
                   onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded text-xs focus:outline-none focus:border-[#1D6FA3]"
                 />
+              </div>
+
+              {/* Privacy Policy Acknowledgement Checkbox */}
+              <div className="pt-1">
+                <div className="flex items-start gap-2.5">
+                  <input
+                    id="modal-quote-consent"
+                    type="checkbox"
+                    checked={formData.consentGiven}
+                    onChange={(e) => setFormData({ ...formData, consentGiven: e.target.checked })}
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-[#1D6FA3] focus:ring-2 focus:ring-[#1D6FA3]/30 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="modal-quote-consent"
+                    className="text-[11px] text-slate-600 leading-snug cursor-pointer select-none"
+                  >
+                    I have read the{' '}
+                    <Link
+                      href="/privacy"
+                      target="_blank"
+                      className="text-[#1D6FA3] font-semibold underline underline-offset-2 hover:text-[#165680]"
+                    >
+                      Privacy Policy
+                    </Link>{' '}
+                    and understand that my information will be used to respond to this enquiry.
+                  </label>
+                </div>
               </div>
 
               <div className="pt-2 flex items-center justify-between gap-4">

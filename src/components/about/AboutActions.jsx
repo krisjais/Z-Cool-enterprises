@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { FileCheck, MessageSquare } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
 import PhotoUpload from '../ui/PhotoUpload';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 /* ── Hero CTA row ── */
 export function AboutHeroCTA() {
@@ -11,18 +13,18 @@ export function AboutHeroCTA() {
   return (
     <>
       <div className="flex flex-col sm:flex-row gap-3">
-        <a
+        <Link
           href="/products"
           className="px-7 py-3.5 rounded-lg bg-white hover:bg-slate-100 text-[#0A192F] font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-colors"
         >
           VIEW COMPRESSORS
-        </a>
-        <a
+        </Link>
+        <Link
           href="/contact"
           className="px-7 py-3.5 rounded-lg border border-white/30 bg-white/10 hover:bg-white/20 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
         >
           CONTACT ZCOOL
-        </a>
+        </Link>
       </div>
       <QuoteModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
@@ -68,7 +70,7 @@ export function AboutBottomCTA() {
             GET A QUOTE
           </button>
           <a
-            href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20requirement"
+            href={COMPANY_DETAILS.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full px-6 py-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs"
@@ -78,20 +80,26 @@ export function AboutBottomCTA() {
           </a>
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 font-mono text-xs">
             <div className="flex justify-between text-slate-600 border-b border-slate-100 pb-2">
-              <span className="text-slate-400">PHONE</span>
-              <a href="tel:+919920691707" className="font-semibold text-[#0A192F] hover:text-[#1D6FA3] transition-colors">
-                +91 99206 91707
+              <span className="text-slate-400">PRIMARY PHONE</span>
+              <a href={COMPANY_DETAILS.primaryTel} className="font-semibold text-[#0A192F] hover:text-[#1D6FA3] transition-colors">
+                {COMPANY_DETAILS.formattedPrimaryPhone}
+              </a>
+            </div>
+            <div className="flex justify-between text-slate-600 border-b border-slate-100 pb-2">
+              <span className="text-slate-400">SECONDARY PHONE</span>
+              <a href={COMPANY_DETAILS.secondaryTel} className="font-semibold text-[#0A192F] hover:text-[#1D6FA3] transition-colors">
+                {COMPANY_DETAILS.formattedSecondaryPhone}
               </a>
             </div>
             <div className="flex justify-between text-slate-600 border-b border-slate-100 pb-2">
               <span className="text-slate-400">EMAIL</span>
-              <a href="mailto:zcooltech4@gmail.com" className="font-semibold text-[#0A192F] hover:text-[#1D6FA3] transition-colors">
-                zcooltech4@gmail.com
+              <a href={COMPANY_DETAILS.mailto} className="font-semibold text-[#0A192F] hover:text-[#1D6FA3] transition-colors break-all">
+                {COMPANY_DETAILS.email}
               </a>
             </div>
             <div className="flex justify-between text-slate-600">
               <span className="text-slate-400">LOCATION</span>
-              <span className="font-semibold text-[#0A192F]">Mumbai, Maharashtra</span>
+              <span className="font-semibold text-[#0A192F]">Dharavi, Mumbai</span>
             </div>
           </div>
         </div>

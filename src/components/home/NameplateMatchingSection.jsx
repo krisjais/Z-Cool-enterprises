@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Camera, CheckCircle2, ArrowRight, Upload, Phone, AlertCircle } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function NameplateMatchingSection() {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
@@ -88,7 +89,7 @@ export default function NameplateMatchingSection() {
               </button>
 
               <a
-                href="https://wa.me/919920691707"
+                href={COMPANY_DETAILS.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 rounded-lg border border-stone-300 bg-white hover:bg-stone-50 text-slate-800 text-sm font-semibold flex items-center justify-center gap-2 transition-colors"

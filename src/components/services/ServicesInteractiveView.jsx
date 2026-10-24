@@ -28,6 +28,7 @@ import {
 import ProductCard from '@/components/ui/ProductCard';
 import QuoteModal from '@/components/ui/QuoteModal';
 import PhotoUpload from '@/components/ui/PhotoUpload';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 /* ─── 5 Verified Service Definitions ─── */
 const SERVICES_DATA = [
@@ -280,7 +281,7 @@ export default function ServicesInteractiveView({ products = [] }) {
       setQuoteModalOpen(true);
     } else if (action.type === 'whatsapp') {
       window.open(
-        `https://wa.me/919920691707?text=Hello%2C%20I%20have%20an%20inquiry%20regarding%20${encodeURIComponent(
+        `${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20an%20inquiry%20regarding%20${encodeURIComponent(
           activeService.title
         )}`,
         '_blank'
@@ -341,7 +342,7 @@ export default function ServicesInteractiveView({ products = [] }) {
                   <span>START A REQUIREMENT</span>
                 </button>
                 <a
-                  href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20sourcing%20requirement"
+                  href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20a%20compressor%20sourcing%20requirement`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 sm:px-7 py-3.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all active:scale-[0.98] shadow-xs"
@@ -506,7 +507,7 @@ export default function ServicesInteractiveView({ products = [] }) {
                   Inquiries sent with model number or nameplate photo are prioritized for stock verification within working hours.
                 </p>
                 <a
-                  href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20sourcing%20question"
+                  href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20a%20compressor%20sourcing%20question`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-mono text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
@@ -649,7 +650,7 @@ export default function ServicesInteractiveView({ products = [] }) {
                         <span>SUBMIT PHOTO FOR IDENTIFICATION</span>
                       </button>
                       <a
-                        href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20nameplate%20photo%20to%20identify"
+                        href={`${COMPANY_DETAILS.whatsappUrl}?text=Hello%2C%20I%20have%20a%20compressor%20nameplate%20photo%20to%20identify`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-5 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2"
@@ -713,7 +714,7 @@ export default function ServicesInteractiveView({ products = [] }) {
                     </button>
                     <span className="text-slate-300">|</span>
                     <a
-                      href="https://wa.me/919920691707"
+                      href={COMPANY_DETAILS.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"

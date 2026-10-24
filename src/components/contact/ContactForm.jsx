@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   Send,
   MessageSquare,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import PhotoUpload from '@/components/ui/PhotoUpload';
 import { submitInquiry } from '@/lib/api';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -29,6 +31,7 @@ export default function ContactForm() {
     quantity: '1 Unit',
     application: 'Commercial Air Conditioning',
     requirement: '',
+    consentGiven: false,
   });
 
   const [photo, setPhoto] = useState(null);
@@ -52,6 +55,9 @@ export default function ContactForm() {
       if (!emailRegex.test(formData.email.trim())) {
         errs.email = 'Please provide a valid email address.';
       }
+    }
+    if (!formData.consentGiven) {
+      errs.consent = 'Please acknowledge the Privacy Policy before proceeding.';
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -77,6 +83,7 @@ export default function ContactForm() {
         company: formData.company.trim() || undefined,
         type: 'general',
         source: 'contact_form',
+        consentGiven: true,
         brand: formData.brand.trim() || undefined,
         model: formData.model.trim() || undefined,
         quantity: formData.quantity,
@@ -105,6 +112,7 @@ export default function ContactForm() {
       quantity: '1 Unit',
       application: 'Commercial Air Conditioning',
       requirement: '',
+      consentGiven: false,
     });
     setPhoto(null);
     setErrors({});
@@ -133,10 +141,10 @@ export default function ContactForm() {
 ${formData.requirement.trim() || 'None provided'}
 ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
 
-  const whatsappUrl = `https://wa.me/919920691707?text=${encodeURIComponent(
+  const whatsappUrl = `${COMPANY_DETAILS.whatsappUrl}?text=${encodeURIComponent(
     inquiryRef ? `*REF: ${inquiryRef}*\n\n${compiledSummary}` : compiledSummary
   )}`;
-  const mailtoUrl = `mailto:zcooltech4@gmail.com?subject=${encodeURIComponent(
+  const mailtoUrl = `mailto:${COMPANY_DETAILS.email}?subject=${encodeURIComponent(
     `Compressor Inquiry${inquiryRef ? ` [Ref: ${inquiryRef}]` : ''}: ${formData.model.trim() || 'Model Match'} - ${formData.name.trim()}`
   )}&body=${encodeURIComponent(compiledSummary)}`;
 
@@ -361,8 +369,8 @@ ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
 
               <div className="text-slate-500 text-[11px]">
                 <span>Direct Desk: </span>
-                <a href="tel:+919920691707" className="font-bold text-[#0A192F] hover:underline">
-                  +91 99206 91707
+                <a href={COMPANY_DETAILS.primaryTel} className="font-bold text-[#0A192F] hover:underline">
+                  {COMPANY_DETAILS.formattedPrimaryPhone}
                 </a>
               </div>
             </div>
@@ -429,7 +437,7 @@ ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
                   id="contact-phone"
                   type="tel"
                   required
-                  placeholder="+91 99206 91707"
+                  placeholder="+91 99209 06508"
                   value={formData.phone}
                   onChange={(e) => {
                     setFormData({ ...formData, phone: e.target.value });
@@ -619,6 +627,42 @@ ${photo ? '\n*Photo:* Nameplate photo attached for identification' : ''}`;
                 className="w-full min-h-[100px] px-3.5 py-3 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#1D6FA3] focus:ring-2 focus:ring-[#1D6FA3]/30 transition-all resize-y"
               />
             </div>
+          </div>
+
+          {/* Privacy Policy Acknowledgement Checkbox */}
+          <div className="pt-1">
+            <div className="flex items-start gap-3">
+              <input
+                id="contact-consent"
+                type="checkbox"
+                checked={formData.consentGiven}
+                onChange={(e) => {
+                  setFormData({ ...formData, consentGiven: e.target.checked });
+                  if (errors.consent) setErrors({ ...errors, consent: null });
+                }}
+                className="mt-1 h-4 w-4 rounded border-slate-300 text-[#1D6FA3] focus:ring-2 focus:ring-[#1D6FA3]/30 cursor-pointer"
+              />
+              <label
+                htmlFor="contact-consent"
+                className="text-xs text-slate-600 leading-snug cursor-pointer select-none"
+              >
+                I have read the{' '}
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  className="text-[#1D6FA3] font-semibold underline underline-offset-2 hover:text-[#165680]"
+                >
+                  Privacy Policy
+                </Link>{' '}
+                and understand that my information will be used to respond to this enquiry.
+              </label>
+            </div>
+            {errors.consent && (
+              <p className="text-rose-600 font-mono text-[11px] mt-1.5 flex items-center gap-1">
+                <AlertCircle size={12} />
+                <span>{errors.consent}</span>
+              </p>
+            )}
           </div>
 
           {/* Submit Action */}

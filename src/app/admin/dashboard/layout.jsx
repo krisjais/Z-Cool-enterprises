@@ -39,9 +39,15 @@ function SidebarContent({ activeTab, setIsMobileOpen }) {
     <div className="flex flex-col h-full bg-[#0A192F] text-white">
       {/* Logo Area */}
       <div className="h-16 flex items-center px-6 gap-3 shrink-0">
-        <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileOpen?.(false)}>
-          <div className="w-8 h-8 rounded bg-[#1D6FA3] flex items-center justify-center font-mono font-bold text-sm">
-            Z
+        <Link href="/" className="flex items-center gap-2.5" onClick={() => setIsMobileOpen?.(false)}>
+          <div className="w-8 h-8 rounded-lg bg-white shadow-2xs flex items-center justify-center p-1 shrink-0">
+            <img
+              src="/logo-icon.png"
+              alt="Z Cool Enterprises Logo"
+              className="w-full h-full object-contain"
+              width={32}
+              height={32}
+            />
           </div>
           <span className="font-bold text-sm tracking-wide uppercase">
             ZCOOL ADMIN

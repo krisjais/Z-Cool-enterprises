@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, MessageSquare, Camera, ChevronRight, Phone } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,11 +64,17 @@ export default function Header() {
           {/* Brand Identity */}
           <Link
             href="/"
-            className="flex items-center gap-2 min-[360px]:gap-3 flex-shrink min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E4B75] rounded-lg py-1"
+            className="flex items-center gap-2.5 min-[360px]:gap-3 flex-shrink min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0E4B75] rounded-lg py-1"
             aria-label="Z Cool Enterprises Homepage"
           >
-            <div className="w-8 h-8 min-[360px]:w-9 min-[360px]:h-9 rounded-md bg-[#0E4B75] text-white flex items-center justify-center font-bold text-sm min-[360px]:text-base shadow-xs group-hover:bg-[#093757] transition-colors shrink-0">
-              Z
+            <div className="w-8 h-8 min-[360px]:w-9 min-[360px]:h-9 rounded-lg bg-white border border-stone-200/90 shadow-2xs flex items-center justify-center p-1 shrink-0 group-hover:border-slate-300 group-hover:shadow-xs transition-all">
+              <img
+                src="/logo-icon.png"
+                alt="Z Cool Enterprises Logo"
+                className="w-full h-full object-contain"
+                width={36}
+                height={36}
+              />
             </div>
             <div className="flex flex-col min-w-0">
               <span className="font-bold text-xs min-[360px]:text-sm sm:text-base tracking-tight text-slate-900 leading-tight truncate">
@@ -106,12 +113,12 @@ export default function Header() {
           {/* Desktop & Tablet Actions */}
           <div className="hidden sm:flex items-center gap-2.5 shrink-0">
             <a
-              href="tel:+919920691707"
+              href={COMPANY_DETAILS.primaryTel}
               className="flex items-center gap-1.5 min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold text-slate-700 hover:text-[#0E4B75] hover:bg-stone-50 border border-stone-200 transition-colors"
               title="Call Mumbai Technical Desk"
             >
               <Phone size={14} className="text-[#0E4B75]" />
-              <span>+91 99206 91707</span>
+              <span>{COMPANY_DETAILS.formattedPrimaryPhone}</span>
             </a>
 
             <button
@@ -128,10 +135,10 @@ export default function Header() {
           <div className="flex lg:hidden items-center gap-1.5 min-[360px]:gap-2 shrink-0">
             {/* Quick Call Icon (Visible on 360px - 639px; on <360px hidden to preserve space for hamburger menu) */}
             <a
-              href="tel:+919920691707"
+              href={COMPANY_DETAILS.primaryTel}
               className="flex hide-below-360 sm:hidden min-h-[44px] min-w-[44px] p-2.5 rounded-md border border-stone-200 text-slate-700 bg-stone-50 items-center justify-center transition-colors active:scale-95"
               aria-label="Call Mumbai Desk directly"
-              title="Call Mumbai Desk"
+              title={`Call Mumbai Desk (${COMPANY_DETAILS.formattedPrimaryPhone})`}
             >
               <Phone size={18} className="text-[#0E4B75]" />
             </a>
@@ -161,6 +168,26 @@ export default function Header() {
           aria-label="Mobile Navigation Menu"
         >
           <div className="space-y-4">
+            <div className="flex items-center gap-3 px-2 py-1 pb-3 border-b border-stone-200">
+              <div className="w-10 h-10 rounded-lg bg-white border border-stone-200 shadow-2xs flex items-center justify-center p-1.5 shrink-0">
+                <img
+                  src="/logo-icon.png"
+                  alt="Z Cool Enterprises Logo"
+                  className="w-full h-full object-contain"
+                  width={40}
+                  height={40}
+                />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-bold text-sm tracking-tight text-slate-900 leading-tight">
+                  Z COOL ENTERPRISES
+                </span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">
+                  HVAC COMPRESSOR SOURCING
+                </span>
+              </div>
+            </div>
+
             <div className="text-xs uppercase tracking-wider text-slate-500 font-semibold px-2">
               Navigation &amp; Sourcing
             </div>
@@ -195,7 +222,7 @@ export default function Header() {
             </button>
 
             <a
-              href="https://wa.me/919920691707"
+              href={COMPANY_DETAILS.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full min-h-[48px] py-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-center text-sm font-semibold flex items-center justify-center gap-2 transition-colors active:scale-[0.98]"
@@ -206,12 +233,21 @@ export default function Header() {
             </a>
 
             <a
-              href="tel:+919920691707"
+              href={COMPANY_DETAILS.primaryTel}
               className="w-full min-h-[44px] py-2.5 rounded-lg border border-stone-300 text-slate-700 hover:bg-stone-100 text-center text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               <Phone size={14} className="text-[#0E4B75]" />
-              <span>Direct Desk: +91 99206 91707</span>
+              <span>Direct Desk: {COMPANY_DETAILS.formattedPrimaryPhone}</span>
+            </a>
+
+            <a
+              href={COMPANY_DETAILS.secondaryTel}
+              className="w-full min-h-[44px] py-2.5 rounded-lg border border-stone-200 text-slate-600 hover:bg-stone-100 text-center text-xs font-medium flex items-center justify-center gap-2 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              <Phone size={14} className="text-slate-400" />
+              <span>Alt Line: {COMPANY_DETAILS.formattedSecondaryPhone}</span>
             </a>
           </div>
         </div>

@@ -13,12 +13,20 @@ import {
   MapPin,
   Phone,
   Mail,
+  UserCheck,
+  ExternalLink,
+  Store,
+  CalendarCheck,
+  TrendingUp,
+  Receipt,
 } from 'lucide-react';
 import { PRODUCTS_CATALOG, CATEGORIES_LIST } from '@/data/products';
 import { CASE_STUDIES } from '@/data/case-studies';
 import ProductCard from '@/components/ui/ProductCard';
 import { AboutHeroCTA, AboutBottomCTA, AboutQuoteButton } from '@/components/about/AboutActions';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import InteractiveCompanyProfile from '@/components/about/InteractiveCompanyProfile';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export const metadata = {
   title: 'About Zcool Enterprises | Compressor & HVAC Equipment Supplier',
@@ -145,12 +153,12 @@ export default function AboutPage() {
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-mono text-xs text-slate-400 pt-1">
                   <div className="flex items-center gap-1.5">
                     <MapPin size={13} className="text-[#0EA6A6]" />
-                    <span>Mumbai, Maharashtra</span>
+                    <span>Dharavi, Mumbai, Maharashtra</span>
                   </div>
                   <span>·</span>
                   <div className="flex items-center gap-1.5">
                     <Phone size={13} className="text-[#0EA6A6]" />
-                    <a href="tel:+919920691707" className="hover:text-white transition-colors">+91 99206 91707</a>
+                    <a href={COMPANY_DETAILS.primaryTel} className="hover:text-white transition-colors">{COMPANY_DETAILS.formattedPrimaryPhone}</a>
                   </div>
                 </div>
               </ScrollReveal>
@@ -196,61 +204,94 @@ export default function AboutPage() {
 
               <ScrollReveal delay={80} direction="up" distance={14}>
                 <p className="text-slate-600 text-xs sm:text-sm font-sans leading-relaxed">
-                  Zcool Enterprises sources, evaluates, and supplies refurbished and replacement AC compressors for commercial HVAC, refrigeration, and industrial cooling applications. We work with contractors, service companies, and commercial buyers who need a compressor quickly — and need to be certain it is the right unit for their application.
+                  Z.Cool Enterprises is an HVAC compressor sourcing and trading business based in Mumbai, Maharashtra. We supply compressor options for commercial and industrial cooling requirements, including refurbished and replacement compressors.
                 </p>
                 <p className="text-slate-600 text-xs sm:text-sm font-sans leading-relaxed pt-2">
                   When a commercial AC compressor fails — in a hotel, office building, or cold storage facility — finding a replacement at short notice is often difficult. OEM lead times can stretch weeks. Import costs can be prohibitive. Zcool addresses this gap by maintaining a catalog of available units that buyers can identify, check, and order directly.
                 </p>
                 <p className="text-slate-500 text-xs sm:text-sm font-sans leading-relaxed pt-2">
-                  We are straightforward about what we sell. Every unit in our catalog carries an honest condition label — Refurbished, Tested Used, Refurbished & Pressure Tested, or similar — so that buyers know exactly what they are purchasing.
+                  We are straightforward about what we sell. Every unit in our catalog carries an honest condition label — Refurbished, Tested Used, Refurbished &amp; Pressure Tested, or similar — so that buyers know exactly what they are purchasing.
                 </p>
               </ScrollReveal>
             </div>
 
-            {/* Right: Operational summary panel */}
+            {/* Right: Operational Standards & Sourcing Commitments */}
             <div className="lg:col-span-5 space-y-4">
               <ScrollReveal delay={120} direction="up" distance={14}>
                 <div className="bg-[#0A192F] text-white rounded-xl p-5 sm:p-6 space-y-4 border border-white/10 shadow-md">
-                  <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#0EA6A6]">
-                    AT A GLANCE
-                  </h3>
-                  <div className="space-y-2.5 font-mono text-xs">
-                    {[
-                      { label: 'BASED IN', value: 'Mumbai, Maharashtra' },
-                      { label: 'SPECIALISATION', value: 'Refurbished & Replacement Compressors' },
-                      { label: 'COMPRESSOR TYPES', value: 'Scroll · Rotary · Reciprocating · VRF' },
-                      { label: 'BRANDS CARRIED', value: 'Copeland · Daikin · LG · Danfoss' },
-                      { label: 'APPLICATIONS', value: 'Commercial AC · Refrigeration · VRF/VRV' },
-                      { label: 'BUYER TYPE', value: 'B2B — Contractors, Service Co., Dealers' },
-                      { label: 'DESK SERVICES', value: 'Model Identification · Nameplate Matching' },
-                    ].map((row) => (
-                      <div key={row.label} className="flex flex-col sm:flex-row sm:justify-between border-b border-white/10 pb-2 gap-0.5 sm:gap-1">
-                        <span className="text-slate-400 text-[10px]">{row.label}</span>
-                        <span className="font-semibold text-white sm:text-right">{row.value}</span>
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0EA6A6]">
+                      SOURCING STANDARDS
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      B2B HVAC Procurement
+                    </span>
+                  </div>
+
+                  <div className="space-y-3.5 font-sans text-xs">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 text-[#0EA6A6] flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 size={16} />
                       </div>
-                    ))}
+                      <div>
+                        <strong className="text-white block font-semibold text-sm">Condition Transparency</strong>
+                        <p className="text-slate-300 leading-relaxed pt-0.5">
+                          Every compressor carries an honest condition label — Refurbished, Tested Used, or Pressure Tested — with verified operating parameters.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 text-[#0EA6A6] flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 size={16} />
+                      </div>
+                      <div>
+                        <strong className="text-white block font-semibold text-sm">Nameplate Footprint Verification</strong>
+                        <p className="text-slate-300 leading-relaxed pt-0.5">
+                          We cross-check displacement, electrical voltage, refrigerant compatibility, and bolt mounting footprints before confirming any supply.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 text-[#0EA6A6] flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 size={16} />
+                      </div>
+                      <div>
+                        <strong className="text-white block font-semibold text-sm">Fast Commercial Turnaround</strong>
+                        <p className="text-slate-300 leading-relaxed pt-0.5">
+                          Direct inventory checks and sourcing assistance designed to reduce critical cooling plant and package AC downtime.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Contact quick-ref */}
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-5 space-y-2 font-mono text-xs">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Phone size={13} className="text-[#1D6FA3]" />
-                    <a href="tel:+919920691707" className="hover:text-[#1D6FA3] transition-colors font-semibold text-[#0A192F]">+91 99206 91707</a>
+                {/* Sourcing Hub Note */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-5 flex items-center justify-between gap-4 font-mono text-xs">
+                  <div>
+                    <span className="text-slate-400 text-[10px] uppercase tracking-wider block">OFFICIAL DISPATCH BASE</span>
+                    <strong className="text-slate-900 font-bold block pt-0.5">Dharavi, Mumbai &bull; Maharashtra</strong>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Mail size={13} className="text-[#1D6FA3]" />
-                    <a href="mailto:zcooltech4@gmail.com" className="hover:text-[#1D6FA3] transition-colors font-semibold text-[#0A192F]">zcooltech4@gmail.com</a>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <MapPin size={13} className="text-[#1D6FA3]" />
-                    <span className="text-slate-700">Mumbai, Maharashtra, India</span>
-                  </div>
+                  <a
+                    href="#statutory-profile"
+                    className="px-3.5 py-2 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-xs font-semibold inline-flex items-center gap-1 transition-colors shrink-0"
+                  >
+                    <span>View Registration</span>
+                    <ChevronRight size={13} />
+                  </a>
                 </div>
               </ScrollReveal>
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* ─── OFFICIAL BUSINESS DETAILS & STATUTORY PROFILE ─── */}
+      <section id="statutory-profile" className="py-12 sm:py-16 bg-[#F8F9FA] border-b border-slate-200">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+          <InteractiveCompanyProfile defaultExpanded={false} />
         </div>
       </section>
 

@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { ChevronRight, ArrowRight, ShieldCheck, FileCheck, Phone } from 'lucide-react';
 import { BRANDS_LIST } from '@/data/brands';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export const metadata = {
-  title: 'Supported Compressor Brands | Zcool Enterprises',
+  title: 'Supported Compressor Brands | Z.Cool Enterprises',
   description:
-    'Browse commercial AC and refrigeration compressor brands supported and stocked by Zcool Enterprises — Copeland, Daikin, LG, Danfoss Maneurop, Carrier, and Hitachi.',
+    'Browse commercial AC and refrigeration compressor brands supported and stocked by Z.Cool Enterprises — Copeland, Daikin, LG, Danfoss Maneurop, Carrier, and Hitachi.',
 };
 
 export default function BrandsPage() {
@@ -110,11 +111,11 @@ export default function BrandsPage() {
                   <span>INQUIRE ABOUT BRAND SOURCING</span>
                 </Link>
                 <a
-                  href="tel:+919920691707"
+                  href={COMPANY_DETAILS.primaryTel}
                   className="px-5 py-3 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 text-white font-mono text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-all active:scale-[0.985]"
                 >
                   <Phone size={14} />
-                  <span>+91 99206 91707</span>
+                  <span>{COMPANY_DETAILS.formattedPrimaryPhone}</span>
                 </a>
               </div>
             </div>

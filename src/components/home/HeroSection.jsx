@@ -33,9 +33,9 @@ export default function HeroSection() {
                 <span className="text-[#0E4B75]">AC Compressors</span> for Industrial HVAC.
               </h1>
 
-              {/* Explanatory Body Copy - 2 Concise Sentences */}
+              {/* Explanatory Body Copy */}
               <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-2xl font-normal">
-                Direct B2B supplier of replacement scroll, rotary, and reciprocating compressors across India. We match mounting footprints, displacement ratings, and electrical specifications for commercial cooling equipment.
+                Explore all types of refurbished AC compressors for commercial and industrial cooling applications. We also help customers find suitable replacement compressors based on their requirements.
               </p>
 
               {/* Action Buttons: 1 Primary and 1 Secondary */}
@@ -43,7 +43,7 @@ export default function HeroSection() {
                 {/* 1. Primary CTA: Browse Compressors */}
                 <Link
                   href="/products"
-                  className="min-h-[48px] px-6 py-3 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors active:scale-[0.98] w-full sm:w-auto"
+                  className="min-h-[48px] px-4 min-[360px]:px-6 py-3 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-xs min-[360px]:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors active:scale-[0.98] w-full sm:w-auto whitespace-nowrap"
                 >
                   <span className="sm:hidden">Browse Compressors</span>
                   <span className="hidden sm:inline">Browse Compressor Catalogue</span>
@@ -54,10 +54,11 @@ export default function HeroSection() {
                 <button
                   type="button"
                   onClick={() => setIsQuoteOpen(true)}
-                  className="min-h-[48px] px-5 py-3 rounded-lg bg-white hover:bg-stone-50 text-slate-800 text-sm font-semibold border border-stone-300 hover:border-slate-400 flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer active:scale-[0.98] w-full sm:w-auto"
+                  className="min-h-[48px] px-3.5 min-[360px]:px-5 py-3 rounded-lg bg-white hover:bg-stone-50 text-slate-800 text-xs min-[360px]:text-sm font-semibold border border-stone-300 hover:border-slate-400 flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer active:scale-[0.98] w-full sm:w-auto whitespace-nowrap"
                 >
-                  <Camera size={16} className="text-[#0E4B75]" />
-                  <span>Submit Nameplate for Match</span>
+                  <Camera size={16} className="text-[#0E4B75] shrink-0" />
+                  <span className="min-[360px]:hidden">Submit Nameplate</span>
+                  <span className="hidden min-[360px]:inline">Submit Nameplate for Match</span>
                 </button>
               </div>
 

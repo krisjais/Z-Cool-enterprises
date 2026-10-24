@@ -15,10 +15,13 @@ import {
   FileCheck,
   Camera,
   Package,
+  ExternalLink,
+  UserCheck,
 } from 'lucide-react';
 import ContactForm from '@/components/contact/ContactForm';
 import { ContactHeroCTA } from '@/components/contact/ContactHeroCTA';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export const metadata = {
   title: 'Contact Zcool Enterprises | Compressor Quote & Sourcing Desk',
@@ -157,9 +160,27 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-3 font-mono text-xs">
-                    {/* Phone */}
+                    {/* Owner / Contact Person */}
+                    <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                      <div className="w-10 h-10 rounded-lg bg-[#0A192F] text-white flex items-center justify-center flex-shrink-0">
+                        <UserCheck size={18} />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase block">
+                          CONTACT PERSON / OWNER
+                        </span>
+                        <strong className="text-slate-900 text-sm font-sans block mt-0.5">
+                          {COMPANY_DETAILS.owner}
+                        </strong>
+                        <span className="text-slate-500 font-sans text-xs block">
+                          {COMPANY_DETAILS.role} · Z.Cool Enterprises
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Primary Phone */}
                     <a
-                      href="tel:+919920691707"
+                      href={COMPANY_DETAILS.primaryTel}
                       className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#1D6FA3] hover:bg-blue-50/40 transition-colors active:scale-[0.985] group"
                     >
                       <div className="w-10 h-10 rounded-lg bg-[#1D6FA3] text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -167,17 +188,35 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <span className="text-slate-400 text-[10px] uppercase block">
-                          CALL SOURCING DESK
+                          PRIMARY CALLING DESK
                         </span>
                         <strong className="text-slate-900 text-sm font-sans block mt-0.5">
-                          +91 99206 91707
+                          {COMPANY_DETAILS.formattedPrimaryPhone}
+                        </strong>
+                      </div>
+                    </a>
+
+                    {/* Secondary Phone */}
+                    <a
+                      href={COMPANY_DETAILS.secondaryTel}
+                      className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#1D6FA3] hover:bg-blue-50/40 transition-colors active:scale-[0.985] group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-slate-700 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <Phone size={18} />
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] uppercase block">
+                          SECONDARY CONTACT LINE
+                        </span>
+                        <strong className="text-slate-900 text-sm font-sans block mt-0.5">
+                          {COMPANY_DETAILS.formattedSecondaryPhone}
                         </strong>
                       </div>
                     </a>
 
                     {/* WhatsApp */}
                     <a
-                      href="https://wa.me/919920691707?text=Hello%2C%20I%20have%20a%20compressor%20requirement"
+                      href={COMPANY_DETAILS.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-4 p-4 rounded-lg bg-emerald-50/70 border border-emerald-200 hover:bg-emerald-100/70 transition-colors active:scale-[0.985] group"
@@ -190,44 +229,57 @@ export default function ContactPage() {
                           WHATSAPP NAMEPLATE PHOTO
                         </span>
                         <strong className="text-emerald-950 text-sm font-sans block mt-0.5">
-                          +91 99206 91707
+                          {COMPANY_DETAILS.formattedPrimaryPhone}
                         </strong>
                       </div>
                     </a>
 
                     {/* Email */}
                     <a
-                      href="mailto:zcooltech4@gmail.com"
+                      href={COMPANY_DETAILS.mailto}
                       className="flex items-center gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200 hover:border-[#1D6FA3] hover:bg-blue-50/40 transition-colors active:scale-[0.985] group"
                     >
                       <div className="w-10 h-10 rounded-lg bg-[#0A192F] text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                         <Mail size={18} />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <span className="text-slate-400 text-[10px] uppercase block">
-                          EMAIL SPECIFICATION SHEET
+                          OFFICIAL BUSINESS EMAIL
                         </span>
                         <strong className="text-slate-900 text-xs font-sans block mt-0.5 break-all">
-                          zcooltech4@gmail.com
+                          {COMPANY_DETAILS.email}
                         </strong>
                       </div>
                     </a>
 
-                    {/* Location */}
-                    <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
-                      <div className="w-10 h-10 rounded-lg bg-slate-800 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <MapPin size={18} />
+                    {/* Location & Directions */}
+                    <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-slate-800 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <MapPin size={18} />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-slate-400 text-[10px] uppercase block">
+                            OFFICIAL BUSINESS PREMISES
+                          </span>
+                          <strong className="text-slate-900 text-xs font-sans block mt-0.5">
+                            {COMPANY_DETAILS.name}
+                          </strong>
+                          <p className="text-slate-600 font-sans text-xs leading-relaxed mt-1">
+                            {COMPANY_DETAILS.address.full}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-slate-400 text-[10px] uppercase block">
-                          OPERATING HUB &amp; WAREHOUSE
-                        </span>
-                        <strong className="text-slate-900 text-xs font-sans block mt-0.5">
-                          Zcool Enterprises
-                        </strong>
-                        <span className="text-slate-600 font-sans text-xs block">
-                          Mumbai, Maharashtra, India
-                        </span>
+                      <div className="pt-2 border-t border-slate-200 flex justify-end">
+                        <a
+                          href={COMPANY_DETAILS.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#1D6FA3] hover:bg-[#14537D] text-white font-mono text-xs font-semibold transition-colors active:scale-95 shadow-2xs"
+                        >
+                          <span>Get Directions</span>
+                          <ExternalLink size={13} />
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -328,7 +380,7 @@ export default function ContactPage() {
               <ScrollReveal key={step.num} animation="fade-up" delay={idx * 80} duration={450}>
                 <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-3 shadow-xs h-full">
                   <span className="font-mono text-xs font-extrabold text-[#1D6FA3] bg-blue-50 border border-blue-100 px-2 py-1 rounded inline-block">
-                    {step.num} // STEP
+                    {step.num} {'// STEP'}
                   </span>
                   <h3 className="font-display font-bold text-lg text-[#0A192F]">{step.title}</h3>
                   <p className="text-slate-600 text-xs font-sans leading-relaxed">{step.desc}</p>
