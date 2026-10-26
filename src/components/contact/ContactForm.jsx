@@ -92,8 +92,16 @@ export default function ContactForm() {
       };
 
       const result = await submitInquiry(payload, photo);
-      setInquiryRef(result.inquiryId || result.data?.inquiryId || 'CONFIRMED');
+      const ref = result.inquiryId || result.data?.inquiryId || 'CONFIRMED';
+      setInquiryRef(ref);
       setSubmitSuccess(true);
+
+      // Automatically launch WhatsApp with structured message directly to +91 99209 06508
+      const fullWaSummary = `*REF: #${ref}*\n\n${compiledSummary}`;
+      const waDirectUrl = `${COMPANY_DETAILS.whatsappUrl}?text=${encodeURIComponent(fullWaSummary)}`;
+      if (typeof window !== 'undefined') {
+        window.open(waDirectUrl, '_blank', 'noopener,noreferrer');
+      }
     } catch (err) {
       setSubmitError(err.message || 'Failed to submit inquiry to server. Please try again or reach us directly.');
     } finally {

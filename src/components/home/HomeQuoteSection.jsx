@@ -62,8 +62,30 @@ export default function HomeQuoteSection() {
       };
 
       const result = await submitInquiry(payload, photo);
-      setInquiryRef(result.inquiryId || result.data?.inquiryId || 'CONFIRMED');
+      const ref = result.inquiryId || result.data?.inquiryId || 'CONFIRMED';
+      setInquiryRef(ref);
       setSubmitSuccess(true);
+
+      // Auto-dispatch directly to WhatsApp (+91 99209 06508)
+      const waMsg = [
+        `*NEW COMPRESSOR INQUIRY [Ref: #${ref}]*`,
+        `----------------------------------------`,
+        `*Buyer:* ${formData.name.trim()}`,
+        `*Phone:* ${formData.phone.trim()}`,
+        formData.company.trim() ? `*Company:* ${formData.company.trim()}` : null,
+        `*Model / Spec:* ${formData.model.trim() || 'Open match'}`,
+        formData.requirement.trim() ? `*Notes:* ${formData.requirement.trim()}` : null,
+        photo ? `*Photo:* Nameplate photo attached` : null,
+        `----------------------------------------`,
+        `Sent via Z.Cool Enterprises Portal (+91 99209 06508)`,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const waLink = `https://wa.me/919920906508?text=${encodeURIComponent(waMsg)}`;
+      if (typeof window !== 'undefined') {
+        window.open(waLink, '_blank', 'noopener,noreferrer');
+      }
     } catch (err) {
       setSubmitError(err.message || 'Failed to submit quote request. Please try again or reach us on WhatsApp.');
     } finally {

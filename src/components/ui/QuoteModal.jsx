@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X, Send, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, Send, ShieldCheck, CheckCircle2, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PhotoUpload from './PhotoUpload';
 import { submitInquiry } from '@/lib/api';
+import { COMPANY_DETAILS } from '@/constants/company';
 
 export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [inquiryRef, setInquiryRef] = useState(null);
+  const [whatsappUrl, setWhatsappUrl] = useState('');
 
   // Sync formData with initialProduct when modal opens
   useEffect(() => {
@@ -88,9 +90,38 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
       );
 
       if (res && res.success) {
-        setInquiryRef(res.inquiryId || res.data?.id);
+        const refId = res.inquiryId || res.data?.id || 'CONFIRMED';
+        setInquiryRef(refId);
         setSubmitted(true);
         toast.success('Quote request registered successfully!');
+
+        // Format message for WhatsApp directly to +91 99209 06508
+        const waLines = [
+          `*NEW COMPRESSOR QUOTE INQUIRY*`,
+          `*Ref ID:* #${refId}`,
+          `----------------------------------------`,
+          `*Buyer Name:* ${formData.name.trim()}`,
+          `*Phone:* ${formData.phone.trim()}`,
+          formData.company.trim() ? `*Company:* ${formData.company.trim()}` : null,
+          formData.email.trim() ? `*Email:* ${formData.email.trim()}` : null,
+          ``,
+          `*Compressor Requirement:*`,
+          formData.brand.trim() ? `• Brand: ${formData.brand.trim()}` : null,
+          formData.model.trim() ? `• Model / Code: ${formData.model.trim()}` : null,
+          `• Quantity: ${formData.quantity}`,
+          formData.requirement.trim() ? `• Notes: ${formData.requirement.trim()}` : null,
+          photo ? `• Photo: Nameplate photo attached` : null,
+          `----------------------------------------`,
+          `Sent via Z.Cool Enterprises Portal (+91 99209 06508)`,
+        ].filter((line) => line !== null);
+
+        const directWaUrl = `https://wa.me/919920906508?text=${encodeURIComponent(waLines.join('\n'))}`;
+        setWhatsappUrl(directWaUrl);
+
+        // Directly open WhatsApp with pre-filled message
+        if (typeof window !== 'undefined') {
+          window.open(directWaUrl, '_blank', 'noopener,noreferrer');
+        }
       } else {
         throw new Error(res?.message || 'Submission failed');
       }
@@ -157,16 +188,28 @@ export default function QuoteModal({ isOpen, onClose, initialProduct = null }) {
               <p className="text-slate-500 text-[11px] font-sans">
                 Our sourcing engineers will review your model requirements and contact you at <strong className="text-slate-800">{formData.phone}</strong>.
               </p>
-              <div className="pt-2 flex items-center gap-3">
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs uppercase tracking-wider rounded-lg font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-xs"
+                  >
+                    <MessageSquare size={16} />
+                    <span>Send via WhatsApp (+91 99209 06508)</span>
+                  </a>
+                )}
                 <button
                   type="button"
                   onClick={() => {
                     setSubmitted(false);
                     setInquiryRef(null);
                     setPhoto(null);
+                    setWhatsappUrl('');
                     onClose();
                   }}
-                  className="px-6 py-2.5 bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs uppercase tracking-wider rounded font-bold cursor-pointer transition-colors shadow-xs"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-[#0A192F] hover:bg-slate-800 text-white font-mono text-xs uppercase tracking-wider rounded-lg font-bold cursor-pointer transition-colors shadow-xs"
                 >
                   Close Window
                 </button>
