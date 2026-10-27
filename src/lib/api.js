@@ -37,7 +37,8 @@ export function getApiBase() {
   }
 }
 
-const DEFAULT_READ_TIMEOUT_MS = 1200; // 1.2 seconds timeout for read operations
+const DEFAULT_READ_TIMEOUT_MS = 1200; // 1.2 seconds timeout for public read operations
+const DEFAULT_ADMIN_READ_TIMEOUT_MS = 10000; // 10 seconds timeout for authenticated admin read operations
 const DEFAULT_MUTATION_TIMEOUT_MS = 10000; // 10 seconds timeout for writes / uploads
 
 // Circuit Breaker state to prevent repeated timeout delays when remote/local backend is unavailable
@@ -484,18 +485,27 @@ export async function adminDeleteCloudinaryImage(publicId, token) {
 
 export async function adminGetOrders(token, query = {}) {
   const apiBase = getApiBase();
-  if (!apiBase) return { success: false, data: [] };
+  if (!apiBase) return { success: false, data: [], message: 'Backend API is not configured.' };
 
-  const params = new URLSearchParams(query).toString();
-  const res = await fetchWithTimeout(
-    `${apiBase}/api/orders${params ? `?${params}` : ''}`,
-    {
-      headers: authHeaders(token),
-      cache: 'no-store',
-    },
-    DEFAULT_READ_TIMEOUT_MS
-  );
-  return res.json();
+  try {
+    const params = new URLSearchParams(query).toString();
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/orders${params ? `?${params}` : ''}`,
+      {
+        headers: authHeaders(token),
+        cache: 'no-store',
+      },
+      DEFAULT_ADMIN_READ_TIMEOUT_MS
+    );
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      return { success: false, data: [], message: errJson.message || `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('[adminGetOrders Error]', err.message);
+    return { success: false, data: [], message: err.message };
+  }
 }
 
 export async function adminCreateOrder(data, token) {
@@ -547,18 +557,27 @@ export async function adminDeleteOrder(id, token) {
 
 export async function adminGetShipments(token, query = {}) {
   const apiBase = getApiBase();
-  if (!apiBase) return { success: false, data: [] };
+  if (!apiBase) return { success: false, data: [], message: 'Backend API is not configured.' };
 
-  const params = new URLSearchParams(query).toString();
-  const res = await fetchWithTimeout(
-    `${apiBase}/api/shipments${params ? `?${params}` : ''}`,
-    {
-      headers: authHeaders(token),
-      cache: 'no-store',
-    },
-    DEFAULT_READ_TIMEOUT_MS
-  );
-  return res.json();
+  try {
+    const params = new URLSearchParams(query).toString();
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/shipments${params ? `?${params}` : ''}`,
+      {
+        headers: authHeaders(token),
+        cache: 'no-store',
+      },
+      DEFAULT_ADMIN_READ_TIMEOUT_MS
+    );
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      return { success: false, data: [], message: errJson.message || `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('[adminGetShipments Error]', err.message);
+    return { success: false, data: [], message: err.message };
+  }
 }
 
 export async function adminCreateShipment(data, token) {
@@ -734,5 +753,182 @@ export async function submitInquiry(data, photoFile = null) {
     console.error('[API submitInquiry Error]', err);
     throw err;
   }
+}
+
+/**
+ * Admin Customer Management
+ */
+export async function adminGetCustomers(token, query = {}) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, data: [], message: 'Backend API is not configured.' };
+
+  try {
+    const params = new URLSearchParams(query).toString();
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/customers${params ? `?${params}` : ''}`,
+      {
+        headers: authHeaders(token),
+        cache: 'no-store',
+      },
+      DEFAULT_ADMIN_READ_TIMEOUT_MS
+    );
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      return { success: false, data: [], message: errJson.message || `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('[adminGetCustomers Error]', err.message);
+    return { success: false, data: [], message: err.message };
+  }
+}
+
+/**
+ * Admin Analytics
+ */
+export async function adminGetAnalytics(token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  try {
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/analytics`,
+      {
+        headers: authHeaders(token),
+        cache: 'no-store',
+      },
+      DEFAULT_ADMIN_READ_TIMEOUT_MS
+    );
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      return { success: false, message: errJson.message || `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('[adminGetAnalytics Error]', err.message);
+    return { success: false, message: err.message };
+  }
+}
+
+/**
+ * Admin Settings
+ */
+export async function adminGetSettings(token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  try {
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/settings`,
+      {
+        headers: authHeaders(token),
+        cache: 'no-store',
+      },
+      DEFAULT_ADMIN_READ_TIMEOUT_MS
+    );
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      return { success: false, message: errJson.message || `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('[adminGetSettings Error]', err.message);
+    return { success: false, message: err.message };
+  }
+}
+
+export async function adminUpdateSettings(data, token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/settings`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
+  return res.json();
+}
+
+/**
+ * Admin Profile & Password Update
+ */
+export async function adminUpdatePassword(data, token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/auth/update-password`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
+  return res.json();
+}
+
+export async function adminUpdateProfile(data, token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/auth/profile`,
+    {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
+  return res.json();
+}
+
+/**
+ * Admin Inquiries
+ */
+export async function adminGetInquiries(token, query = {}) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, data: [] };
+
+  try {
+    const params = new URLSearchParams(query).toString();
+    const res = await fetchWithTimeout(
+      `${apiBase}/api/inquiries${params ? `?${params}` : ''}`,
+      {
+        headers: authHeaders(token),
+        cache: 'no-store',
+      },
+      DEFAULT_ADMIN_READ_TIMEOUT_MS
+    );
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      return { success: false, data: [], message: errJson.message || `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn('[adminGetInquiries Error]', err.message);
+    return { success: false, data: [], message: err.message };
+  }
+}
+
+export async function adminUpdateInquiryStatus(id, status, token) {
+  const apiBase = getApiBase();
+  if (!apiBase) return { success: false, message: 'Backend API is not configured.' };
+
+  const res = await fetchWithTimeout(
+    `${apiBase}/api/inquiries/${encodeURIComponent(id)}`,
+    {
+      method: 'PATCH',
+      headers: authHeaders(token),
+      body: JSON.stringify({ status }),
+    },
+    DEFAULT_MUTATION_TIMEOUT_MS
+  );
+  return res.json();
 }
 

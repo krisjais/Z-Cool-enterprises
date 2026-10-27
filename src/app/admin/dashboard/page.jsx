@@ -38,6 +38,11 @@ import {
   resolveImageUrl,
 } from '@/lib/api';
 import ProductManagementSection from '@/components/admin/ProductManagementSection';
+import CategoryManagementSection from '@/components/admin/CategoryManagementSection';
+import CustomerManagementSection from '@/components/admin/CustomerManagementSection';
+import AnalyticsSection from '@/components/admin/AnalyticsSection';
+import SettingsSection from '@/components/admin/SettingsSection';
+import HelpCenterSection from '@/components/admin/HelpCenterSection';
 
 const CATEGORIES = [
   'AC Compressor',
@@ -87,6 +92,7 @@ export default function AdminDashboardPage() {
   const [categories, setCategories] = useState([]);
   const [orders, setOrders] = useState([]);
   const [shipments, setShipments] = useState([]);
+  const [dataErrors, setDataErrors] = useState({ orders: null, shipments: null });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -168,25 +174,45 @@ export default function AdminDashboardPage() {
   // Load all real data from backend
   const loadData = useCallback(async () => {
     setLoading(true);
+    setDataErrors({ orders: null, shipments: null });
     const token = getToken();
 
     try {
-      const [prodRes, catRes, ordRes, shpRes] = await Promise.all([
+      const [prodRes, catRes, ordRes, shpRes] = await Promise.allSettled([
         getProducts(),
         getCategories(),
-        token ? adminGetOrders(token) : { data: [] },
-        token ? adminGetShipments(token) : { data: [] },
+        token ? adminGetOrders(token) : Promise.resolve({ success: true, data: [] }),
+        token ? adminGetShipments(token) : Promise.resolve({ success: true, data: [] }),
       ]);
 
-      setProducts(Array.isArray(prodRes) ? prodRes : []);
-      if (catRes && Array.isArray(catRes.categories)) {
-        setCategories(catRes.categories);
+      if (prodRes.status === 'fulfilled' && Array.isArray(prodRes.value)) {
+        setProducts(prodRes.value);
       }
-      if (ordRes && ordRes.success && Array.isArray(ordRes.data)) {
-        setOrders(ordRes.data);
+
+      if (catRes.status === 'fulfilled' && catRes.value && Array.isArray(catRes.value.categories)) {
+        setCategories(catRes.value.categories);
       }
-      if (shpRes && shpRes.success && Array.isArray(shpRes.data)) {
-        setShipments(shpRes.data);
+
+      if (ordRes.status === 'fulfilled') {
+        const val = ordRes.value;
+        if (val && val.success && Array.isArray(val.data)) {
+          setOrders(val.data);
+        } else if (val && val.success === false) {
+          setDataErrors((prev) => ({ ...prev, orders: val.message || 'Failed to load orders from server' }));
+        }
+      } else {
+        setDataErrors((prev) => ({ ...prev, orders: ordRes.reason?.message || 'Orders network error' }));
+      }
+
+      if (shpRes.status === 'fulfilled') {
+        const val = shpRes.value;
+        if (val && val.success && Array.isArray(val.data)) {
+          setShipments(val.data);
+        } else if (val && val.success === false) {
+          setDataErrors((prev) => ({ ...prev, shipments: val.message || 'Failed to load shipments from server' }));
+        }
+      } else {
+        setDataErrors((prev) => ({ ...prev, shipments: shpRes.reason?.message || 'Shipments network error' }));
       }
     } catch (err) {
       notify('Failed to load some admin data: ' + err.message, 'error');
@@ -648,16 +674,94 @@ export default function AdminDashboardPage() {
                 <h2 className="text-lg font-bold text-slate-900">Overview</h2>
                 <div className="text-xs font-medium text-slate-500 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Live Data</div>
               </div>
-              <div className="flex-1 flex items-center justify-center bg-slate-50 rounded-xl border border-slate-100 border-dashed min-h-[300px]">
-                 <div className="text-center p-6">
-                   <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-4 text-[#1D6FA3]">
-                     <BarChart2 size={32} />
-                   </div>
-                   <h3 className="text-base font-bold text-slate-900 mb-1">Analytics overview</h3>
-                   <p className="text-sm text-slate-500 max-w-xs mx-auto">
-                     Data visualization features will be available in the next release.
-                   </p>
-                 </div>
+              <div className="flex-1 flex flex-col justify-between space-y-6">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Catalogue Distribution by Category
+                    </span>
+                    <a
+                      href="/admin/dashboard?tab=analytics"
+                      className="text-xs font-semibold text-[#1D6FA3] hover:underline"
+                    >
+                      View Full Analytics &rarr;
+                    </a>
+                  </div>
+
+                  {categories.length === 0 ? (
+                    <div className="text-center py-8 text-slate-400 bg-slate-50 rounded-xl">
+                      <BarChart2 size={24} className="mx-auto mb-1 text-slate-300" />
+                      <p className="text-xs">No category data available</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {categories
+                        .slice(0, 5)
+                        .map((cat) => {
+                          const count = cat.productCount || 0;
+                          const pct = totalProducts > 0 ? Math.round((count / totalProducts) * 100) : 0;
+
+                          return (
+                            <div key={cat._id || cat.id || cat.slug} className="space-y-1">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="font-semibold text-slate-800 truncate max-w-[220px]">
+                                  {cat.name}
+                                </span>
+                                <span className="text-slate-500 font-mono text-[11px]">
+                                  {count} units ({pct}%)
+                                </span>
+                              </div>
+                              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#1D6FA3] rounded-full transition-all duration-300"
+                                  style={{ width: `${Math.max(pct, 2)}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Stock Health Quick Row */}
+                <div className="pt-4 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      In Stock
+                    </span>
+                    <span className="text-base font-bold text-emerald-600 mt-0.5 block">
+                      {availableProducts}
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      Out of Stock
+                    </span>
+                    <span className="text-base font-bold text-slate-700 mt-0.5 block">
+                      {products.filter((p) => p.availability === 'OUT OF STOCK').length}
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      Refurbishing
+                    </span>
+                    <span className="text-base font-bold text-amber-600 mt-0.5 block">
+                      {products.filter((p) => p.availability === 'REFURBISHMENT IN PROGRESS').length}
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      Made to Order
+                    </span>
+                    <span className="text-base font-bold text-[#1D6FA3] mt-0.5 block">
+                      {products.filter((p) => p.availability === 'MADE TO ORDER').length}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -759,7 +863,21 @@ export default function AdminDashboardPage() {
 
           {/* Mobile Stacked Orders */}
           <div className="space-y-3">
-            {filteredOrders.length === 0 ? (
+            {dataErrors.orders ? (
+              <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={16} className="text-red-600 shrink-0" />
+                  <span>Unable to load orders: {dataErrors.orders}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadData}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-xs self-start sm:self-auto transition-colors"
+                >
+                  Retry Loading
+                </button>
+              </div>
+            ) : filteredOrders.length === 0 ? (
               <div className="bg-white p-8 text-center rounded-lg border border-slate-200 text-slate-400 text-xs">
                 No orders match your filter.
               </div>
@@ -877,7 +995,21 @@ export default function AdminDashboardPage() {
 
           {/* Shipments List */}
           <div className="space-y-3">
-            {filteredShipments.length === 0 ? (
+            {dataErrors.shipments ? (
+              <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={16} className="text-red-600 shrink-0" />
+                  <span>Unable to load shipments: {dataErrors.shipments}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadData}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-xs self-start sm:self-auto transition-colors"
+                >
+                  Retry Loading
+                </button>
+              </div>
+            ) : filteredShipments.length === 0 ? (
               <div className="bg-white p-8 text-center rounded-lg border border-slate-200 text-slate-400 text-xs">
                 No shipments recorded yet.
               </div>
@@ -949,6 +1081,56 @@ export default function AdminDashboardPage() {
             )}
           </div>
         </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* TAB: CATEGORIES MANAGEMENT                                         */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'categories' && (
+        <CategoryManagementSection
+          categories={categories}
+          token={getToken()}
+          onRefresh={loadData}
+          notify={notify}
+        />
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* TAB: CUSTOMER DIRECTORY                                            */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'customers' && (
+        <CustomerManagementSection
+          token={getToken()}
+          notify={notify}
+        />
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* TAB: ANALYTICS                                                     */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'analytics' && (
+        <AnalyticsSection
+          token={getToken()}
+          notify={notify}
+        />
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* TAB: SETTINGS                                                      */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'settings' && (
+        <SettingsSection
+          admin={admin}
+          token={getToken()}
+          notify={notify}
+        />
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {/* TAB: HELP CENTER                                                   */}
+      {/* ══════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'help' && (
+        <HelpCenterSection />
       )}
 
 

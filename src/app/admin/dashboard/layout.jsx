@@ -17,19 +17,20 @@ import {
   Settings,
   HelpCircle,
   Users,
-  BarChart2
+  BarChart2,
+  FolderTree
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const NAV_ITEMS = [
   { id: 'overview', name: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard?tab=overview' },
   { id: 'products', name: 'Products', icon: Box, href: '/admin/dashboard?tab=products' },
-  { id: 'categories', name: 'Categories', icon: Box, href: '/admin/dashboard?tab=overview' }, // Route to overview for now
+  { id: 'categories', name: 'Categories', icon: FolderTree, href: '/admin/dashboard?tab=categories' },
   { id: 'orders', name: 'Orders', icon: ShoppingCart, href: '/admin/dashboard?tab=orders' },
   { id: 'shipments', name: 'Shipments', icon: Truck, href: '/admin/dashboard?tab=shipments' },
-  { id: 'customers', name: 'Customers', icon: Users, href: '/admin/dashboard?tab=overview' }, // Dummy route to match design
-  { id: 'analytics', name: 'Analytics', icon: BarChart2, href: '/admin/dashboard?tab=overview' }, // Dummy route
-  { id: 'settings', name: 'Settings', icon: Settings, href: '/admin/dashboard?tab=overview' }, // Dummy route
+  { id: 'customers', name: 'Customers', icon: Users, href: '/admin/dashboard?tab=customers' },
+  { id: 'analytics', name: 'Analytics', icon: BarChart2, href: '/admin/dashboard?tab=analytics' },
+  { id: 'settings', name: 'Settings', icon: Settings, href: '/admin/dashboard?tab=settings' },
 ];
 
 function SidebarContent({ activeTab, setIsMobileOpen }) {
@@ -82,13 +83,18 @@ function SidebarContent({ activeTab, setIsMobileOpen }) {
 
       {/* Bottom Actions */}
       <div className="p-4 border-t border-slate-800 space-y-1">
-        <button
-          type="button"
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+        <Link
+          href="/admin/dashboard?tab=help"
+          onClick={() => setIsMobileOpen?.(false)}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'help'
+              ? 'bg-[#1D6FA3] text-white'
+              : 'text-slate-400 hover:text-white hover:bg-white/5'
+          }`}
         >
-          <HelpCircle size={18} />
+          <HelpCircle size={18} className={activeTab === 'help' ? 'text-white' : 'text-slate-400'} />
           <span>Help Center</span>
-        </button>
+        </Link>
         <button
           type="button"
           onClick={logout}
