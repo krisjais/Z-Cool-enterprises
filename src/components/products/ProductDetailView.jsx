@@ -19,6 +19,7 @@ import {
   Download,
   CheckCircle2,
   ExternalLink,
+  Mail,
 } from 'lucide-react';
 import QuoteModal from '../ui/QuoteModal';
 import { resolveImageUrl } from '@/lib/api';
@@ -275,6 +276,61 @@ export default function ProductDetailView({
     return () => clearTimeout(timer);
   }, [selectedImgIdx, currentImage]);
 
+  // ── STRICT PRODUCT-SPECIFIC DATASHEET VERIFICATION ──
+  // Associates a datasheet only when the brand and model code affirmatively match.
+  // Never falls back to a global default or shared PDF.
+  const verifiedDatasheet = useMemo(() => {
+    if (!product || !product.datasheet || typeof product.datasheet !== 'object') {
+      return null;
+    }
+    const ds = product.datasheet;
+    if (!ds.url || typeof ds.url !== 'string' || !ds.url.trim()) {
+      return null;
+    }
+
+    const prodCode = String(product.code || product.modelNumber || '').toUpperCase().trim();
+    const prodCatalog = String(product.catalogCode || '').toUpperCase().trim();
+    const prodBrand = String(product.brand || '').toUpperCase().trim();
+
+    const dsModel = String(ds.model || '').toUpperCase().trim();
+    const dsOemCode = String(ds.oemModelCode || '').toUpperCase().trim();
+    const dsFilename = String(ds.filename || '').toUpperCase().trim();
+    const dsManufacturer = String(ds.manufacturer || ds.brand || '').toUpperCase().trim();
+
+    // Verify manufacturer brand match if present
+    if (dsManufacturer && prodBrand) {
+      const brandMatches = dsManufacturer.includes(prodBrand) || prodBrand.includes(dsManufacturer);
+      if (!brandMatches) {
+        return null;
+      }
+    }
+
+    // Verify model correspondence
+    const cleanProdCode = prodCode.replace(/[^A-Z0-9]/g, '');
+    const cleanDsModel = dsModel.replace(/[^A-Z0-9]/g, '');
+    const cleanDsOem = dsOemCode.replace(/[^A-Z0-9]/g, '');
+    const cleanDsFilename = dsFilename.replace(/[^A-Z0-9]/g, '');
+    const cleanCatalog = prodCatalog.replace(/[^A-Z0-9]/g, '');
+
+    const modelMatches =
+      (cleanProdCode && (cleanDsModel.includes(cleanProdCode) || cleanDsOem.includes(cleanProdCode) || cleanDsFilename.includes(cleanProdCode))) ||
+      (cleanDsModel && cleanProdCode.includes(cleanDsModel)) ||
+      (cleanCatalog && (cleanDsModel.includes(cleanCatalog) || cleanDsOem.includes(cleanCatalog) || cleanDsFilename.includes(cleanCatalog)));
+
+    if (!modelMatches) {
+      return null;
+    }
+
+    return {
+      url: ds.url.trim(),
+      filename: ds.filename || `${prodCode || 'Product'}-Datasheet.pdf`,
+      size: ds.size || 'PDF Document',
+      manufacturer: ds.manufacturer || (prodBrand ? `${prodBrand} Climate Solutions` : 'Manufacturer Technical Documentation'),
+      model: ds.oemModelCode || ds.model || prodCode,
+      verifiedAt: ds.verifiedAt,
+    };
+  }, [product]);
+
   // ── STRUCTURED SPECIFICATION GROUPS (COMBINES ROOT, SPECS, AND SPECIFICATIONS ARRAY) ──
   const technicalGroups = useMemo(() => {
     if (!product) return [];
@@ -291,24 +347,25 @@ export default function ProductDetailView({
     };
 
     // Group 1: Model Identification & Nomenclature
+    const brandLabel = product.brand ? `${product.brand.toUpperCase()} OEM CODE` : 'OEM EQUIPMENT CODE';
     const idRows = [
       { label: 'EQUIPMENT MODEL CODE', value: product.code || product.modelNumber },
-      { label: 'DANFOSS OEM CODE', value: product.catalogCode || findSpec('Danfoss OEM Equipment Code') },
+      { label: brandLabel, value: product.catalogCode || findSpec(`${product.brand || 'OEM'} OEM Equipment Code`) || findSpec('Danfoss OEM Equipment Code') },
       { label: 'MANUFACTURER BRAND', value: product.brand },
       { label: 'COMPRESSOR TECHNOLOGY', value: product.type },
       { label: 'CATALOGUE CATEGORY', value: product.category },
       { label: 'VERIFICATION STATUS', value: product.verificationStatus || product.statusBadge },
       {
         label: 'OFFICIAL DATASHEET',
-        value: product.datasheet?.filename
-          ? `${product.datasheet.filename} (${product.datasheet.size || '741 KB'})`
-          : (product.downloads?.[0]?.file ? 'Danfoss-SM110S4EA-Datasheet.pdf (741 KB)' : null),
+        value: verifiedDatasheet
+          ? `${verifiedDatasheet.filename} (${verifiedDatasheet.size})`
+          : 'Datasheet available upon request from technical desk',
       },
       {
         label: 'PRICE PROVENANCE',
         value: product.source?.priceDisplay
           ? `${product.source.priceDisplay} (${product.source.verificationStatus || 'Unconfirmed - Request Quote'})`
-          : '₹24,000 (Marketplace Source Listing) · Official Quote Required',
+          : (product.price ? `₹${Number(product.price).toLocaleString('en-IN')}` : 'Official Quote Required'),
       },
       { label: 'ORIGINAL LISTING SOURCE', value: product.source?.marketplace ? `${product.source.marketplace} (${product.source.sellerName || 'Verified Supplier'})` : product.legacyTitle },
     ].filter((r) => Boolean(r.value && typeof r.value === 'string' && r.value.trim() !== ''));
@@ -416,11 +473,9 @@ export default function ProductDetailView({
   const whatsappMessage = encodeURIComponent(
     `Hello Z Cool Enterprises, I am inquiring about compressor model: ${product.name} (Code: ${product.code || 'N/A'}, Catalog: ${product.catalogCode || product.id}). Please share current availability and procurement quotation.`
   );
-
-  const datasheetUrl =
-    product.datasheet?.url ||
-    product.downloads?.[0]?.file ||
-    '/datasheets/Danfoss-SM110S4EA-Datasheet.pdf';
+  const whatsappDatasheetMessage = encodeURIComponent(
+    `Hello Z Cool Enterprises Technical Desk, I am requesting the official manufacturer datasheet and technical documentation for compressor model: ${product.name} (Code: ${product.code || 'N/A'}, Catalog: ${product.catalogCode || product.id}).`
+  );
 
   return (
     <div className="bg-[#F8FAFC] min-h-screen text-slate-900 py-4 sm:py-6 lg:py-8 pb-36 lg:pb-16 overflow-x-hidden">
@@ -772,32 +827,78 @@ export default function ProductDetailView({
                 </button>
               </div>
 
-              {/* Dedicated Official Manufacturer Datasheet Card */}
-              <div className="bg-gradient-to-r from-blue-50/80 to-slate-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center text-[#0E4B75] shrink-0">
-                    <FileText size={20} />
+              {/* Dedicated Official Manufacturer Datasheet Card (Desktop) */}
+              {verifiedDatasheet ? (
+                <div className="bg-gradient-to-r from-blue-50/80 to-slate-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center text-[#0E4B75] shrink-0">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wide">
+                        Official Manufacturer Datasheet
+                      </h4>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        {verifiedDatasheet.manufacturer} · {verifiedDatasheet.model} ({verifiedDatasheet.size} PDF)
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wide">
-                      Official Manufacturer Datasheet
-                    </h4>
-                    <p className="text-xs text-slate-600 mt-0.5">
-                      Danfoss Climate Solutions · {product.catalogCode || 'SM110-4EAG'} ({product.datasheet?.size || '741 KB'} PDF)
-                    </p>
+
+                  <a
+                    href={verifiedDatasheet.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={verifiedDatasheet.filename}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
+                  >
+                    <Download size={14} />
+                    <span>Download PDF</span>
+                  </a>
+                </div>
+              ) : (
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-slate-200/70 border border-slate-300 flex items-center justify-center text-slate-600 shrink-0">
+                        <FileText size={20} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wide">
+                            Manufacturer Technical Documentation
+                          </h4>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                            Available Upon Request
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                          Datasheet currently unavailable — contact us for technical documentation. Official manufacturer technical datasheet, wiring schematics, and performance curves for {product.brand || 'OEM'} {product.code || product.name} are available upon request. Contact our engineering desk to receive verified OEM documentation.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={`${COMPANY_DETAILS.whatsappUrl}?text=${whatsappDatasheetMessage}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold transition-colors"
+                      >
+                        <MessageSquare size={13} />
+                        <span>Inquire via WhatsApp</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setIsQuoteOpen(true)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <Mail size={14} className="text-[#0E4B75]" />
+                        <span>Request OEM Datasheet</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <a
-                  href={datasheetUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0E4B75] hover:bg-[#093757] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
-                >
-                  <Download size={14} />
-                  <span>Download PDF</span>
-                </a>
-              </div>
+              )}
 
               {/* Verified Technical Specification Groups (5 Tables) */}
               {technicalGroups.length > 0 && (
@@ -1151,33 +1252,63 @@ export default function ProductDetailView({
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Marketplace reference (₹24,000) is an unconfirmed 3rd-party source listing. Submit quote for official pricing based on active stock and delivery city.
+                      {product.source?.priceDisplay
+                        ? `Marketplace reference (${product.source.priceDisplay}) is an unconfirmed 3rd-party source listing. Submit quote for official pricing based on active stock and delivery city.`
+                        : 'Submit inquiry for official B2B wholesale quotation based on active inventory, warranty terms, and freight destination.'}
                     </p>
                   </div>
 
                   {/* Datasheet Card (Mobile) */}
-                  <div className="bg-blue-50/80 border border-blue-200 rounded-xl p-3.5 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <FileText size={18} className="text-[#0E4B75] shrink-0" />
-                      <div className="min-w-0">
-                        <span className="text-xs font-mono font-bold text-slate-900 block truncate">
-                          Official OEM Datasheet
-                        </span>
-                        <span className="text-[11px] text-slate-600 block">
-                          PDF ({product.datasheet?.size || '741 KB'})
+                  {verifiedDatasheet ? (
+                    <div className="bg-blue-50/80 border border-blue-200 rounded-xl p-3.5 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <FileText size={18} className="text-[#0E4B75] shrink-0" />
+                        <div className="min-w-0">
+                          <span className="text-xs font-mono font-bold text-slate-900 block truncate">
+                            Official OEM Datasheet
+                          </span>
+                          <span className="text-[11px] text-slate-600 block truncate">
+                            {verifiedDatasheet.model} · {verifiedDatasheet.size}
+                          </span>
+                        </div>
+                      </div>
+
+                      <a
+                        href={verifiedDatasheet.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={verifiedDatasheet.filename}
+                        className="px-3 py-1.5 rounded-lg bg-[#0E4B75] text-white text-xs font-semibold shrink-0"
+                      >
+                        Download
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FileText size={16} className="text-slate-500 shrink-0" />
+                          <span className="text-xs font-mono font-bold text-slate-900 truncate">
+                            Manufacturer Technical Documentation
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
+                          On Request
                         </span>
                       </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        Datasheet currently unavailable — contact us for technical documentation. Official engineering specs for {product.brand || 'OEM'} {product.code || product.name} available upon request.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setIsQuoteOpen(true)}
+                        className="w-full min-h-[36px] px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-800 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <Mail size={13} className="text-[#0E4B75]" />
+                        <span>Request OEM Datasheet</span>
+                      </button>
                     </div>
-
-                    <a
-                      href={datasheetUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-lg bg-[#0E4B75] text-white text-xs font-semibold shrink-0"
-                    >
-                      Download
-                    </a>
-                  </div>
+                  )}
 
                   {/* Expandable Technical Specification Groups */}
                   {technicalGroups.length > 0 && (

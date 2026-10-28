@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { 
   Phone, MessageSquare, Mail, Download, Maximize2, Eye, 
-  ChevronRight, ArrowLeft, RotateCw, Pause, Play, Compass
+  ChevronRight, ArrowLeft, RotateCw, Pause, Play, Compass, FileText
 } from 'lucide-react';
 import BlueprintViewer from './BlueprintViewer';
 import { COMPANY_DETAILS } from '@/constants/company';
@@ -145,14 +145,25 @@ export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, acti
                 >
                   <Mail size={12} /> Enquire Now
                 </button>
-                <a
-                  href={product?.datasheet?.url || product?.downloads?.[0]?.file || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3.5 border border-slate-200 hover:border-[#1D6FA3] text-[#0F2B46] text-[10px] font-mono uppercase font-bold rounded-xl transition-all bg-white"
-                >
-                  <Download size={12} /> Datasheet PDF
-                </a>
+                {product?.datasheet?.url ? (
+                  <a
+                    href={product.datasheet.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={product.datasheet.filename || `${product.code || 'product'}-datasheet.pdf`}
+                    className="flex items-center justify-center gap-2 py-3.5 border border-slate-200 hover:border-[#1D6FA3] text-[#0F2B46] text-[10px] font-mono uppercase font-bold rounded-xl transition-all bg-white"
+                  >
+                    <Download size={12} /> Datasheet PDF
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setQuoteModalOpen(true)}
+                    className="flex items-center justify-center gap-2 py-3.5 border border-slate-200 hover:border-[#1D6FA3] text-[#0F2B46] text-[10px] font-mono uppercase font-bold rounded-xl transition-all bg-white cursor-pointer"
+                  >
+                    <FileText size={12} /> Request Datasheet
+                  </button>
+                )}
               </div>
             </div>
 
