@@ -12,6 +12,7 @@ import {
   Send,
   Info,
   ChevronRight,
+
   ChevronDown,
   ShieldAlert,
   Cpu,
@@ -84,6 +85,18 @@ export default function ProductDetailView({
   const getImageMeta = (idx) => {
     if (product?.imageManifest && product.imageManifest[idx]) {
       const item = product.imageManifest[idx];
+      if (item.label && item.caption) {
+        return {
+          isVerified: item.isVerified ?? true,
+          label: item.label,
+          badgeText: item.badgeText || (item.isVerified ? 'Verified OEM Asset · Single Unit' : 'Reference Asset'),
+          badgeClass: item.badgeClass || (item.isVerified ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-slate-50 text-slate-800 border-slate-300'),
+          dotClass: item.dotClass || (item.isVerified ? 'bg-emerald-600' : 'bg-slate-600'),
+          caption: item.caption,
+          thumbTag: item.thumbTag || (item.isVerified ? 'OEM' : `Photo #${idx + 1}`),
+        };
+      }
+
       const isOfficial =
         item.type === 'primary' ||
         (item.source && item.source.toLowerCase().includes('danfoss')) ||
@@ -324,10 +337,12 @@ export default function ProductDetailView({
     return {
       url: ds.url.trim(),
       filename: ds.filename || `${prodCode || 'Product'}-Datasheet.pdf`,
+      title: ds.displayName || ds.title || (ds.isCatalogue ? 'Highly Rotary Compressor Catalogue' : 'Official Manufacturer Datasheet'),
       size: ds.size || 'PDF Document',
       manufacturer: ds.manufacturer || (prodBrand ? `${prodBrand} Climate Solutions` : 'Manufacturer Technical Documentation'),
       model: ds.oemModelCode || ds.model || prodCode,
       verifiedAt: ds.verifiedAt,
+      isCatalogue: Boolean(ds.isCatalogue),
     };
   }, [product]);
 
@@ -637,11 +652,10 @@ export default function ProductDetailView({
                             key={idx}
                             type="button"
                             onClick={() => setSelectedImgIdx(idx)}
-                            className={`rounded-lg bg-white border p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all min-h-[72px] ${
-                              isSelected
+                            className={`rounded-lg bg-white border p-1.5 flex flex-col items-center justify-between cursor-pointer transition-all min-h-[72px] ${isSelected
                                 ? 'border-[#0E4B75] ring-2 ring-[#0E4B75]/30 shadow-xs bg-blue-50/40'
                                 : 'border-slate-200 hover:border-slate-300 opacity-80 hover:opacity-100'
-                            }`}
+                              }`}
                             aria-label={`Select ${meta.label}`}
                             aria-current={isSelected ? 'true' : undefined}
                           >
@@ -656,7 +670,7 @@ export default function ProductDetailView({
                               />
                             </div>
                             <span className={`text-[8px] font-mono uppercase font-semibold px-1 rounded ${meta.isVerified ? 'text-emerald-700 bg-emerald-50' : 'text-amber-800 bg-amber-50'}`}>
-                              {meta.isVerified ? 'OEM' : 'Ref'}
+                              {meta.thumbTag || (meta.isVerified ? 'OEM' : 'Ref')}
                             </span>
                           </button>
                         );
@@ -836,7 +850,7 @@ export default function ProductDetailView({
                     </div>
                     <div>
                       <h4 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wide">
-                        Official Manufacturer Datasheet
+                        {verifiedDatasheet.title || 'Official Manufacturer Datasheet'}
                       </h4>
                       <p className="text-xs text-slate-600 mt-0.5">
                         {verifiedDatasheet.manufacturer} · {verifiedDatasheet.model} ({verifiedDatasheet.size} PDF)
@@ -1125,11 +1139,10 @@ export default function ProductDetailView({
                             key={idx}
                             type="button"
                             onClick={() => setSelectedImgIdx(idx)}
-                            className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-mono font-bold transition-all cursor-pointer ${
-                              isSelected
+                            className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-mono font-bold transition-all cursor-pointer ${isSelected
                                 ? 'bg-[#0E4B75] text-white'
                                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
+                              }`}
                             aria-label={`Select photo ${idx + 1}`}
                           >
                             #{idx + 1}
@@ -1265,7 +1278,7 @@ export default function ProductDetailView({
                         <FileText size={18} className="text-[#0E4B75] shrink-0" />
                         <div className="min-w-0">
                           <span className="text-xs font-mono font-bold text-slate-900 block truncate">
-                            Official OEM Datasheet
+                            {verifiedDatasheet.title || 'Official OEM Datasheet'}
                           </span>
                           <span className="text-[11px] text-slate-600 block truncate">
                             {verifiedDatasheet.model} · {verifiedDatasheet.size}
@@ -1341,9 +1354,8 @@ export default function ProductDetailView({
                                 </div>
                                 <ChevronDown
                                   size={16}
-                                  className={`text-slate-500 transition-transform duration-200 shrink-0 ${
-                                    isOpen ? 'rotate-180 text-[#0E4B75]' : ''
-                                  }`}
+                                  className={`text-slate-500 transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180 text-[#0E4B75]' : ''
+                                    }`}
                                 />
                               </button>
 

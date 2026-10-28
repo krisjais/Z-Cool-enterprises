@@ -3,6 +3,233 @@
 // Phase 3.3 Active Catalogue: 6 Core records (including unified Daikin JT160) + 39 Migrated Legacy Records = 45 Verified Catalogue Products
 
 export const PRODUCTS_CATALOG = [
+  {
+    "id": "highly-ate690uc3q9jk",
+    "slug": "highly-ate690uc3q9jk",
+    "code": "ATE690UC3Q9JK",
+    "catalogCode": "Z-HIGHLY-ATE690",
+    "name": "Highly ATE690UC3Q9JK 5 TR Twin Rotary Compressor",
+    "brand": "Highly",
+    "tagline": "Commercial 5 TR Hermetic Twin Rotary AC Compressor",
+    "category": "Rotary Compressors",
+    "type": "Hermetic Rotary (Twin Rotary)",
+    "condition": "Refurbished & Pressure Tested",
+    "availability": "IN STOCK",
+    "voltage": "380V–415V, 3-Phase, 50Hz",
+    "displacement": "69.0 cm³/rev",
+    "coolingCapacity": "5 TR (~58,000 BTU/hr / 17.5 kW)",
+    "refrigerant": "R410A",
+    "application": "Commercial AC package units, chillers & ducted splits",
+    "accentColor": "#0E4B75",
+    "statusBadge": "Verified OEM Match · Technical Documentation Available",
+    "verificationStatus": "Verified OEM Commercial Match",
+    "imageType": "verified",
+    "imageDisclaimer": "Physical nameplate verified — model stamped ATE690UC3Q9JK.",
+    "shortDescription": "Commercial hermetic twin rotary compressor manufactured by Shanghai Highly (Hitachi technology partner) under model code ATE690UC3Q9JK. Engineered for light-commercial split air conditioning, package units, and heat pumps with 5 TR cooling capacity.",
+    "description": "Commercial hermetic twin rotary compressor manufactured by Shanghai Highly (Hitachi technology partner) under model code ATE690UC3Q9JK. Engineered for light-commercial split air conditioning, package units, and heat pumps with 5 TR cooling capacity. Operates on 380–415V three-phase electrical distribution with R410A refrigerant. Dispatched from Mumbai technical desk with pressure hold testing and oil level verification.",
+    "featured": true,
+    "inStock": true,
+    "status": "Active",
+    "price": 27000,
+    "pricingMode": "Request Quote",
+    "keySpecs": [
+      {
+        "label": "Displacement",
+        "value": "69.0 cm³/rev"
+      },
+      {
+        "label": "Rated Capacity",
+        "value": "5 TR (~58,000 BTU/hr / 17.5 kW)"
+      },
+      {
+        "label": "Electrical",
+        "value": "380V–415V, 3-Phase, 50Hz"
+      },
+      {
+        "label": "Refrigerant",
+        "value": "R410A"
+      },
+      {
+        "label": "Technology",
+        "value": "Twin Rotary"
+      }
+    ],
+    "specs": {
+      "electrical": {
+        "Input Voltage": "380V–415V, 3-Phase, 50Hz",
+        "Nominal HP": "5 HP",
+        "Phase": "Three-Phase",
+        "Frequency": "50 Hz"
+      },
+      "mechanical": {
+        "Compressor Type": "Hermetic Twin Rotary",
+        "Displacement": "69.0 cm³/rev",
+        "Cooling Capacity": "5 TR (~58,000 BTU/hr / 17.5 kW)",
+        "Refrigerant": "R410A",
+        "Lubricant Oil": "Synthetic POE (Pre-charged)"
+      }
+    },
+    "specifications": [
+      {
+        "key": "Equipment Model Code",
+        "value": "ATE690UC3Q9JK"
+      },
+      {
+        "key": "Highly OEM Equipment Code",
+        "value": "Z-HIGHLY-ATE690"
+      },
+      {
+        "key": "Manufacturer Brand",
+        "value": "Shanghai Highly (Hitachi Technology Partner)"
+      },
+      {
+        "key": "Compressor Technology",
+        "value": "Hermetic Twin Rotary"
+      },
+      {
+        "key": "Catalogue Category",
+        "value": "Rotary Compressors"
+      },
+      {
+        "key": "Nominal Cooling Capacity",
+        "value": "5 TR (~58,000 BTU/hr / 17.5 kW)"
+      },
+      {
+        "key": "Displacement per Revolution",
+        "value": "69.0 cm³/rev"
+      },
+      {
+        "key": "Operating Voltage",
+        "value": "380V–415V, 3-Phase, 50Hz"
+      },
+      {
+        "key": "Refrigerant Compatibility",
+        "value": "R410A"
+      },
+      {
+        "key": "Application Type",
+        "value": "Commercial ducted air conditioning, package units, and liquid chillers"
+      },
+      {
+        "key": "Verification Status",
+        "value": "Physical Nameplate Verified (Serial LKHN1E2335MKL)"
+      },
+      {
+        "key": "Dispatch Location",
+        "value": "Z Cool Enterprises Technical Desk, Mumbai"
+      }
+    ],
+    "images": [
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201639/z-cool/products/Highly_ATE690UC3Q9JK_1.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_1"
+      },
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201640/z-cool/products/Highly_ATE690UC3Q9JK_Nameplate.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_Nameplate"
+      },
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201641/z-cool/products/Highly_ATE690UC3Q9JK_Profile.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_Profile"
+      },
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201642/z-cool/products/Highly_ATE690UC3Q9JK_Warehouse_Stock.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_Warehouse_Stock"
+      }
+],
+    "imageManifest": [
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201639/z-cool/products/Highly_ATE690UC3Q9JK_1.jpg",
+            "localUrl": "/products/verified/highly-ate690uc3q9jk-primary.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_1",
+            "isVerified": true,
+            "type": "primary",
+            "label": "Verified Physical Unit · Front View",
+            "badgeText": "Verified Physical Unit · Single Unit",
+            "badgeClass": "bg-emerald-50 text-emerald-800 border-emerald-300",
+            "dotClass": "bg-emerald-600",
+            "caption": "Authentic physical workshop photograph of Shanghai Highly ATE690UC3Q9JK twin rotary compressor with visible OEM nameplate sticker and serial number.",
+            "thumbTag": "Unit"
+      },
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201640/z-cool/products/Highly_ATE690UC3Q9JK_Nameplate.jpg",
+            "localUrl": "/products/verified/highly-ate690uc3q9jk-nameplate.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_Nameplate",
+            "isVerified": true,
+            "type": "nameplate",
+            "label": "Verified OEM Nameplate Close-Up",
+            "badgeText": "Verified OEM Nameplate · Technical Data Stamped",
+            "badgeClass": "bg-emerald-50 text-emerald-800 border-emerald-300",
+            "dotClass": "bg-emerald-600",
+            "caption": "High-resolution macro photograph of compressor nameplate confirming model ATE690UC3Q9JK, 50Hz 380-415V 3~ electrical, R410A refrigerant, barcode LKHN1E2319MKL, and Shanghai Hitachi Electrical Appliances Co., Ltd. manufacture.",
+            "thumbTag": "Nameplate"
+      },
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201641/z-cool/products/Highly_ATE690UC3Q9JK_Profile.jpg",
+            "localUrl": "/products/verified/highly-ate690uc3q9jk-profile.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_Profile",
+            "isVerified": true,
+            "type": "profile",
+            "label": "Side Profile & Suction Accumulator",
+            "badgeText": "Verified Physical Shell · Accumulator & Ports",
+            "badgeClass": "bg-emerald-50 text-emerald-800 border-emerald-300",
+            "dotClass": "bg-emerald-600",
+            "caption": "Side profile photograph showing hermetic cylindrical shell, brazed suction accumulator canister with mounting clamp bracket, and top terminal connection housing.",
+            "thumbTag": "Profile"
+      },
+      {
+            "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793201642/z-cool/products/Highly_ATE690UC3Q9JK_Warehouse_Stock.jpg",
+            "localUrl": "/products/verified/highly-ate690uc3q9jk-warehouse.jpg",
+            "publicId": "z-cool/products/Highly_ATE690UC3Q9JK_Warehouse_Stock",
+            "isVerified": true,
+            "type": "stock",
+            "label": "Warehouse Inventory Batch",
+            "badgeText": "Commercial Batch Stock · Verified Inventory",
+            "badgeClass": "bg-emerald-50 text-emerald-800 border-emerald-300",
+            "dotClass": "bg-emerald-600",
+            "caption": "Commercial warehouse inventory staging of Shanghai Highly ATE690 series rotary compressors ready for dispatch and pressure-hold testing.",
+            "thumbTag": "Stock"
+      }
+],
+    "datasheet": {
+      "filename": "Highly-Rotary-Compressor-Catalogue.pdf",
+      "displayName": "Highly Rotary Compressor Catalogue",
+      "title": "Highly Rotary Compressor Catalogue",
+      "model": "ATE690UC3",
+      "oemModelCode": "ATE690UC3",
+      "brand": "Highly",
+      "manufacturer": "Shanghai Highly (Hitachi Technology Partner)",
+      "fileType": "application/pdf",
+      "size": "1.38 MB",
+      "bytes": 1384724,
+      "url": "/datasheets/Highly-Rotary-Compressor-Catalogue.pdf",
+      "localUrl": "/uploads/datasheets/Highly-Rotary-Compressor-Catalogue.pdf",
+      "cloudinaryUrl": "https://res.cloudinary.com/ot9atptn/raw/upload/v1793201586/z-cool/datasheets/Highly_Rotary_Compressor_Catalogue.pdf",
+      "cloudinaryPublicId": "z-cool/datasheets/Highly_Rotary_Compressor_Catalogue.pdf",
+      "isCatalogue": true,
+      "note": "Publicly available manufacturer product-family catalogue covering TE-Series rotary compressor base model ATE690UC3. Contains technical specifications, displacement, and dimensions.",
+      "verifiedAt": "2026-10-28T15:40:26.958Z"
+},
+    "downloads": [
+      {
+            "name": "Highly Rotary Compressor Catalogue (Product Family Documentation)",
+            "type": "PDF",
+            "version": "TE-Series",
+            "size": "1.38 MB",
+            "updated": "28-10-2026",
+            "file": "/datasheets/Highly-Rotary-Compressor-Catalogue.pdf"
+      }
+],
+    "source": {
+      "marketplace": "IndiaMART",
+      "sellerName": "Unique Refrigeration",
+      "sellerLocation": "New Delhi",
+      "sourceUrl": "https://www.indiamart.com/proddetail/ate690uc3q9jk-scroll-compressor-air-conditioning-2859657127691.html",
+      "priceDisplay": "₹ 27,000",
+      "rawPrice": 27000,
+      "verificationStatus": "Marketplace Reference Listing"
+    }
+  },
 {
   "id": "danfoss-sm110s4ea",
   "code": "SM110S4EA",
