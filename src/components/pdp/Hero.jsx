@@ -146,7 +146,9 @@ export default function Hero({ product, setQuoteModalOpen, setLightboxOpen, acti
                   <Mail size={12} /> Enquire Now
                 </button>
                 <a
-                  href="#"
+                  href={product?.datasheet?.url || product?.downloads?.[0]?.file || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 py-3.5 border border-slate-200 hover:border-[#1D6FA3] text-[#0F2B46] text-[10px] font-mono uppercase font-bold rounded-xl transition-all bg-white"
                 >
                   <Download size={12} /> Datasheet PDF

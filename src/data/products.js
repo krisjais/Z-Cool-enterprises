@@ -4,6 +4,104 @@
 
 export const PRODUCTS_CATALOG = [
 {
+  "id": "danfoss-sm110s4ea",
+  "code": "SM110S4EA",
+  "catalogCode": "SM110-4EAG",
+  "name": "Danfoss SM110S4EA Scroll Compressor",
+  "brand": "Danfoss",
+  "tagline": "7.5 TR Commercial Scroll Compressor (SM110-4EAG)",
+  "category": "Danfoss Scroll Compressor",
+  "type": "Hermetic Scroll",
+  "condition": "Refurbished & Pressure Tested",
+  "availability": "IN STOCK",
+  "voltage": "380-415V, 3-Phase, 50Hz / 460V, 3-Phase, 60Hz",
+  "displacement": "144.20 cm³",
+  "coolingCapacity": "7.5 TR",
+  "refrigerant": "R22",
+  "application": "Ductable AC, Split AC, Rooftop Package Units",
+  "accentColor": "#0E4B75",
+  "statusBadge": "Verified OEM Match · Technical Datasheet Available",
+  "verificationStatus": "Verified OEM Match",
+  "imageType": "representative",
+  "imageDisclaimer": "Primary photograph represents official manufacturer technical render (Danfoss SM110-4EAG). Secondary physical photographs preserved from marketplace listing for workshop inspection.",
+  "shortDescription": "7.5 TR commercial hermetic scroll compressor (SM110-4EAG), 380–415V 3-Phase, 144.20 cm³ displacement, R22 refrigerant.",
+  "description": "The Danfoss SM110S4EA (OEM code SM110-4EAG) is an industrial-grade hermetic scroll compressor engineered for medium-temperature air conditioning and commercial cooling installations. Delivering a rated 7.5 TR cooling capacity with 144.20 cm³ swept volume displacement, this fixed-speed compressor operates reliably on three-phase 380–415V (50Hz) and 460V (60Hz) commercial power distribution. Purpose-built for R22 refrigeration systems, it features standard ODF sweat connection fittings, 3/8'' flare SAE oil equalization, and CE/UL compliance for HVAC contractors and facility maintenance.",
+  "keySpecs": [
+    {
+      "label": "Rated Capacity",
+      "value": "7.5 TR"
+    },
+    {
+      "label": "Electrical",
+      "value": "380-415V, 3-Phase, 50Hz / 460V, 3-Phase, 60Hz"
+    },
+    {
+      "label": "Displacement",
+      "value": "144.20 cm³"
+    },
+    {
+      "label": "Refrigerant",
+      "value": "R22"
+    }
+  ],
+  "compatibility": [
+    "Danfoss",
+    "Carrier",
+    "Blue Star",
+    "Voltas",
+    "Daikin"
+  ],
+  "compatDetails": {
+    "Danfoss": "Direct OEM displacement match for Danfoss SM series 7.5 TR commercial installations.",
+    "Carrier": "Compatible displacement replacement for 7.5-Ton commercial ductable and packaged units.",
+    "Blue Star": "Replacement match for Blue Star medium-temperature package circuits.",
+    "Voltas": "Fits standard 7.5 TR commercial footprint with 380V three-phase supply."
+  },
+  "images": [
+    "https://res.cloudinary.com/ot9atptn/image/upload/v1793188138/z-cool/products/danfoss_sm110s4ea_official.jpg",
+    "https://res.cloudinary.com/ot9atptn/image/upload/v1793188821/z-cool/products/danfoss_sm110s4ea_supplier_1.jpg",
+    "https://res.cloudinary.com/ot9atptn/image/upload/v1793188822/z-cool/products/danfoss_sm110s4ea_supplier_2.jpg",
+    "https://res.cloudinary.com/ot9atptn/image/upload/v1793188823/z-cool/products/danfoss_sm110s4ea_supplier_3.jpg",
+    "https://res.cloudinary.com/ot9atptn/image/upload/v1793188824/z-cool/products/danfoss_sm110s4ea_supplier_4.jpg"
+  ],
+  "datasheet": {
+    "filename": "Danfoss-SM110S4EA-Datasheet.pdf",
+    "model": "SM110S4EA",
+    "oemModelCode": "SM110-4EAG",
+    "fileType": "application/pdf",
+    "size": "741 KB",
+    "bytes": 758720,
+    "url": "/datasheets/Danfoss-SM110S4EA-Datasheet.pdf",
+    "localUrl": "/uploads/datasheets/Danfoss-SM110S4EA-Datasheet.pdf",
+    "cloudinaryUrl": "https://res.cloudinary.com/ot9atptn/raw/upload/v1793188137/z-cool/datasheets/Danfoss_SM110S4EA_Datasheet.pdf",
+    "cloudinaryPublicId": "z-cool/datasheets/Danfoss_SM110S4EA_Datasheet.pdf",
+    "verifiedAt": "2026-10-28T12:00:27.340Z"
+  },
+  "downloads": [
+    {
+      "name": "Danfoss Scroll Compressor SM110S4EA Technical Datasheet",
+      "type": "PDF",
+      "version": "2026.10",
+      "size": "741 KB",
+      "updated": "28-10-2026",
+      "file": "/datasheets/Danfoss-SM110S4EA-Datasheet.pdf"
+    }
+  ],
+  "source": {
+    "marketplace": "IndiaMART",
+    "listingPrice": 24000,
+    "currency": "INR",
+    "priceDisplay": "₹ 2*** (free trial)",
+    "unconfirmedPrice": true,
+    "verificationStatus": "Unconfirmed seller price (₹24,000) — Request quote required for official procurement pricing",
+    "sellerName": "Hashmi Refrigeration",
+    "listingUrl": "https://www.indiamart.com/proddetail/danfoss-sm110s4ea-scroll-compressor-2855410547248.html",
+    "oemUrl": "https://designcenter.danfoss.com/products/climate-solutions-for-cooling/compressors/hermetic-scroll-compressors/sm/p/SM110-4EAG",
+    "pdfDatasheetUrl": "/datasheets/Danfoss-SM110S4EA-Datasheet.pdf",
+    "importedAt": "2026-10-28T12:00:27.341Z"
+  }
+},
+{
     "id": "copeland-zr72kc-tFD",
     "code": "ZR72KC-TFD",
     "catalogCode": "Z-COP-ZR72",

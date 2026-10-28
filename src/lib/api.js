@@ -83,11 +83,37 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_READ_TIME
 }
 
 /**
+ * Safe Reversible Catalogue Review Mode:
+ * When NEXT_PUBLIC_CATALOGUE_REVIEW_MODE=danfoss-sm110s4ea is configured, public catalog listings,
+ * category views, and related products restrict visibility exclusively to the Danfoss product.
+ * Direct lookups by ID/slug remain accessible for verification, and zero records are deleted.
+ * Defaults to false if unset or in standard production.
+ */
+export function isCatalogueReviewModeActive() {
+  const envVal = (
+    process.env.NEXT_PUBLIC_CATALOGUE_REVIEW_MODE ||
+    process.env.CATALOGUE_REVIEW_MODE ||
+    ''
+  ).trim().toLowerCase();
+  return envVal === 'danfoss-sm110s4ea';
+}
+
+/**
  * Filters the verified static catalogue according to query parameters.
  * Preserves full filtering compatibility even in static fallback mode.
  */
 function filterStaticProducts(query = {}) {
   let result = [...PRODUCTS_CATALOG];
+
+  if (isCatalogueReviewModeActive()) {
+    result = result.filter(
+      (p) =>
+        p.id?.toLowerCase() === 'danfoss-sm110s4ea' ||
+        p.modelNumber?.toLowerCase() === 'sm110s4ea' ||
+        p.code?.toLowerCase() === 'sm110s4ea' ||
+        p.slug?.toLowerCase() === 'danfoss-sm110s4ea'
+    );
+  }
 
   if (query.category && query.category !== 'all') {
     const cleanCat = query.category.toLowerCase().trim();
@@ -141,15 +167,22 @@ function filterStaticProducts(query = {}) {
  * Static categories fallback generator matching backend shape.
  */
 function getStaticCategories() {
+  const isReview = isCatalogueReviewModeActive();
   return {
-    categories: CATEGORIES_LIST.map((c) => ({
-      _id: c.id,
-      name: c.name,
-      slug: c.id,
-      description: c.desc,
-      productCount: 0,
-    })),
-    totalProducts: PRODUCTS_CATALOG.length,
+    categories: CATEGORIES_LIST.map((c) => {
+      const isDanfossCat =
+        c.name.toLowerCase().includes('scroll') ||
+        c.id.toLowerCase().includes('scroll') ||
+        c.name.toLowerCase().includes('danfoss');
+      return {
+        _id: c.id,
+        name: c.name,
+        slug: c.id,
+        description: c.desc,
+        productCount: isReview ? (isDanfossCat ? 1 : 0) : 0,
+      };
+    }),
+    totalProducts: isReview ? 1 : PRODUCTS_CATALOG.length,
   };
 }
 
@@ -163,6 +196,7 @@ function getStaticProductById(id) {
   const staticProduct = PRODUCTS_CATALOG.find(
     (p) =>
       p.id?.toLowerCase() === cleanId ||
+      p.slug?.toLowerCase() === cleanId ||
       p.code?.toLowerCase() === cleanId ||
       p.modelNumber?.toLowerCase() === cleanId ||
       p.catalogCode?.toLowerCase() === cleanId
@@ -237,6 +271,60 @@ export function resolveImageUrl(src) {
 }
 
 /**
+ * Merges database products with verified static products without creating duplicate entries.
+ * Live database records take precedence, while static catalog records ensure newly imported
+ * models or static definitions are immediately available across catalogue views.
+ */
+function mergeAndDeduplicateProducts(dbProducts = [], staticProducts = []) {
+  const seen = new Set();
+  const merged = [];
+
+  for (const p of dbProducts) {
+    if (!p) continue;
+    const idKey = (p.id || '').toLowerCase().trim();
+    const slugKey = (p.slug || '').toLowerCase().trim();
+    const codeKey = (p.code || p.modelNumber || '').toLowerCase().trim();
+
+    if (idKey) seen.add(idKey);
+    if (slugKey) seen.add(slugKey);
+    if (codeKey) seen.add(codeKey);
+
+    merged.push(p);
+  }
+
+  for (const p of staticProducts) {
+    if (!p) continue;
+    const idKey = (p.id || '').toLowerCase().trim();
+    const slugKey = (p.slug || '').toLowerCase().trim();
+    const codeKey = (p.code || p.modelNumber || '').toLowerCase().trim();
+
+    const isDuplicate =
+      (idKey && seen.has(idKey)) ||
+      (slugKey && seen.has(slugKey)) ||
+      (codeKey && seen.has(codeKey));
+
+    if (!isDuplicate) {
+      if (idKey) seen.add(idKey);
+      if (slugKey) seen.add(slugKey);
+      if (codeKey) seen.add(codeKey);
+      merged.push(p);
+    }
+  }
+
+  if (isCatalogueReviewModeActive()) {
+    return merged.filter(
+      (p) =>
+        p.id?.toLowerCase() === 'danfoss-sm110s4ea' ||
+        p.modelNumber?.toLowerCase() === 'sm110s4ea' ||
+        p.code?.toLowerCase() === 'sm110s4ea' ||
+        p.slug?.toLowerCase() === 'danfoss-sm110s4ea'
+    );
+  }
+
+  return merged;
+}
+
+/**
  * Public catalog fetcher with seamless fallback to static catalog
  */
 export async function getProducts(query = {}) {
@@ -257,9 +345,14 @@ export async function getProducts(query = {}) {
     if (query.limit) params.append('limit', query.limit);
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
+    const isDev = process.env.NODE_ENV === 'development';
+    const fetchOptions = isDev
+      ? { cache: 'no-store' }
+      : { next: { revalidate: 3600 } };
+
     const res = await fetchWithTimeout(
       `${apiBase}/api/products${queryString}`,
-      { next: { revalidate: 3600 } },
+      fetchOptions,
       DEFAULT_READ_TIMEOUT_MS
     );
 
@@ -267,7 +360,18 @@ export async function getProducts(query = {}) {
     const json = await res.json();
     if (json.success && Array.isArray(json.data) && json.data.length > 0) {
       CIRCUIT_BREAKER.reset();
-      return json.data;
+      const staticList = filterStaticProducts(query);
+      const merged = mergeAndDeduplicateProducts(json.data, staticList);
+      if (isCatalogueReviewModeActive()) {
+        return merged.filter(
+          (p) =>
+            p.id?.toLowerCase() === 'danfoss-sm110s4ea' ||
+            p.modelNumber?.toLowerCase() === 'sm110s4ea' ||
+            p.code?.toLowerCase() === 'sm110s4ea' ||
+            p.slug?.toLowerCase() === 'danfoss-sm110s4ea'
+        );
+      }
+      return merged;
     }
   } catch (err) {
     CIRCUIT_BREAKER.trip();
@@ -298,6 +402,21 @@ export async function getCategories() {
       const json = await res.json();
       if (json.success && Array.isArray(json.data) && json.data.length > 0) {
         CIRCUIT_BREAKER.reset();
+        if (isCatalogueReviewModeActive()) {
+          return {
+            categories: json.data.map((c) => {
+              const isDanfossCat =
+                (c.name || '').toLowerCase().includes('scroll') ||
+                (c.slug || '').toLowerCase().includes('scroll') ||
+                (c.name || '').toLowerCase().includes('danfoss');
+              return {
+                ...c,
+                productCount: isDanfossCat ? 1 : 0,
+              };
+            }),
+            totalProducts: 1,
+          };
+        }
         return {
           categories: json.data,
           totalProducts: json.totalProducts || 0,
@@ -325,9 +444,14 @@ export async function getProductById(id) {
   }
 
   try {
+    const isDev = process.env.NODE_ENV === 'development';
+    const fetchOptions = isDev
+      ? { cache: 'no-store' }
+      : { next: { revalidate: 3600 } };
+
     const res = await fetchWithTimeout(
       `${apiBase}/api/products/${encodeURIComponent(id)}`,
-      { next: { revalidate: 3600 } },
+      fetchOptions,
       DEFAULT_READ_TIMEOUT_MS
     );
     if (res.ok) {
@@ -336,18 +460,34 @@ export async function getProductById(id) {
         CIRCUIT_BREAKER.reset();
         return {
           product: json.data,
-          related: json.related || [],
+          related: isCatalogueReviewModeActive() ? [] : (json.related || []),
         };
       }
     }
-    if (res.status === 404) return null;
+    if (res.status === 404) {
+      const staticMatch = getStaticProductById(id);
+      if (staticMatch) {
+        return {
+          product: staticMatch.product,
+          related: isCatalogueReviewModeActive() ? [] : (staticMatch.related || []),
+        };
+      }
+      return null;
+    }
     throw new Error(`HTTP ${res.status}`);
   } catch (err) {
     CIRCUIT_BREAKER.trip();
     console.warn('API getProductById fallback to static catalog:', err.message);
   }
 
-  return getStaticProductById(id);
+  const staticMatch = getStaticProductById(id);
+  if (staticMatch) {
+    return {
+      product: staticMatch.product,
+      related: isCatalogueReviewModeActive() ? [] : (staticMatch.related || []),
+    };
+  }
+  return null;
 }
 
 /**
@@ -371,9 +511,17 @@ export async function getProductsByCategory(slug) {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
         CIRCUIT_BREAKER.reset();
+        const prods = isCatalogueReviewModeActive()
+          ? json.data.filter(
+              (p) =>
+                p.id?.toLowerCase() === 'danfoss-sm110s4ea' ||
+                p.modelNumber?.toLowerCase() === 'sm110s4ea' ||
+                p.slug?.toLowerCase() === 'danfoss-sm110s4ea'
+            )
+          : json.data;
         return {
           category: json.category,
-          products: json.data,
+          products: prods,
         };
       }
     }
@@ -383,7 +531,19 @@ export async function getProductsByCategory(slug) {
     console.warn('API getProductsByCategory fallback:', err.message);
   }
 
-  return getStaticProductsByCategory(slug);
+  const staticCat = getStaticProductsByCategory(slug);
+  if (isCatalogueReviewModeActive()) {
+    return {
+      category: staticCat.category,
+      products: (staticCat.products || []).filter(
+        (p) =>
+          p.id?.toLowerCase() === 'danfoss-sm110s4ea' ||
+          p.modelNumber?.toLowerCase() === 'sm110s4ea' ||
+          p.slug?.toLowerCase() === 'danfoss-sm110s4ea'
+      ),
+    };
+  }
+  return staticCat;
 }
 
 /**
