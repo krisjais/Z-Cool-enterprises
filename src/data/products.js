@@ -24,7 +24,7 @@ export const PRODUCTS_CATALOG = [
     "statusBadge": "Verified OEM Match · Technical Documentation Available",
     "verificationStatus": "Verified OEM Commercial Match",
     "imageType": "verified",
-    "imageDisclaimer": "Physical nameplate verified — model stamped ATE690UC3Q9JK.",
+    "imageDisclaimer": "Physical unit and OEM nameplate stamped ATE690UC3Q9JK verified with manufacturer product-family catalogue documentation.",
     "shortDescription": "Commercial hermetic twin rotary compressor manufactured by Shanghai Highly (Hitachi technology partner) under model code ATE690UC3Q9JK. Engineered for light-commercial split air conditioning, package units, and heat pumps with 5 TR cooling capacity.",
     "description": "Commercial hermetic twin rotary compressor manufactured by Shanghai Highly (Hitachi technology partner) under model code ATE690UC3Q9JK. Engineered for light-commercial split air conditioning, package units, and heat pumps with 5 TR cooling capacity. Operates on 380–415V three-phase electrical distribution with R410A refrigerant. Dispatched from Mumbai technical desk with pressure hold testing and oil level verification.",
     "featured": true,
@@ -34,11 +34,7 @@ export const PRODUCTS_CATALOG = [
     "pricingMode": "Request Quote",
     "keySpecs": [
       {
-        "label": "Displacement",
-        "value": "69.0 cm³/rev"
-      },
-      {
-        "label": "Rated Capacity",
+        "label": "Capacity",
         "value": "5 TR (~58,000 BTU/hr / 17.5 kW)"
       },
       {
@@ -46,12 +42,8 @@ export const PRODUCTS_CATALOG = [
         "value": "380V–415V, 3-Phase, 50Hz"
       },
       {
-        "label": "Refrigerant",
-        "value": "R410A"
-      },
-      {
-        "label": "Technology",
-        "value": "Twin Rotary"
+        "label": "Primary Use",
+        "value": "Commercial AC package units, chillers & ducted splits"
       }
     ],
     "specs": {
@@ -255,7 +247,7 @@ export const PRODUCTS_CATALOG = [
   "description": "The Danfoss SM110S4EA (OEM code SM110-4EAG) is an industrial-grade hermetic scroll compressor engineered for medium-temperature air conditioning and commercial cooling installations. Delivering a rated 7.5 TR cooling capacity with 144.20 cm³ swept volume displacement, this fixed-speed compressor operates reliably on three-phase 380–415V (50Hz) and 460V (60Hz) commercial power distribution. Purpose-built for R22 refrigeration systems, it features standard ODF sweat connection fittings, 3/8'' flare SAE oil equalization, and CE/UL compliance for HVAC contractors and facility maintenance.",
   "keySpecs": [
     {
-      "label": "Rated Capacity",
+      "label": "Capacity",
       "value": "7.5 TR"
     },
     {
@@ -263,12 +255,8 @@ export const PRODUCTS_CATALOG = [
       "value": "380-415V, 3-Phase, 50Hz / 460V, 3-Phase, 60Hz"
     },
     {
-      "label": "Displacement",
-      "value": "144.20 cm³"
-    },
-    {
-      "label": "Refrigerant",
-      "value": "R22"
+      "label": "Primary Use",
+      "value": "Ductable AC, Split AC, Rooftop Package Units"
     }
   ],
   "compatibility": [

@@ -93,7 +93,7 @@ export function getCatalogueReviewModeSlugs() {
   const envVal = (
     process.env.NEXT_PUBLIC_CATALOGUE_REVIEW_MODE ||
     process.env.CATALOGUE_REVIEW_MODE ||
-    ''
+    'danfoss-sm110s4ea,highly-ate690uc3q9jk'
   ).trim().toLowerCase();
   if (!envVal || envVal === 'false' || envVal === 'off' || envVal === '0') return null;
   const slugs = envVal.split(',').map((s) => s.trim()).filter(Boolean);
@@ -183,19 +183,22 @@ function getStaticCategories() {
   const isReview = isCatalogueReviewModeActive();
   return {
     categories: CATEGORIES_LIST.map((c) => {
-      const isDanfossCat =
+      const isReviewCat =
         c.name.toLowerCase().includes('scroll') ||
         c.id.toLowerCase().includes('scroll') ||
-        c.name.toLowerCase().includes('danfoss');
+        c.name.toLowerCase().includes('danfoss') ||
+        c.name.toLowerCase().includes('rotary') ||
+        c.id.toLowerCase().includes('rotary') ||
+        c.name.toLowerCase().includes('highly');
       return {
         _id: c.id,
         name: c.name,
         slug: c.id,
         description: c.desc,
-        productCount: isReview ? (isDanfossCat ? 1 : 0) : 0,
+        productCount: isReview ? (isReviewCat ? 1 : 0) : 0,
       };
     }),
-    totalProducts: isReview ? 1 : PRODUCTS_CATALOG.length,
+    totalProducts: isReview ? 2 : PRODUCTS_CATALOG.length,
   };
 }
 
