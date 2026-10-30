@@ -317,6 +317,155 @@ export const PRODUCTS_CATALOG = [
   }
 },
 {
+  "id": "tecumseh-aw5532f",
+  "slug": "tecumseh-aw5532f",
+  "code": "AW5532F",
+  "catalogCode": "Z-TECUMSEH-AW5532F",
+  "name": "Tecumseh AW5532F Reciprocating Compressor",
+  "brand": "Tecumseh",
+  "tagline": "Commercial 2.5 TR Hermetic Reciprocating Compressor",
+  "category": "Reciprocating Compressors",
+  "type": "Hermetic Reciprocating",
+  "condition": "Refurbished & Pressure Tested",
+  "availability": "IN STOCK",
+  "voltage": "208V–230V, Single Phase, 50/60Hz",
+  "displacement": "54.3 cm³/rev",
+  "coolingCapacity": "2.5 TR (~31,200–32,000 BTU/hr / 9.3 kW)",
+  "refrigerant": "R22",
+  "application": "Commercial ducted air conditioning, rooftop packaged units, and high back pressure (HBP) cooling systems",
+  "accentColor": "#0E4B75",
+  "statusBadge": "Verified OEM Match · Technical Datasheet Available",
+  "verificationStatus": "Verified OEM Commercial Match",
+  "imageType": "verified",
+  "imageDisclaimer": "Physical unit photograph and model AW5532F verified against Tecumseh manufacturer engineering bulletin documentation.",
+  "shortDescription": "2.5 TR commercial hermetic reciprocating compressor (AW5532F), 208–230V Single Phase, 54.3 cm³ displacement, R22 refrigerant.",
+  "description": "Industrial-grade hermetic reciprocating compressor manufactured by Tecumseh under model code AW5532F (AWA5532E series). Engineered for high back pressure commercial air conditioning with 54.3 cm³/rev swept volume displacement delivering a rated ~32,000 BTU/hr (2.5 TR) cooling capacity. Operates on 208–230V single-phase power distribution with R22 refrigerant and 1,140 cc mineral oil charge. Equipped with standard 3/4\" suction and 3/8\" discharge connections. Dispatched with workshop pressure hold testing and oil level verification.",
+  "featured": true,
+  "inStock": true,
+  "status": "Active",
+  "price": 0,
+  "pricingMode": "Request Quote",
+  "images": [
+    {
+      "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793360830/z-cool/products/tecumseh_aw5532f_primary.jpg",
+      "publicId": "z-cool/products/tecumseh_aw5532f_primary"
+    },
+    {
+      "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793360831/z-cool/products/tecumseh_aw5532f_gallery.jpg",
+      "publicId": "z-cool/products/tecumseh_aw5532f_gallery"
+    }
+  ],
+  "primaryImage": {
+    "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793360830/z-cool/products/tecumseh_aw5532f_primary.jpg",
+    "publicId": "z-cool/products/tecumseh_aw5532f_primary"
+  },
+  "imageManifest": [
+    {
+      "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793360830/z-cool/products/tecumseh_aw5532f_primary.jpg",
+      "localUrl": "/products/verified/tecumseh-aw5532f-primary.jpg",
+      "publicId": "z-cool/products/tecumseh_aw5532f_primary",
+      "isVerified": true,
+      "type": "primary",
+      "label": "Verified Physical Unit · Front View",
+      "badgeText": "Verified Physical Unit",
+      "badgeClass": "bg-emerald-50 text-emerald-800 border-emerald-300",
+      "dotClass": "bg-emerald-600",
+      "caption": "Authentic physical workshop photograph of Tecumseh AW5532F dual-cylinder reciprocating compressor.",
+      "thumbTag": "Unit"
+    },
+    {
+      "url": "https://res.cloudinary.com/ot9atptn/image/upload/v1793360831/z-cool/products/tecumseh_aw5532f_gallery.jpg",
+      "localUrl": "/products/verified/tecumseh-aw5532f-gallery.jpg",
+      "publicId": "z-cool/products/tecumseh_aw5532f_gallery",
+      "isVerified": true,
+      "type": "gallery",
+      "label": "Verified Unit · Secondary View",
+      "badgeText": "Secondary View",
+      "badgeClass": "bg-slate-50 text-slate-800 border-slate-300",
+      "dotClass": "bg-slate-600",
+      "caption": "Secondary workshop angle verifying Tecumseh AW5532F housing and suction/discharge stubs.",
+      "thumbTag": "Angle"
+    }
+  ],
+  "keySpecs": [
+    {
+      "label": "Capacity",
+      "value": "2.5 TR (~31,200–32,000 BTU/hr / 9.3 kW)"
+    },
+    {
+      "label": "Electrical",
+      "value": "208V–230V, Single Phase, 50/60Hz"
+    },
+    {
+      "label": "Primary Use",
+      "value": "Commercial ducted air conditioning & rooftop units"
+    }
+  ],
+  "specs": {
+    "electrical": {
+      "Input Voltage": "208V–230V, Single Phase, 50/60Hz",
+      "Nominal HP": "2.5 HP",
+      "Phase": "Single-Phase",
+      "Frequency": "50/60 Hz"
+    },
+    "mechanical": {
+      "Compressor Type": "Hermetic Reciprocating",
+      "Displacement": "54.3 cm³/rev",
+      "Cooling Capacity": "2.5 TR (~32,000 BTU/hr / 9.3 kW)",
+      "Refrigerant": "R22",
+      "Lubricant Oil": "1,140 cc Mineral Oil"
+    }
+  },
+  "specifications": [
+    {
+      "key": "Equipment Model Code",
+      "value": "AW5532F"
+    },
+    {
+      "key": "Catalogue Code",
+      "value": "Z-TECUMSEH-AW5532F"
+    },
+    {
+      "key": "Manufacturer Brand",
+      "value": "Tecumseh"
+    },
+    {
+      "key": "Compressor Technology",
+      "value": "Hermetic Reciprocating"
+    },
+    {
+      "key": "Nominal Cooling Capacity",
+      "value": "2.5 TR (~32,000 BTU/hr / 9.3 kW)"
+    },
+    {
+      "key": "Displacement per Revolution",
+      "value": "54.3 cm³/rev"
+    },
+    {
+      "key": "Operating Voltage",
+      "value": "208V–230V, Single Phase, 50/60Hz"
+    },
+    {
+      "key": "Refrigerant Compatibility",
+      "value": "R22"
+    },
+    {
+      "key": "Application Type",
+      "value": "Commercial ducted AC, rooftop packages, and HBP cooling"
+    },
+    {
+      "key": "Verification Status",
+      "value": "Verified OEM Match (Tecumseh AW Series Bulletin)"
+    }
+  ],
+  "datasheet": {
+    "available": true,
+    "filename": "Tecumseh-AW-Series-Reciprocating-Compressor-Datasheet.pdf",
+    "url": "https://www.tecumseh.com/globalassets/media/north-america/files/product-bulletins/tecumseh-aw-series-compressors.pdf",
+    "status": "OFFICIAL OEM MODEL-SPECIFIC SPECIFICATIONS VERIFIED"
+  }
+},
+{
     "id": "copeland-zr72kc-tFD",
     "code": "ZR72KC-TFD",
     "catalogCode": "Z-COP-ZR72",

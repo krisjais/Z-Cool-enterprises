@@ -93,10 +93,13 @@ export function getCatalogueReviewModeSlugs() {
   const envVal = (
     process.env.NEXT_PUBLIC_CATALOGUE_REVIEW_MODE ||
     process.env.CATALOGUE_REVIEW_MODE ||
-    'danfoss-sm110s4ea,highly-ate690uc3q9jk'
+    'danfoss-sm110s4ea,highly-ate690uc3q9jk,tecumseh-aw5532f'
   ).trim().toLowerCase();
   if (!envVal || envVal === 'false' || envVal === 'off' || envVal === '0') return null;
   const slugs = envVal.split(',').map((s) => s.trim()).filter(Boolean);
+  if (!slugs.includes('tecumseh-aw5532f')) {
+    slugs.push('tecumseh-aw5532f');
+  }
   return slugs.length > 0 ? slugs : null;
 }
 
@@ -189,7 +192,10 @@ function getStaticCategories() {
         c.name.toLowerCase().includes('danfoss') ||
         c.name.toLowerCase().includes('rotary') ||
         c.id.toLowerCase().includes('rotary') ||
-        c.name.toLowerCase().includes('highly');
+        c.name.toLowerCase().includes('highly') ||
+        c.name.toLowerCase().includes('reciprocating') ||
+        c.id.toLowerCase().includes('reciprocating') ||
+        c.name.toLowerCase().includes('tecumseh');
       return {
         _id: c.id,
         name: c.name,
@@ -198,7 +204,7 @@ function getStaticCategories() {
         productCount: isReview ? (isReviewCat ? 1 : 0) : 0,
       };
     }),
-    totalProducts: isReview ? 2 : PRODUCTS_CATALOG.length,
+    totalProducts: isReview ? 3 : PRODUCTS_CATALOG.length,
   };
 }
 
