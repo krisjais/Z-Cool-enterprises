@@ -11,7 +11,7 @@ const nextConfig = {
     root: path.resolve(__dirname),
   },
   env: {
-    NEXT_PUBLIC_CATALOGUE_REVIEW_MODE: process.env.NEXT_PUBLIC_CATALOGUE_REVIEW_MODE || 'danfoss-sm110s4ea,highly-ate690uc3q9jk,tecumseh-aw5532f',
+    NEXT_PUBLIC_CATALOGUE_REVIEW_MODE: process.env.NEXT_PUBLIC_CATALOGUE_REVIEW_MODE || 'false',
   },
   devIndicators: false,
   images: {

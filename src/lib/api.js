@@ -93,13 +93,10 @@ export function getCatalogueReviewModeSlugs() {
   const envVal = (
     process.env.NEXT_PUBLIC_CATALOGUE_REVIEW_MODE ||
     process.env.CATALOGUE_REVIEW_MODE ||
-    'danfoss-sm110s4ea,highly-ate690uc3q9jk,tecumseh-aw5532f'
+    'false'
   ).trim().toLowerCase();
   if (!envVal || envVal === 'false' || envVal === 'off' || envVal === '0') return null;
   const slugs = envVal.split(',').map((s) => s.trim()).filter(Boolean);
-  if (!slugs.includes('tecumseh-aw5532f')) {
-    slugs.push('tecumseh-aw5532f');
-  }
   return slugs.length > 0 ? slugs : null;
 }
 
